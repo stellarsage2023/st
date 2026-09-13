@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>星宸学社 STELLARSAGE — 以星为引，以创为宸</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+/* ============================================================
+   0. 变量
+   ============================================================ */
+:root{
+  --bg:#FFFFFF;
+  --bg-soft:#F4F6FA;
+  --text:#0A0A0A;
+  --text-2:#4A5568;
+  --muted:#9AA4B2;
+  --blue:#3778e5;
+  --blue-light:#5B9EFF;
+  --slide:#2d3748;
+  --blue-soft:rgba(55,120,229,.08);
+  --blue-line:rgba(55,120,229,.25);
+  --border:rgba(0,0,0,.08);
+  --border-soft:rgba(0,0,0,.04);
+  --nav-h:76px;
+  --ease:cubic-bezier(.22,.8,.22,1);
+  --sans:"HarmonyOS Sans SC","PingFang SC","Source Han Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono","SF Mono",ui-monospace,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;border-radius:0;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+ul{list-style:none;}
+h1,h2,h3,h4,p{margin:0;}
+button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer;}
+::selection{background:var(--blue);color:#fff;}
+::-webkit-scrollbar{display:none;}
+
+/* ============================================================
+   1. 导航栏（未改动）
+   ============================================================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;
+  background:rgba(255,255,255,.94);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border-soft);
+  transition:background .5s var(--ease),backdrop-filter .5s var(--ease),
+             border-color .5s var(--ease);
+}
+body.is-home .nav{
+  background:transparent;
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  border-bottom-color:transparent;
+}
+.nav-logo{
+  position:relative;
+  display:inline-flex;align-items:center;gap:22px;
+  height:var(--nav-h);
+  padding:0 26px 0 48px;
+  margin-left:-48px;
+  background:transparent;
+  transition:background .5s var(--ease);
+}
+body.is-home .nav-logo{background:rgba(255,255,255,.96);}
+.nav-logo-line{width:2px;height:26px;background:rgba(0,0,0,.22);flex:none;}
+body.is-home .nav-logo-line{background:rgba(0,0,0,.28);}
+.nav-logo img{height:48px;width:auto;transition:height .3s var(--ease),transform .4s var(--ease);}
+.nav-logo:hover img{transform:scale(1.04);}
+
+.nav-links{display:flex;gap:38px;}
+.nav-links a{
+  position:relative;padding:8px 0;
+  color:var(--text-2);font-size:14px;letter-spacing:.1em;
+  transition:color .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-links a.active{color:var(--text);}
+body.is-home .nav-links a{color:rgba(255,255,255,.85);}
+body.is-home .nav-links a.active{color:#fff;}
+.nav-links a .nav-line{
+  position:absolute;left:0;bottom:0;
+  width:100%;height:2px;overflow:hidden;pointer-events:none;
+}
+.nav-links a .nav-line::before{
+  content:"";position:absolute;inset:0;
+  background:var(--blue);
+  transform:translateX(-100%);
+  transition:transform .45s cubic-bezier(.22,.8,.22,1);
+}
+body.is-home .nav-links a .nav-line::before{background:var(--blue-light);}
+.nav-links a.active .nav-line::before{transform:translateX(0);}
+.nav-links a.line-in .nav-line::before{transform:translateX(0);}
+.nav-links a.line-out .nav-line::before{
+  transform:translateX(100%);
+  transition:transform .45s cubic-bezier(.22,.8,.22,1);
+}
+@media (hover:hover) and (pointer:fine){
+  .nav-links a:hover{color:var(--text);}
+  body.is-home .nav-links a:hover{color:#fff;}
+}
+
+.nav-burger{
+  display:none;width:44px;height:44px;
+  border:1px solid var(--border);background:none;cursor:pointer;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  transition:border-color .3s var(--ease),background .3s var(--ease);
+}
+body.is-home .nav-burger{border-color:rgba(255,255,255,.4);}
+.nav-burger:hover{background:var(--blue-soft);}
+body.is-home .nav-burger:hover{background:rgba(255,255,255,.15);}
+.nav-burger span{display:block;width:18px;height:1.5px;background:var(--text);transition:transform .35s var(--ease),opacity .35s var(--ease);}
+body.is-home .nav-burger span{background:#fff;}
+.nav-burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.nav-burger.open span:nth-child(2){opacity:0;}
+.nav-burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+
+.mobile-menu{
+  position:fixed;inset:0;z-index:999;
+  background:var(--bg);display:flex;flex-direction:column;justify-content:center;
+  padding:0 40px;transform:translateY(-100%);visibility:hidden;
+  transition:transform .6s var(--ease),visibility .6s var(--ease);
+}
+.mobile-menu.open{transform:translateY(0);visibility:visible;}
+.mobile-menu a{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:22px 0;border-bottom:1px solid var(--border-soft);
+  font-size:clamp(24px,5vw,36px);font-weight:800;color:var(--muted);
+  transition:color .35s var(--ease),padding-left .35s var(--ease);
+}
+.mobile-menu a:hover{color:var(--blue);padding-left:12px;}
+.mobile-menu a span{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--muted);font-weight:400;}
+
+/* ============================================================
+   2. 主 Swiper
+   ============================================================ */
+.main-swiper{width:100%;height:100%;}
+.main-swiper .swiper-slide{position:relative;overflow:hidden;background:var(--bg);}
+.slide{width:100%;height:100%;position:relative;}
+
+/* ============================================================
+   3. 入场动画
+   ============================================================ */
+[data-anim]{
+  opacity:0;
+  transition:opacity .9s cubic-bezier(.22,.8,.22,1),
+             transform .9s cubic-bezier(.22,.8,.22,1);
+  will-change:opacity,transform;
+}
+[data-anim="up"]{transform:translateY(72px);}
+[data-anim="left"]{transform:translateX(-72px);}
+[data-anim="right"]{transform:translateX(72px);}
+[data-anim="scale"]{transform:scale(.92);}
+[data-anim].anim-in{opacity:1;transform:translate(0) scale(1);}
+[data-anim][data-anim-delay="1"]{transition-delay:.10s;}
+[data-anim][data-anim-delay="2"]{transition-delay:.20s;}
+[data-anim][data-anim-delay="3"]{transition-delay:.30s;}
+[data-anim][data-anim-delay="4"]{transition-delay:.40s;}
+[data-anim][data-anim-delay="5"]{transition-delay:.50s;}
+[data-anim][data-anim-delay="6"]{transition-delay:.60s;}
+
+/* ============================================================
+   4. 第一页：主站
+   ============================================================ */
+.slide-home{
+  display:flex;align-items:center;justify-content:center;
+  background-size:cover;background-position:center;
+  position:relative;
+}
+.slide-home::before{
+  content:"";position:absolute;inset:0;
+  background:rgba(0,0,0,.74);z-index:1;
+}
+.slide-home::after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(600px 400px at 75% 25%,rgba(55,120,229,.18),transparent 60%),
+    radial-gradient(500px 400px at 15% 80%,rgba(55,120,229,.12),transparent 60%);
+  z-index:1;
+}
+.home-content{position:relative;z-index:2;text-align:center;padding:0 32px;}
+.home-title{
+  font-family:var(--sans);
+  font-size:clamp(20px,2.6vw,38px);
+  font-weight:700;letter-spacing:.05em;line-height:1.5;
+  text-transform:uppercase;
+}
+.home-title .line{display:block;}
+.home-title .w{color:#FFFFFF;}
+.home-title .b{color:var(--blue-light);}
+
+.scroll-hint{
+  position:absolute;bottom:44px;left:50%;transform:translateX(-50%);
+  z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;
+  color:rgba(255,255,255,.6);
+}
+.scroll-hint .mouse{
+  width:22px;height:36px;border:1px solid rgba(255,255,255,.4);position:relative;
+}
+.scroll-hint .mouse::before{
+  content:"";position:absolute;left:50%;top:6px;width:2px;height:8px;
+  background:var(--blue-light);transform:translateX(-50%);
+  animation:mouseScroll 1.8s var(--ease) infinite;
+}
+@keyframes mouseScroll{
+  0%{opacity:0;transform:translate(-50%,-4px);}
+  40%{opacity:1;}
+  100%{opacity:0;transform:translate(-50%,12px);}
+}
+
+/* ============================================================
+   5. 按钮：单向滑动色块
+   ============================================================ */
+.btn-block,
+.btn-slide-x{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:15px 28px;
+  background:var(--blue);color:#fff;
+  font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.02em;line-height:1;
+  border:0;cursor:pointer;overflow:hidden;white-space:nowrap;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;user-select:none;
+}
+.btn-block::before,
+.btn-slide-x::before{
+  content:"";position:absolute;inset:0;
+  background:var(--slide);z-index:0;
+  transform:translateY(-100%);pointer-events:none;
+}
+.btn-slide-x::before{transform:translateX(-100%);}
+.btn-block > *,
+.btn-slide-x > *{position:relative;z-index:1;}
+.btn-block.slide-in::before{transform:translateY(0);transition:transform .55s cubic-bezier(.22,.8,.22,1);}
+.btn-block.slide-out::before{transform:translateY(100%);transition:transform .55s cubic-bezier(.22,.8,.22,1);}
+.btn-slide-x.slide-in::before{transform:translateX(0);transition:transform .55s cubic-bezier(.22,.8,.22,1);}
+.btn-slide-x.slide-out::before{transform:translateX(100%);transition:transform .55s cubic-bezier(.22,.8,.22,1);}
+.btn-block:hover,
+.btn-slide-x:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(45,55,72,.28);}
+.btn-block:active,
+.btn-slide-x:active{transform:translateY(0);box-shadow:none;}
+.btn-block svg,
+.btn-slide-x svg{width:15px;height:15px;flex:none;transition:transform .35s var(--ease);}
+.btn-block:hover svg,
+.btn-slide-x:hover svg{transform:translateX(4px);}
+
+/* ============================================================
+   6. 第二页：学社作品
+   ============================================================ */
+.slide-works{
+  padding:calc(var(--nav-h) + 28px) clamp(24px,5vw,80px) 40px;
+  display:flex;align-items:stretch;gap:clamp(24px,4.5vw,80px);
+  background:var(--bg);position:relative;overflow:hidden;
+}
+.slide-works::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(55,120,229,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(55,120,229,.05) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+          mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+}
+
+.side-nav{
+  flex:none;position:relative;z-index:2;
+  width:clamp(48px,3.6vw,60px);
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:clamp(6px,1.6vh,16px) 0;gap:clamp(16px,3.6vh,36px);
+}
+.side-nav-mark{
+  width:clamp(32px,2.8vw,40px);aspect-ratio:1;flex:none;
+  display:grid;place-items:center;
+  background:var(--blue);color:#fff;
+  font-family:var(--mono);font-size:clamp(10px,.9vw,12px);font-weight:700;letter-spacing:.04em;
+  position:relative;
+}
+.side-nav-mark::after{
+  content:"";position:absolute;inset:0;
+  border:1px solid var(--blue);transform:translate(4px,4px);opacity:.3;
+}
+.side-nav-list{
+  display:flex;flex-direction:column;align-items:center;
+  gap:clamp(14px,3.4vh,30px);position:relative;
+}
+.side-nav-list::before{
+  content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;
+  background:linear-gradient(to bottom,transparent,var(--border) 12%,var(--border) 88%,transparent);
+  transform:translateX(-50%);z-index:-1;
+}
+.side-nav-item{
+  width:clamp(32px,2.8vw,40px);aspect-ratio:1;
+  display:grid;place-items:center;
+  background:var(--bg);color:var(--muted);
+  font-family:var(--mono);font-size:11px;letter-spacing:.05em;
+  border:1px solid var(--border);cursor:pointer;
+  transition:color .35s var(--ease),border-color .35s var(--ease),
+             background .35s var(--ease),transform .35s var(--ease),box-shadow .35s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+@media (hover:hover) and (pointer:fine){
+  .side-nav-item:hover{
+    color:var(--blue);
+    border-color:var(--blue-line);
+    transform:scale(1.08);
+    box-shadow:0 6px 16px rgba(55,120,229,.18);
+  }
+}
+.side-nav-item.on{
+  background:var(--blue);border-color:var(--blue);color:#fff;
+  box-shadow:0 6px 18px rgba(55,120,229,.3);
+}
+.side-nav-foot{
+  writing-mode:vertical-rl;font-family:var(--mono);font-size:10px;
+  letter-spacing:.32em;color:var(--muted);text-transform:uppercase;
+}
+
+.works-stage{
+  flex:1;min-width:0;position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;
+  padding-top:clamp(44px,7vh,80px);
+}
+
+.stage-head{
+  position:absolute;top:0;right:0;
+  display:flex;align-items:stretch;gap:clamp(12px,1.2vw,18px);
+}
+.stage-head .head-bar{width:clamp(7px,.7vw,10px);background:var(--blue);flex:none;}
+.stage-head .head-titles h2{
+  font-size:clamp(22px,2.5vw,34px);font-weight:800;
+  letter-spacing:-.02em;line-height:1.15;color:var(--text);
+}
+.stage-head .head-titles p{
+  margin-top:5px;font-family:var(--mono);
+  font-size:clamp(9px,.9vw,11px);letter-spacing:.3em;
+  color:var(--muted);text-transform:uppercase;
+}
+
+.works-showcase{
+  position:relative;display:grid;grid-template-columns:1.9fr 1fr;
+  height:clamp(300px,50vh,460px);
+  background:var(--bg);border:1px solid var(--border);
+  overflow:hidden;
+  box-shadow:0 16px 44px rgba(10,10,10,.06);
+  transition:border-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .works-showcase:hover{
+    border-color:var(--blue-line);
+    box-shadow:0 22px 60px rgba(55,120,229,.16);
+    transform:translateY(-4px);
+  }
+}
+.works-wipe{
+  position:absolute;inset:0;background:var(--blue);
+  transform:translateX(-100%);pointer-events:none;z-index:20;
+}
+.works-showcase.anim .works-wipe{animation:cardWipe .85s cubic-bezier(.7,0,.3,1);}
+@keyframes cardWipe{
+  0%{transform:translateX(-100%);}
+  42%{transform:translateX(0);}
+  58%{transform:translateX(0);}
+  100%{transform:translateX(100%);}
+}
+
+.works-media{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#2f6ad9,#3778e5 45%,#6FA8FF);
+  cursor:pointer;isolation:isolate;
+  transition:background .6s var(--ease);
+}
+.works-media-pano{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transform-origin:center;
+  transition:transform 10s linear;
+}
+.works-showcase:hover .works-media-pano{transform:scale(1.06);}
+.works-media::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px);
+  background-size:48px 48px;
+  transition:background-position .8s var(--ease);
+  pointer-events:none;
+  z-index:2;
+}
+@media (hover:hover) and (pointer:fine){
+  .works-showcase:hover .works-media::before{background-position:24px 24px;}
+}
+.works-media::after{
+  content:"";position:absolute;
+  width:70%;aspect-ratio:1;top:-18%;right:-12%;
+  background:radial-gradient(circle,rgba(255,255,255,.3),transparent 62%);
+  pointer-events:none;
+  z-index:3;
+}
+.works-orbit{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(255,255,255,.3);pointer-events:none;
+  z-index:4;
+}
+.works-orbit.o1{width:min(58%,340px);aspect-ratio:1;}
+.works-orbit.o2{width:min(38%,220px);aspect-ratio:1;border-style:dashed;opacity:.7;}
+.works-orbit.o3{width:min(18%,104px);aspect-ratio:1;background:rgba(255,255,255,.1);}
+
+.works-pano-badge{
+  position:absolute;
+  left:clamp(20px,3vw,34px);bottom:clamp(16px,3vh,28px);
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 14px;
+  background:rgba(0,0,0,.42);
+  border:1px solid rgba(255,255,255,.35);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  color:#fff;
+  font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.16em;text-transform:uppercase;
+  z-index:5;
+}
+.works-pano-badge i{
+  width:6px;height:6px;
+  background:#8FFFC8;
+  box-shadow:0 0 0 3px rgba(143,255,200,.25);
+  animation:dotPulse 2s var(--ease) infinite;
+}
+@keyframes dotPulse{
+  0%,100%{opacity:1;transform:scale(1);}
+  50%{opacity:.55;transform:scale(.8);}
+}
+
+.works-info{
+  display:flex;flex-direction:column;
+  border-left:1px solid var(--border);min-width:0;
+}
+.works-info-tag{
+  flex:none;padding:clamp(14px,2.2vh,20px) clamp(18px,2vw,28px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.works-info-tag .cat{
+  font-family:var(--mono);font-size:clamp(10px,1vw,11.5px);
+  letter-spacing:.2em;color:var(--blue);text-transform:uppercase;white-space:nowrap;
+}
+.works-info-tag .yr{
+  font-family:var(--mono);font-size:clamp(10px,1vw,11.5px);
+  letter-spacing:.14em;color:var(--muted);white-space:nowrap;
+}
+.works-badge{
+  position:absolute;
+  left:clamp(20px,3vw,34px);top:clamp(16px,3vh,28px);
+  display:inline-flex;align-items:center;padding:5px 14px;
+  font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:.12em;
+  z-index:5;
+}
+.works-badge.blue{background:var(--blue);color:#fff;}
+.works-badge.white{background:#fff;color:var(--blue);border:1px solid var(--blue);}
+
+.works-info-body{
+  flex:1;min-height:0;
+  padding:clamp(18px,2.4vh,28px) clamp(18px,2vw,28px);
+  display:flex;flex-direction:column;justify-content:center;
+  gap:clamp(9px,1.4vh,14px);overflow:hidden;
+}
+.works-info-body h3{
+  font-size:clamp(16px,1.7vw,24px);font-weight:800;
+  line-height:1.3;letter-spacing:-.015em;color:var(--text);
+}
+.works-info-body p{
+  font-size:clamp(12.5px,1.05vw,14px);line-height:1.75;color:var(--text-2);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.works-meta{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:2px;}
+.works-meta span{
+  padding:4px 9px;background:var(--blue-soft);
+  border:1px solid rgba(55,120,229,.18);
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--blue);
+}
+.works-btn{
+  align-self:flex-end;
+  margin:0 clamp(18px,2vw,28px) clamp(16px,2.4vh,24px);
+  padding:11px 20px;font-size:13px;
+}
+
+/* ============================================================
+   7. 第三页：学社信息
+   ============================================================ */
+.slide-about{
+  padding:calc(var(--nav-h) + 28px) clamp(24px,5vw,80px) 40px;
+  display:flex;align-items:stretch;gap:clamp(24px,4.5vw,80px);
+  background:var(--bg-soft);position:relative;overflow:hidden;
+}
+.slide-about::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(55,120,229,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(55,120,229,.05) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+          mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+}
+.about-stage{
+  flex:1;min-width:0;position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:clamp(50px,8vh,90px) 0 clamp(16px,3vh,30px);
+}
+.about-inner{width:100%;max-width:940px;display:flex;flex-direction:column;}
+.about-tabs{
+  display:flex;gap:0;border-bottom:1px solid var(--border);
+  margin-bottom:clamp(26px,4vh,40px);width:100%;
+}
+.about-tab{
+  position:relative;padding:14px 0;margin-right:clamp(28px,3vw,44px);
+  font-size:clamp(15px,1.5vw,19px);font-weight:700;
+  color:var(--muted);cursor:pointer;background:none;border:0;font-family:inherit;
+  transition:color .35s var(--ease);white-space:nowrap;
+}
+.about-tab.on{color:var(--text);}
+@media (hover:hover) and (pointer:fine){
+  .about-tab:hover{color:var(--text);}
+}
+.about-tab::after{
+  content:"";position:absolute;left:0;bottom:-1px;
+  height:2px;width:0;background:var(--blue);transition:width .4s var(--ease);
+}
+.about-tab.on::after{width:100%;}
+
+.about-panel{display:none;}
+.about-panel.on{display:block;animation:panelIn .5s var(--ease);}
+@keyframes panelIn{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:none;}
+}
+
+.about-grid{
+  display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+  gap:clamp(36px,4.5vw,64px);align-items:start;
+}
+.about-text p{
+  color:var(--text-2);font-size:clamp(13.5px,1.05vw,15px);
+  line-height:1.95;margin-bottom:14px;
+}
+.about-text p:last-child{margin-bottom:0;}
+.about-text strong{color:var(--blue);font-weight:600;}
+
+.about-link{
+  position:relative;
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:18px;padding:12px 18px;
+  background:var(--blue-soft);
+  border:1px solid var(--blue-line);
+  color:var(--blue);
+  font-size:13px;font-weight:600;letter-spacing:.02em;
+  overflow:hidden;isolation:isolate;cursor:pointer;
+  transition:color .3s var(--ease),border-color .3s var(--ease),
+             transform .3s var(--ease),box-shadow .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.about-link::before{
+  content:"";position:absolute;inset:0;
+  background:var(--blue);
+  transform:translateX(-100%);
+  pointer-events:none;z-index:0;
+}
+.about-link > *{position:relative;z-index:1;}
+.about-link.slide-in::before{
+  transform:translateX(0);
+  transition:transform .5s cubic-bezier(.22,.8,.22,1);
+}
+.about-link.slide-out::before{
+  transform:translateX(100%);
+  transition:transform .5s cubic-bezier(.22,.8,.22,1);
+}
+.about-link.slide-in,
+.about-link.slide-out{color:#fff;border-color:var(--blue);}
+@media (hover:hover) and (pointer:fine){
+  .about-link:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(55,120,229,.2);}
+}
+.about-link svg{width:14px;height:14px;flex:none;}
+
+.timeline{position:relative;padding-left:28px;}
+.timeline::before{
+  content:"";position:absolute;left:6px;top:6px;bottom:6px;width:1px;
+  background:linear-gradient(to bottom,var(--blue),transparent);
+}
+.tl-item{position:relative;padding-bottom:26px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:"";position:absolute;left:-28px;top:6px;width:13px;height:13px;
+  border:1px solid var(--blue);background:var(--bg-soft);
+  transition:background .35s var(--ease),transform .35s var(--ease);
+}
+.tl-item:hover::before{background:var(--blue);transform:scale(1.1);}
+.tl-year{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--blue);margin-bottom:5px;}
+.tl-title{font-size:15px;font-weight:700;margin-bottom:5px;color:var(--text);}
+.tl-desc{font-size:13px;color:var(--text-2);line-height:1.7;}
+
+.about-values{min-width:0;display:flex;flex-direction:column;}
+.values-title{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:14px;
+}
+.values-list{
+  display:flex;flex-direction:column;gap:1px;
+  background:var(--border-soft);border:1px solid var(--border-soft);
+}
+.value-item{
+  position:relative;display:flex;gap:16px;
+  padding:16px 20px;background:var(--bg);align-items:flex-start;
+  overflow:hidden;isolation:isolate;
+  transition:padding-left .35s var(--ease);
+}
+.value-item::before{
+  content:"";position:absolute;inset:0;
+  background:var(--blue-soft);
+  transform:translateX(-100%);z-index:0;pointer-events:none;
+}
+.value-item.slide-in::before{transform:translateX(0);transition:transform .5s cubic-bezier(.22,.8,.22,1);}
+.value-item.slide-out::before{transform:translateX(100%);transition:transform .5s cubic-bezier(.22,.8,.22,1);}
+.value-item:hover{padding-left:26px;}
+.value-num{
+  position:relative;z-index:1;
+  font-family:var(--mono);font-size:11px;color:var(--blue);
+  flex:none;padding-top:2px;letter-spacing:.05em;
+}
+.value-item > div{position:relative;z-index:1;}
+.value-item h4{
+  font-size:14px;font-weight:700;color:var(--text);
+  margin-bottom:4px;letter-spacing:-.005em;
+}
+.value-item p{font-size:12.5px;color:var(--text-2);line-height:1.6;}
+
+/* ============================================================
+   8. 第四页：加入我们
+   ============================================================ */
+.slide-join{
+  padding:calc(var(--nav-h) + 28px) clamp(24px,5vw,80px) 40px;
+  display:flex;align-items:stretch;gap:clamp(24px,4.5vw,80px);
+  background:var(--bg);position:relative;overflow:hidden;
+}
+.slide-join::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(55,120,229,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(55,120,229,.05) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+          mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+}
+.join-stage{
+  flex:1;min-width:0;position:relative;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;
+  padding-top:clamp(50px,8vh,90px);
+}
+.join-inner{width:100%;max-width:1160px;margin:0 auto;}
+.join-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,2.4fr);
+  gap:clamp(16px,2.4vw,32px);align-items:stretch;
+}
+.join-card{
+  position:relative;background:var(--bg);
+  border:1px solid var(--border);
+  padding:clamp(26px,3vw,38px);
+  display:flex;flex-direction:column;
+  gap:clamp(16px,2.2vh,22px);
+  overflow:hidden;
+  transition:border-color .4s var(--ease),box-shadow .4s var(--ease),transform .4s var(--ease);
+}
+.join-card::before{
+  content:"";position:absolute;top:0;left:0;
+  width:4px;height:100%;background:var(--blue);
+  transition:width .4s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .join-card:hover{
+    border-color:var(--blue-line);
+    box-shadow:0 14px 40px rgba(55,120,229,.14);
+    transform:translateY(-4px);
+  }
+  .join-card:hover::before{width:6px;}
+}
+.join-card-icon{
+  width:clamp(60px,5vw,76px);aspect-ratio:1;
+  display:grid;place-items:center;
+  background:var(--blue-soft);border:1px solid var(--blue-line);
+  color:var(--blue);flex:none;
+  transition:background .4s var(--ease),color .4s var(--ease),transform .4s var(--ease);
+}
+.join-card:hover .join-card-icon{background:var(--blue);color:#fff;transform:rotate(-6deg);}
+.join-card-icon svg{width:52%;height:52%;}
+.join-card h3{
+  font-size:clamp(17px,1.6vw,22px);font-weight:800;
+  color:var(--text);letter-spacing:-.015em;line-height:1.3;
+}
+.join-card p{
+  font-size:clamp(13px,1.05vw,14px);line-height:1.85;color:var(--text-2);
+}
+
+.join-card-en{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:.28em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:-6px;
+}
+.join-card-en-sub{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.22em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+
+.join-cta{
+  position:relative;background:var(--bg-soft);
+  border:1px solid var(--border);
+  padding:clamp(28px,3.2vw,42px);
+  display:flex;flex-direction:column;justify-content:space-between;
+  gap:clamp(28px,4vh,48px);
+  overflow:hidden;
+  transition:border-color .4s var(--ease),box-shadow .4s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .join-cta:hover{
+    border-color:var(--blue-line);
+    box-shadow:0 14px 40px rgba(55,120,229,.12);
+  }
+}
+.join-cta::before{
+  content:"";position:absolute;
+  top:-40%;right:-15%;width:55%;aspect-ratio:1;
+  background:radial-gradient(circle,rgba(55,120,229,.14),transparent 65%);
+  pointer-events:none;
+}
+.join-cta-body{position:relative;z-index:1;}
+.join-cta-body h3{
+  font-size:clamp(20px,2.2vw,32px);font-weight:800;
+  color:var(--text);letter-spacing:-.02em;line-height:1.25;margin-bottom:12px;
+}
+.join-cta-body p{
+  font-size:clamp(13px,1.1vw,15px);color:var(--text-2);
+  line-height:1.85;max-width:56ch;
+}
+.join-cta-actions{
+  position:relative;z-index:1;
+  display:flex;gap:14px;flex-wrap:wrap;
+}
+.join-cta-actions .btn-slide-x{
+  flex:1 1 200px;min-width:170px;
+  padding:16px 24px;
+}
+
+/* ============================================================
+   9. 第五页：学社动态 + 页脚
+   ============================================================ */
+.slide-news{
+  padding:calc(var(--nav-h) + 24px) clamp(20px,4vw,64px) 0;
+  display:flex;flex-direction:column;
+  background:var(--bg);position:relative;overflow:hidden;
+}
+.slide-news::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(55,120,229,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(55,120,229,.05) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+          mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+}
+.news-main{
+  flex:1;min-height:0;position:relative;z-index:2;
+  display:flex;flex-direction:column;
+  gap:clamp(16px,2.2vh,24px);
+  padding-bottom:clamp(16px,2vh,22px);
+}
+.news-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:20px;padding-bottom:16px;
+  border-bottom:1px solid var(--border);flex:none;
+}
+.news-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.3em;
+  color:var(--blue);margin-bottom:10px;
+}
+.news-header h2{
+  font-size:clamp(22px,2.8vw,38px);font-weight:800;
+  letter-spacing:-.02em;color:var(--text);line-height:1.15;
+}
+.news-more{
+  font-family:var(--mono);font-size:12px;letter-spacing:.16em;
+  color:var(--text-2);
+  transition:color .35s var(--ease),gap .35s var(--ease);
+  display:inline-flex;align-items:center;gap:6px;
+}
+.news-more:hover{color:var(--blue);gap:10px;}
+
+.news-content{
+  flex:1;min-height:0;
+  display:grid;grid-template-columns:1.4fr 1fr;
+  gap:clamp(24px,3vw,48px);overflow:hidden;
+}
+.news-feature{
+  position:relative;border:1px solid var(--border);
+  background:var(--bg);overflow:hidden;cursor:pointer;
+  display:flex;flex-direction:column;
+  transition:border-color .45s var(--ease),box-shadow .45s var(--ease),transform .45s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .news-feature:hover{
+    border-color:var(--blue-line);
+    box-shadow:0 18px 50px rgba(55,120,229,.16);
+    transform:translateY(-4px);
+  }
+}
+.news-wipe{
+  position:absolute;inset:0;background:var(--blue);
+  transform:translateX(-100%);pointer-events:none;z-index:30;
+}
+.news-feature.anim .news-wipe{animation:cardWipe .85s cubic-bezier(.7,0,.3,1);}
+
+.news-feature-img{
+  flex:1;min-height:0;position:relative;
+  background:linear-gradient(135deg,#2f6ad9,#3778e5 45%,#6FA8FF);
+  overflow:hidden;
+}
+.news-feature-img::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px);
+  background-size:48px 48px;
+  transition:background-position .8s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .news-feature:hover .news-feature-img::before{background-position:24px 24px;}
+}
+.news-feature-img::after{
+  content:"";position:absolute;
+  width:70%;aspect-ratio:1;top:-18%;right:-12%;
+  background:radial-gradient(circle,rgba(255,255,255,.3),transparent 62%);
+  pointer-events:none;
+}
+.news-feature-tag{
+  position:absolute;
+  left:clamp(18px,2.5vw,30px);top:clamp(14px,2.4vh,24px);
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 12px;
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.35);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  color:#fff;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.18em;text-transform:uppercase;
+}
+.news-feature-tag i{
+  width:5px;height:5px;background:#8FFFC8;
+  box-shadow:0 0 0 3px rgba(143,255,200,.25);
+  animation:dotPulse 2s var(--ease) infinite;
+}
+.news-feature-body{
+  flex:none;padding:clamp(20px,2.6vh,26px) clamp(20px,2.4vw,30px);
+  background:var(--bg);border-top:1px solid var(--border);
+}
+.news-feature-body .date{
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+  color:var(--blue);margin-bottom:10px;
+}
+.news-feature-body h3{
+  font-size:clamp(16px,1.7vw,22px);font-weight:800;
+  line-height:1.35;letter-spacing:-.015em;
+  margin-bottom:10px;color:var(--text);
+  transition:color .35s var(--ease);
+}
+.news-feature:hover .news-feature-body h3{color:var(--blue);}
+.news-feature-body p{
+  font-size:clamp(12.5px,1vw,13.5px);color:var(--text-2);
+  line-height:1.75;margin-bottom:14px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.news-readmore{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
+  color:var(--blue);
+  transition:gap .3s var(--ease),color .3s var(--ease);
+  cursor:pointer;
+}
+.news-readmore:hover{gap:12px;color:#2a66d0;}
+.news-readmore svg{width:13px;height:13px;}
+
+.news-list{
+  display:flex;flex-direction:column;gap:1px;
+  background:var(--border-soft);border:1px solid var(--border-soft);
+  overflow:hidden;
+}
+.news-item{
+  flex:1;display:flex;flex-direction:column;gap:8px;
+  padding:clamp(16px,2.2vh,22px) clamp(18px,2vw,24px);
+  background:var(--bg);cursor:pointer;
+  transition:background .35s var(--ease),padding-left .35s var(--ease);
+  position:relative;
+}
+.news-item::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--blue);transform:scaleY(0);transform-origin:top;
+  transition:transform .4s var(--ease);
+}
+.news-item:hover{background:var(--blue-soft);padding-left:clamp(22px,2.6vw,30px);}
+.news-item:hover::before{transform:scaleY(1);}
+.news-item .meta{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);
+}
+.news-item .meta .idx{color:var(--blue);font-weight:700;}
+.news-item h4{
+  font-size:clamp(13.5px,1.15vw,15px);font-weight:600;
+  line-height:1.55;color:var(--text);transition:color .35s var(--ease);
+}
+.news-item:hover h4{color:var(--blue);}
+.news-item .news-readmore{
+  align-self:flex-start;margin-top:2px;
+  font-size:10.5px;letter-spacing:.16em;opacity:.65;
+  transition:opacity .3s var(--ease),gap .3s var(--ease);
+}
+.news-item:hover .news-readmore{opacity:1;}
+
+.news-footer{
+  flex:none;position:relative;z-index:2;
+  border-top:1px solid var(--border);
+  padding:clamp(20px,2.8vh,28px) 0 clamp(18px,2.4vh,24px);
+  display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;gap:clamp(20px,3vw,48px);
+}
+.news-footer-brand{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  letter-spacing:.26em;color:var(--text);
+  transition:color .3s var(--ease);
+}
+.news-footer-brand:hover{color:var(--blue);}
+.news-footer-brand .dot{
+  width:6px;height:6px;background:var(--blue);flex:none;
+  transition:transform .4s var(--ease);
+}
+.news-footer-brand:hover .dot{transform:rotate(45deg) scale(1.2);}
+.news-footer-nav{
+  display:flex;gap:clamp(16px,2vw,28px);justify-content:center;
+  flex-wrap:wrap;font-family:var(--mono);font-size:11px;
+  letter-spacing:.16em;color:var(--muted);text-transform:uppercase;
+}
+.news-footer-nav a{
+  transition:color .3s var(--ease),transform .3s var(--ease);
+  display:inline-block;
+}
+.news-footer-nav a:hover{color:var(--blue);transform:translateY(-2px);}
+.news-footer-copy{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  color:var(--muted);text-transform:uppercase;
+  text-align:right;white-space:nowrap;
+}
+
+/* ============================================================
+   10. 页码指示器
+   ============================================================ */
+.page-indicator{
+  position:fixed;right:38px;bottom:44px;z-index:60;
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);
+  transition:opacity .4s var(--ease);
+}
+body.is-home .page-indicator{opacity:0;pointer-events:none;}
+.page-indicator .current{color:var(--blue);font-size:14px;font-weight:700;}
+.page-indicator .progress{
+  width:60px;height:2px;background:rgba(0,0,0,.1);position:relative;overflow:hidden;
+}
+.page-indicator .progress-bar{
+  position:absolute;left:0;top:0;height:100%;width:20%;
+  background:var(--blue);transition:width .5s var(--ease);
+}
+
+/* ============================================================
+   12. 弹窗提示
+   ============================================================ */
+.toast{
+  position:fixed;
+  left:50%;bottom:80px;
+  transform:translateX(-50%) translateY(24px);
+  z-index:2000;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 24px;
+  background:var(--text);
+  color:#fff;
+  font-family:var(--sans);
+  font-size:13.5px;
+  font-weight:600;
+  letter-spacing:.02em;
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s var(--ease),transform .35s var(--ease);
+  box-shadow:0 14px 40px rgba(0,0,0,.22);
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+.toast .toast-dot{
+  width:7px;height:7px;
+  background:var(--blue-light);
+  flex:none;
+  animation:dotPulse 1.4s var(--ease) infinite;
+}
+
+/* ============================================================
+   11. 响应式
+   ============================================================ */
+@media (max-width:1024px){
+  .nav{padding:0 24px;}
+  .nav-links{display:none;}
+  .nav-burger{display:flex;}
+  .nav-logo{padding:0 20px 0 24px;margin-left:-24px;}
+  .nav-logo img{height:42px;}
+
+  .slide-works,.slide-about,.slide-join{
+    padding:calc(var(--nav-h) + 22px) clamp(16px,3.5vw,40px) 32px;
+    gap:clamp(14px,2.6vw,28px);
+  }
+  .side-nav{width:clamp(40px,4vw,50px);gap:clamp(12px,2.6vh,24px);}
+  .side-nav-mark{width:clamp(28px,2.6vw,34px);font-size:10px;}
+  .side-nav-item{width:clamp(28px,2.6vw,34px);font-size:10px;}
+  .side-nav-foot{font-size:9px;}
+
+  .works-stage,.about-stage,.join-stage{padding-top:clamp(38px,6vh,60px);}
+  .stage-head .head-titles h2{font-size:clamp(20px,3vw,28px);}
+  .stage-head .head-titles p{font-size:9.5px;}
+
+  .works-showcase{
+    grid-template-columns:1.6fr 1fr;
+    height:clamp(270px,46vh,400px);
+  }
+  .works-info-body h3{font-size:clamp(15px,1.8vw,20px);}
+
+  .about-inner{max-width:100%;}
+  .about-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:clamp(24px,3vw,40px);}
+
+  .join-inner{max-width:100%;}
+  .join-grid{grid-template-columns:minmax(0,1fr) minmax(0,2fr);}
+  .join-cta-actions .btn-slide-x{min-width:150px;}
+
+  .slide-news{padding:calc(var(--nav-h) + 22px) clamp(16px,3.5vw,40px) 0;}
+  .news-content{grid-template-columns:1.3fr 1fr;gap:22px;}
+  .news-footer{grid-template-columns:1fr;gap:14px;text-align:center;}
+  .news-footer-brand{justify-content:center;}
+  .news-footer-copy{text-align:center;}
+}
+@media (max-width:680px){
+  :root{--nav-h:64px;}
+  .nav{padding:0 18px;}
+  .nav-logo{padding:0 14px 0 18px;margin-left:-18px;gap:14px;}
+  .nav-logo-line{height:22px;}
+  .nav-logo img{height:38px;}
+
+  .slide-works,.slide-about,.slide-join{
+    padding:calc(var(--nav-h) + 16px) 14px 24px;
+    gap:12px;
+  }
+  .side-nav{width:36px;gap:12px;padding:2px 0;}
+  .side-nav-mark{width:26px;font-size:9px;}
+  .side-nav-item{width:26px;font-size:9px;}
+  .side-nav-list{gap:11px;}
+  .side-nav-foot{font-size:8px;}
+
+  .works-stage,.about-stage,.join-stage{padding-top:34px;justify-content:flex-start;}
+  .stage-head{gap:10px;}
+  .stage-head .head-bar{width:6px;}
+  .stage-head .head-titles h2{font-size:19px;}
+  .stage-head .head-titles p{font-size:8.5px;}
+
+  .works-showcase{
+    display:flex;flex-direction:column;
+    flex:1;min-height:0;height:auto;margin-top:14px;
+  }
+  .works-media{flex:1.15;min-height:0;}
+  .works-info{flex:1;min-height:0;border-left:0;border-top:1px solid var(--border);}
+  .works-info-tag{padding:10px 16px;}
+  .works-info-body{justify-content:center;padding:12px 16px;gap:8px;}
+  .works-info-body h3{font-size:15px;}
+  .works-info-body p{font-size:11.5px;line-height:1.6;-webkit-line-clamp:3;}
+  .works-meta{gap:5px 6px;}
+  .works-meta span{padding:3px 7px;font-size:9px;}
+  .works-btn{align-self:stretch;margin:0 16px 14px;padding:12px 16px;font-size:12.5px;}
+  .works-orbit.o1{width:62%;}
+  .works-orbit.o2{width:42%;}
+  .works-orbit.o3{width:20%;}
+  .works-pano-badge{padding:5px 10px;font-size:9.5px;left:16px;bottom:14px;}
+  .works-badge{padding:4px 10px;font-size:10.5px;left:16px;top:14px;}
+
+  .about-inner{max-width:100%;}
+  .about-tab{margin-right:24px;font-size:14px;padding:12px 0;}
+  .about-tabs{margin-bottom:20px;}
+  .about-grid{grid-template-columns:minmax(0,1fr);gap:24px;}
+  .about-text p{font-size:12.5px;line-height:1.8;margin-bottom:12px;}
+  .about-link{width:100%;justify-content:center;}
+  .values-title{margin-bottom:10px;}
+  .value-item{padding:12px 16px;}
+  .value-item:hover{padding-left:20px;}
+  .value-item h4{font-size:13px;}
+  .value-item p{font-size:12px;}
+  .tl-title{font-size:14px;}
+  .tl-desc{font-size:12.5px;}
+
+  .join-inner{max-width:100%;}
+  .join-grid{grid-template-columns:minmax(0,1fr);gap:14px;}
+  .join-card{padding:24px;}
+  .join-card-icon{width:56px;}
+  .join-card h3{font-size:17px;}
+  .join-card p{font-size:12.5px;line-height:1.75;}
+  .join-card-en{font-size:9.5px;letter-spacing:.22em;}
+  .join-card-en-sub{font-size:9px;letter-spacing:.18em;}
+  .join-cta{padding:24px;gap:24px;}
+  .join-cta-body h3{font-size:20px;}
+  .join-cta-body p{font-size:12.5px;}
+  .join-cta-actions{gap:10px;}
+  .join-cta-actions .btn-slide-x{flex:1 1 100%;min-width:0;}
+
+  .slide-news{padding:calc(var(--nav-h) + 16px) 14px 0;}
+  .news-header{padding-bottom:14px;}
+  .news-header h2{font-size:22px;}
+  .news-content{
+    grid-template-columns:minmax(0,1fr);gap:14px;
+    flex:1;min-height:0;overflow:auto;
+  }
+  .news-feature{min-height:240px;}
+  .news-feature-img{min-height:140px;}
+  .news-feature-body{padding:18px;}
+  .news-feature-body h3{font-size:15px;}
+  .news-feature-body p{-webkit-line-clamp:3;}
+  .news-list{flex:none;}
+  .news-item{padding:14px 16px;}
+  .news-item h4{font-size:13px;}
+
+  .news-footer{
+    grid-template-columns:1fr;gap:12px;
+    padding:16px 0 14px;text-align:center;
+  }
+  .news-footer-nav{gap:14px;font-size:10px;}
+  .news-footer-copy{font-size:9px;}
+
+  .home-title{font-size:clamp(15px,4.6vw,24px);letter-spacing:.04em;line-height:1.6;}
+  .home-content{padding:0 18px;}
+  .page-indicator{right:20px;bottom:20px;}
+
+  .toast{left:18px;right:18px;transform:translateX(0) translateY(24px);justify-content:center;}
+  .toast.show{transform:translateX(0) translateY(0);}
+}
+</style>
+</head>
+<body class="is-home">
+
+<!-- ============ 导航 ============ -->
+<header class="nav">
+  <a class="nav-logo" href="#">
+    <span class="nav-logo-line"></span>
+    <img src="https://user-assets.sxlcdn.com/images/1138507/Fl8euAZgWWS1PH92jqEcts2zgcns.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png" alt="星宸学社">
+  </a>
+  <nav class="nav-links">
+    <a href="#" class="active" data-index="0">主站<span class="nav-line"></span></a>
+    <a href="#" data-index="1">学社作品<span class="nav-line"></span></a>
+    <a href="#" data-index="2">学社信息<span class="nav-line"></span></a>
+    <a href="#" data-index="3">加入我们<span class="nav-line"></span></a>
+    <a href="#" data-index="4">学社动态<span class="nav-line"></span></a>
+  </nav>
+  <button class="nav-burger" id="burger" type="button" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ============ 移动端菜单 ============ -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" data-index="0">主站 <span>HOME</span></a>
+  <a href="#" data-index="1">学社作品 <span>WORKS</span></a>
+  <a href="#" data-index="2">学社信息 <span>ABOUT</span></a>
+  <a href="#" data-index="3">加入我们 <span>JOIN</span></a>
+  <a href="#" data-index="4">学社动态 <span>NEWS</span></a>
+</div>
+
+<!-- ============ 主 Swiper ============ -->
+<div class="swiper main-swiper" id="mainSwiper">
+  <div class="swiper-wrapper">
+
+    <!-- ====== 第一页：主站 ====== -->
+    <div class="swiper-slide">
+      <div class="slide slide-home" style="background-image:url('https://user-assets.sxlcdn.com/images/1138507/Fhl9mvaDZsiI_ZqNnZ4nvZafIrbg.jpg?imageMogr2/strip/auto-orient/thumbnail/1920x/quality/90!/interlace/1/format/jpg')">
+        <div class="home-content">
+          <h1 class="home-title" data-anim="up">
+            <span class="line"><span class="w">GUIDED BY</span> <span class="b">STARS</span></span>
+            <span class="line"><span class="b">CREATING</span> <span class="w">FOR THE PALACE</span></span>
+          </h1>
+        </div>
+        <div class="scroll-hint" data-anim="up" data-anim-delay="2">
+          <div class="mouse"></div>
+          <span>SCROLL</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 第二页：学社作品 ====== -->
+    <div class="swiper-slide">
+      <div class="slide slide-works">
+
+        <nav class="side-nav" aria-label="作品导航" data-anim="left">
+          <span class="side-nav-mark">SS</span>
+          <ul class="side-nav-list">
+            <li class="side-nav-item on" data-work="0">01</li>
+            <li class="side-nav-item" data-work="1">02</li>
+            <li class="side-nav-item" data-work="2">03</li>
+            <li class="side-nav-item" data-work="3">04</li>
+          </ul>
+          <span class="side-nav-foot">Works Collection</span>
+        </nav>
+
+        <div class="works-stage">
+
+          <header class="stage-head" data-anim="right">
+            <span class="head-bar"></span>
+            <div class="head-titles">
+              <h2>学社作品</h2>
+              <p>Works Collection</p>
+            </div>
+          </header>
+
+          <main class="works-showcase" id="worksShowcase" data-anim="up" data-anim-delay="1">
+            <span class="works-wipe" aria-hidden="true"></span>
+
+            <div class="works-media" id="workMedia">
+              <div class="works-media-pano" id="workPano"></div>
+              <span class="works-badge blue" id="workBadge">最近</span>
+              <span class="works-pano-badge" id="workPanoBadge">
+                <i></i>
+                <span>全景</span>
+              </span>
+              <span class="works-orbit o1"></span>
+              <span class="works-orbit o2"></span>
+              <span class="works-orbit o3"></span>
+            </div>
+
+            <aside class="works-info">
+              <div class="works-info-tag">
+                <span class="cat" id="workCat">WEB</span>
+                <span class="yr" id="workYear">2026</span>
+              </div>
+
+              <div class="works-info-body">
+                <h3 id="workTitle">建宸高中艺术网站</h3>
+                <p id="workDesc">受建宸高级中学委托完成的校园艺术网站，从视觉设计到前端实现全部由学社成员完成，是我们第一个真正上线的网页作品。</p>
+                <div class="works-meta" id="workMeta">
+                  <span>网页</span>
+                  <span>前端</span>
+                  <span>全景</span>
+                </div>
+              </div>
+
+              <button class="btn-block works-btn" type="button" id="workBtn">
+                <span>查看作品</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                  <polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </aside>
+
+          </main>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ====== 第三页：学社信息 ====== -->
+    <div class="swiper-slide">
+      <div class="slide slide-about">
+
+        <nav class="side-nav" aria-label="学社信息导航" data-anim="left">
+          <span class="side-nav-mark">SS</span>
+          <ul class="side-nav-list">
+            <li class="side-nav-item on" data-about="0">01</li>
+            <li class="side-nav-item" data-about="1">02</li>
+          </ul>
+          <span class="side-nav-foot">About StellarSage</span>
+        </nav>
+
+        <div class="about-stage">
+
+          <header class="stage-head" data-anim="right">
+            <span class="head-bar"></span>
+            <div class="head-titles">
+              <h2>学社信息</h2>
+              <p>About Us</p>
+            </div>
+          </header>
+
+          <div class="about-inner">
+
+            <div class="about-tabs" data-anim="up" data-anim-delay="1">
+              <button class="about-tab on" data-tab="0" type="button">关于我们</button>
+              <button class="about-tab" data-tab="1" type="button">学社档案</button>
+            </div>
+
+            <div class="about-grid">
+
+              <div class="about-content" data-anim="left" data-anim-delay="2">
+
+                <div class="about-panel on" data-panel="0">
+                  <div class="about-text">
+                    <p>星宸学社成立于 <strong>2026 年</strong>，是一个由六名同学发起的青年创作社团。我们不设门槛、不设身份，只关心你是否愿意动手做点东西。</p>
+                    <p>前身是校园里的一个零散小组「<strong>超雄伪人</strong>」，几个人凑在一起做图、剪片、搭网页。正式成社之后，我们想把这种零散的折腾，变成一件持续的事。</p>
+                    <p>我们做的事很朴素：拍视频、做图、写网页、搭工具，偶尔也做点自己觉得好玩的小东西。这里没有 KPI，也没有甲方，只有一群愿意把想法真正做出来的人。</p>
+                    <a class="about-link" href="https://stellarsage2023.github.io/JCGZ/" target="_blank" rel="noopener" data-slide>
+                      <span>建宸高中艺术网站 二创项目</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="about-panel" data-panel="1">
+                  <div class="timeline">
+                    <div class="tl-item">
+                      <div class="tl-year">2024</div>
+                      <div class="tl-title">前身「超雄伪人」小组</div>
+                      <div class="tl-desc">几名同学在校园里零散做图、剪片，开始积累最初的作品与默契。</div>
+                    </div>
+                    <div class="tl-item">
+                      <div class="tl-year">2026</div>
+                      <div class="tl-title">星宸学社正式成立</div>
+                      <div class="tl-desc">由六名成员发起，从前身小组转正为社团，确立视频、图片、网页、工具、游戏等创作方向。</div>
+                    </div>
+                    <div class="tl-item">
+                      <div class="tl-year">2026</div>
+                      <div class="tl-title">建宸高中艺术网站上线</div>
+                      <div class="tl-desc">自发为建宸高级中学搭建的艺术网站，属二创项目，借助 AI 辅助完成，代码托管在 GitHub 上，是学社第一个真实上线的网页作品。</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <aside class="about-values" data-anim="right" data-anim-delay="3">
+                <h3 class="values-title">Our Values / 价值观</h3>
+                <ul class="values-list">
+                  <li class="value-item" data-slide>
+                    <span class="value-num">01</span>
+                    <div>
+                      <h4>以星为引</h4>
+                      <p>保持好奇，向着未知的方向多走一步。</p>
+                    </div>
+                  </li>
+                  <li class="value-item" data-slide>
+                    <span class="value-num">02</span>
+                    <div>
+                      <h4>以创为宸</h4>
+                      <p>动手实践，把想法真正做出来。</p>
+                    </div>
+                  </li>
+                  <li class="value-item" data-slide>
+                    <span class="value-num">03</span>
+                    <div>
+                      <h4>与同频者同行</h4>
+                      <p>协作共创，不设边界地彼此激发。</p>
+                    </div>
+                  </li>
+                  <li class="value-item" data-slide>
+                    <span class="value-num">04</span>
+                    <div>
+                      <h4>让作品说话</h4>
+                      <p>结果导向，每一件都真实发布。</p>
+                    </div>
+                  </li>
+                </ul>
+              </aside>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ====== 第四页：加入我们 ====== -->
+    <div class="swiper-slide">
+      <div class="slide slide-join">
+
+        <div class="join-stage">
+
+          <header class="stage-head" data-anim="right">
+            <span class="head-bar"></span>
+            <div class="head-titles">
+              <h2>加入我们</h2>
+              <p>Join Us</p>
+            </div>
+          </header>
+
+          <div class="join-inner">
+
+            <div class="join-grid">
+
+              <div class="join-card" data-anim="left" data-anim-delay="1">
+                <div class="join-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="18" height="14"/>
+                    <circle cx="8.5" cy="10" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+                <span class="join-card-en">StellarSage Studio</span>
+                <h3>加入星宸学社</h3>
+                <p>分同校与网络两种方式。无论你是在校同学，还是通过线上认识的创作者，只要愿意动手、愿意坚持，这里都欢迎你。</p>
+                <span class="join-card-en-sub">On Campus / Online</span>
+              </div>
+
+              <div class="join-cta" data-anim="right" data-anim-delay="2">
+                <div class="join-cta-body">
+                  <h3>两种方式，一起创作</h3>
+                  <p>同校的同学可以线下一起拍片、做图、搭网页；线上的伙伴可以远程参与项目、分享作品、互相给反馈。我们不着急招很多人，也不打算做得很商业，只想找几个愿意一起把东西做出来的人。</p>
+                </div>
+
+                <div class="join-cta-actions">
+                  <button class="btn-slide-x" type="button" data-toast>
+                    <span>同校加入</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                  <button class="btn-slide-x" type="button" data-toast>
+                    <span>网络联系</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ====== 第五页：学社动态 + 页脚 ====== -->
+    <div class="swiper-slide">
+      <div class="slide slide-news">
+
+        <div class="news-main">
+
+          <header class="news-header" data-anim="up">
+            <div>
+              <div class="news-eyebrow">04 / NEWSROOM</div>
+              <h2>学社动态</h2>
+            </div>
+            <a href="#" class="news-more" data-toast>
+              全部动态
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </a>
+          </header>
+
+          <div class="news-content">
+
+            <article class="news-feature" data-anim="left" data-anim-delay="1" id="newsFeature">
+              <span class="news-wipe" aria-hidden="true"></span>
+              <div class="news-feature-img" id="newsFeatureImg">
+                <span class="news-feature-tag" id="newsFeatureTag"><i></i><span id="newsFeatureTagText">NEW</span></span>
+              </div>
+              <div class="news-feature-body">
+                <div class="date" id="newsFeatureDate">2026.04.18</div>
+                <h3 id="newsFeatureTitle">建宸高中艺术网站正式上线，学社完成首个校外项目</h3>
+                <p id="newsFeatureDesc">从视觉到前端全部由学社成员完成，前后历时一个多月，是学社第一个真实上线的网页作品。</p>
+                <a class="news-readmore" href="#" data-toast>
+                  阅读全文
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              </div>
+            </article>
+
+            <div class="news-list" data-anim="right" data-anim-delay="2" id="newsList">
+              <div class="news-item" data-news="0">
+                <div class="meta">
+                  <span class="idx">01</span>
+                  <span>2026.04.10</span>
+                </div>
+                <h4>校园防早恋防霸凌短片进入策划阶段</h4>
+                <a class="news-readmore" href="#" data-toast>
+                  阅读全文
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              </div>
+              <div class="news-item" data-news="1">
+                <div class="meta">
+                  <span class="idx">02</span>
+                  <span>2026.03.20</span>
+                </div>
+                <h4>学社官网上线，开始记录每一件作品</h4>
+                <a class="news-readmore" href="#" data-toast>
+                  阅读全文
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              </div>
+              <div class="news-item" data-news="2">
+                <div class="meta">
+                  <span class="idx">03</span>
+                  <span>2026.03.05</span>
+                </div>
+                <h4>星宸学社正式成立，六名成员确立创作方向</h4>
+                <a class="news-readmore" href="#" data-toast>
+                  阅读全文
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <footer class="news-footer" data-anim="up" data-anim-delay="3">
+          <span class="news-footer-brand">
+            <span class="dot"></span>
+            STELLARSAGE
+          </span>
+          <nav class="news-footer-nav">
+            <a href="#" data-toast>主站</a>
+            <a href="#" data-toast>学社作品</a>
+            <a href="#" data-toast>学社信息</a>
+            <a href="#" data-toast>加入我们</a>
+          </nav>
+          <span class="news-footer-copy">© 2026 StellarSage Studio</span>
+        </footer>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 右侧页码指示器 -->
+<div class="page-indicator">
+  <span class="current" id="pageCurrent">01</span>
+  <span>/ 05</span>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+
+<!-- 弹窗提示 -->
+<div class="toast" id="toast">
+  <span class="toast-dot"></span>
+  <span id="toastText">功能正在测试，暂不开放</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+/* ============================================================
+   1. 入场动画
+   ============================================================ */
+function animateSlide(index) {
+  const slide = mainSwiper.slides[index];
+  if (!slide) return;
+  slide.querySelectorAll('[data-anim]').forEach(function (el) {
+    el.classList.remove('anim-in');
+    void el.offsetWidth;
+    el.classList.add('anim-in');
+  });
+}
+
+/* ============================================================
+   2. 主 Swiper
+   ============================================================ */
+const mainSwiper = new Swiper('#mainSwiper', {
+  direction: 'vertical',
+  speed: 800,
+  mousewheel: { forceToAxis: true, sensitivity: 1 },
+  keyboard: { enabled: true },
+  resistanceRatio: 0.65,
+  on: {
+    slideChangeTransitionStart: function (sw) {
+      animateSlide(sw.activeIndex);
+      document.body.classList.toggle('is-home', sw.activeIndex === 0);
+    },
+    slideChange: function (sw) {
+      const i = sw.activeIndex;
+      document.getElementById('pageCurrent').textContent = ('0' + (i + 1)).slice(-2);
+      document.getElementById('progressBar').style.width = ((i + 1) / 5 * 100) + '%';
+      document.querySelectorAll('.nav-links a').forEach((a, idx) => {
+        a.classList.toggle('active', idx === i);
+        a.classList.remove('line-in', 'line-out');
+      });
+    }
+  }
+});
+
+/* ============================================================
+   3. 学社作品数据（信息更正）
+   ============================================================ */
+const worksData = [
+  {
+    badge: '最近', badgeStyle: 'blue',
+    cat: 'WEB', year: '2026',
+    title: '建宸高中艺术网站',
+    desc: '我们自发为建宸高级中学搭建的艺术网站，属于二创项目。网站借助 AI 辅助搭建，代码托管在 GitHub 上，是学社第一个真实上线的网页作品。',
+    tags: ['网页', '前端', '二创'],
+    grad: 'linear-gradient(135deg,#2f6ad9,#3778e5 45%,#6FA8FF)',
+    pano: 'https://raw.githubusercontent.com/stellarsage2023/JCGZ/refs/heads/main/dji_fly_20251129_134936_558_1764404326078_pano_op.jpg',
+    cover: '',
+    isPano: true,
+    link: 'https://stellarsage2023.github.io/JCGZ/'
+  },
+  {
+    badge: '策划中', badgeStyle: 'white',
+    cat: 'SHORT VIDEO', year: '2026',
+    title: '校园篇：防早恋防霸凌',
+    desc: '正在策划的校园主题短片，聚焦早恋与霸凌两个话题，用学生的视角讲学生自己的故事。目前处于剧本打磨阶段。',
+    tags: ['短片', '策划中', '校园'],
+    grad: 'linear-gradient(135deg,#1f5bbf,#3778e5 50%,#7FB3FF)',
+    pano: '',
+    cover: 'https://user-assets.sxlcdn.com/images/1138507/FmCzNFEsghmhcM_Qe7amhHSHRl3L.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png',
+    isPano: false,
+    link: ''
+  },
+  {
+    badge: '推荐', badgeStyle: 'blue',
+    cat: 'WEB', year: '2026',
+    title: '极光创工作室网站',
+    desc: '为极光创工作室搭建的官方网站，从页面设计到前端开发全部由学社成员完成，是他们对外展示作品与服务的窗口。',
+    tags: ['网页', '前端', '合作'],
+    grad: 'linear-gradient(135deg,#5b3fd6,#8B5CF6 50%,#C4B5FD)',
+    pano: '',
+    cover: 'https://user-assets.sxlcdn.com/images/1138507/FlLofIlpGqi0ycU_yLoGcVCB3s3E.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png',
+    isPano: false,
+    link: 'https://jgcgzs.github.io/acns/'
+  },
+  {
+    badge: '最近', badgeStyle: 'white',
+    cat: 'WEB', year: '2026',
+    title: '星宸学社官网',
+    desc: '你现在看到的这个网站，就是学社成员自己设计、自己搭建的。从布局到动效，每一处都是我们自己写的。',
+    tags: ['官网', '前端', '自研'],
+    grad: 'linear-gradient(135deg,#0f9e8e,#10B981 50%,#5EEAD4)',
+    pano: '',
+    cover: 'https://user-assets.sxlcdn.com/images/1138507/Fn4d5i0P-7771F9gtm98TB5DEH2_.jpg?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/interlace/1/format/jpg',
+    isPano: false,
+    link: ''
+  }
+];
+
+const workEls = {
+  showcase: document.getElementById('worksShowcase'),
+  media:    document.getElementById('workMedia'),
+  pano:     document.getElementById('workPano'),
+  panoBadge:document.getElementById('workPanoBadge'),
+  cat:      document.getElementById('workCat'),
+  year:     document.getElementById('workYear'),
+  title:    document.getElementById('workTitle'),
+  desc:     document.getElementById('workDesc'),
+  badge:    document.getElementById('workBadge'),
+  meta:     document.getElementById('workMeta'),
+  btn:      document.getElementById('workBtn')
+};
+
+const workNavItems = document.querySelectorAll('[data-work]');
+
+function renderWork(index) {
+  const d = worksData[index];
+  if (!d) return;
+  workEls.cat.textContent   = d.cat;
+  workEls.year.textContent  = d.year;
+  workEls.title.textContent = d.title;
+  workEls.desc.textContent  = d.desc;
+  workEls.meta.innerHTML = d.tags.map(t => '<span>' + t + '</span>').join('');
+  workEls.badge.textContent = d.badge;
+  workEls.badge.className = 'works-badge ' + d.badgeStyle;
+
+  if (d.isPano && d.pano) {
+    workEls.pano.style.backgroundImage = 'url(' + d.pano + ')';
+    workEls.pano.style.backgroundSize = 'cover';
+    workEls.pano.style.backgroundPosition = 'center';
+    workEls.panoBadge.style.display = 'inline-flex';
+  } else if (d.cover) {
+    workEls.pano.style.backgroundImage = 'url(' + d.cover + ')';
+    workEls.pano.style.backgroundSize = 'cover';
+    workEls.pano.style.backgroundPosition = 'center';
+    workEls.panoBadge.style.display = 'none';
+  } else {
+    workEls.pano.style.backgroundImage = d.grad;
+    workEls.pano.style.backgroundSize = 'cover';
+    workEls.pano.style.backgroundPosition = 'center';
+    workEls.panoBadge.style.display = 'none';
+  }
+
+  /* 有链接时绑定跳转，无链接时触发弹窗 */
+  if (d.link) {
+    workEls.btn.dataset.toast = '';
+    delete workEls.btn.dataset.toast;
+    workEls.btn.onclick = function () { window.open(d.link, '_blank'); };
+  } else {
+    workEls.btn.onclick = null;
+    workEls.btn.setAttribute('data-toast', '');
+    workEls.btn.classList.remove('slide-in', 'slide-out');
+  }
+}
+
+function switchWork(index) {
+  workEls.showcase.classList.remove('anim');
+  void workEls.showcase.offsetWidth;
+  workEls.showcase.classList.add('anim');
+  setTimeout(function () { renderWork(index); }, 340);
+  workNavItems.forEach((n, i) => n.classList.toggle('on', i === index));
+}
+
+workNavItems.forEach(function (item) {
+  item.addEventListener('click', function () {
+    const idx = parseInt(item.getAttribute('data-work'), 10) || 0;
+    switchWork(idx);
+  });
+});
+
+/* ============================================================
+   4. 学社信息
+   ============================================================ */
+const aboutTabs   = document.querySelectorAll('.about-tab');
+const aboutPanels = document.querySelectorAll('.about-panel');
+const aboutNavItems = document.querySelectorAll('[data-about]');
+
+aboutTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const idx = tab.getAttribute('data-tab');
+    aboutTabs.forEach(t => t.classList.toggle('on', t === tab));
+    aboutPanels.forEach(p => {
+      p.classList.toggle('on', p.getAttribute('data-panel') === idx);
+    });
+    aboutNavItems.forEach((n, i) => n.classList.toggle('on', String(i) === idx));
+  });
+});
+
+aboutNavItems.forEach(item => {
+  item.addEventListener('click', function () {
+    const idx = parseInt(item.getAttribute('data-about'), 10) || 0;
+    const tabIdx = Math.min(idx, aboutTabs.length - 1);
+    aboutTabs.forEach((t, i) => t.classList.toggle('on', i === tabIdx));
+    aboutPanels.forEach(p => {
+      p.classList.toggle('on', parseInt(p.getAttribute('data-panel'), 10) === tabIdx);
+    });
+    aboutNavItems.forEach((n, i) => n.classList.toggle('on', i === idx));
+  });
+});
+
+/* ============================================================
+   5. 弹窗提示
+   ============================================================ */
+const toastEl = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+let toastTimer = null;
+
+function showToast(msg) {
+  toastText.textContent = msg || '功能正在测试，暂不开放';
+  toastEl.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () {
+    toastEl.classList.remove('show');
+    toastTimer = null;
+  }, 2000);
+}
+
+/* 事件委托：所有带 data-toast 的元素点击触发弹窗 */
+document.addEventListener('click', function (e) {
+  const target = e.target.closest('[data-toast]');
+  if (!target) return;
+  /* 若该元素同时有真实链接（a 标签 href 非 #），交给浏览器处理 */
+  if (target.tagName === 'A') {
+    const href = target.getAttribute('href');
+    if (href && href !== '#') return;
+    e.preventDefault();
+  }
+  showToast();
+}, true);
+
+/* ============================================================
+   6. 按钮单向滑动动画
+   ============================================================ */
+function setupSlideButton(btn) {
+  let leaveTimer = null;
+  function activate() {
+    if (leaveTimer) { clearTimeout(leaveTimer); leaveTimer = null; }
+    btn.classList.remove('slide-out');
+    void btn.offsetWidth;
+    btn.classList.add('slide-in');
+  }
+  function deactivate() {
+    btn.classList.remove('slide-in');
+    btn.classList.add('slide-out');
+    leaveTimer = setTimeout(function () {
+      btn.classList.remove('slide-out');
+      leaveTimer = null;
+    }, 620);
+  }
+  btn.addEventListener('mouseenter', activate);
+  btn.addEventListener('mouseleave', deactivate);
+  btn.addEventListener('touchstart', activate, { passive: true });
+  btn.addEventListener('touchend', deactivate, { passive: true });
+  btn.addEventListener('touchcancel', deactivate, { passive: true });
+}
+
+document.querySelectorAll('.btn-block, .btn-slide-x, [data-slide]').forEach(setupSlideButton);
+
+/* ============================================================
+   7. 导航下划线
+   ============================================================ */
+document.querySelectorAll('.nav-links a').forEach(function (link) {
+  let leaveTimer = null;
+  function lineIn() {
+    if (leaveTimer) { clearTimeout(leaveTimer); leaveTimer = null; }
+    link.classList.remove('line-out');
+    void link.offsetWidth;
+    link.classList.add('line-in');
+  }
+  function lineOut() {
+    link.classList.remove('line-in');
+    link.classList.add('line-out');
+    leaveTimer = setTimeout(function () {
+      link.classList.remove('line-out');
+      leaveTimer = null;
+    }, 520);
+  }
+  link.addEventListener('mouseenter', lineIn);
+  link.addEventListener('mouseleave', lineOut);
+});
+
+/* ============================================================
+   8. 汉堡菜单
+   ============================================================ */
+const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobileMenu');
+burger.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('open');
+  burger.classList.toggle('open', open);
+});
+mobileMenu.querySelectorAll('a[data-index]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const idx = parseInt(a.getAttribute('data-index'), 10);
+    mainSwiper.slideTo(idx);
+    mobileMenu.classList.remove('open');
+    burger.classList.remove('open');
+  });
+});
+
+/* ============================================================
+   9. 导航链接点击
+   ============================================================ */
+document.querySelectorAll('.nav-links a[data-index]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const idx = parseInt(a.getAttribute('data-index'), 10);
+    mainSwiper.slideTo(idx);
+    a.blur();
+  });
+});
+
+/* ============================================================
+   10. 学社动态自动轮播
+   ============================================================ */
+const newsItems = [
+  {
+    date: '2026.04.18',
+    title: '建宸高中艺术网站正式上线，学社完成首个校外项目',
+    desc: '从视觉到前端全部由学社成员完成，前后历时一个多月，是学社第一个真实上线的网页作品。',
+    tag: 'NEW',
+    grad: 'linear-gradient(135deg,#2f6ad9,#3778e5 45%,#6FA8FF)'
+  },
+  {
+    date: '2026.04.10',
+    title: '校园防早恋防霸凌短片进入策划阶段',
+    desc: '学社正在策划一部聚焦校园早恋与霸凌话题的短片，目前处于剧本打磨阶段。',
+    tag: 'PLAN',
+    grad: 'linear-gradient(135deg,#5b3fd6,#8B5CF6 50%,#C4B5FD)'
+  },
+  {
+    date: '2026.03.20',
+    title: '学社官网上线，开始记录每一件作品',
+    desc: '你现在看到的这个网站，就是学社成员自己设计、自己搭建的。',
+    tag: 'SITE',
+    grad: 'linear-gradient(135deg,#0f9e8e,#10B981 50%,#5EEAD4)'
+  },
+  {
+    date: '2026.03.05',
+    title: '星宸学社正式成立，六名成员确立创作方向',
+    desc: '由六名成员发起，从前身小组转正为社团，确立视频、图片、网页、工具、游戏等创作方向。',
+    tag: 'NEW',
+    grad: 'linear-gradient(135deg,#1f5bbf,#3778e5 50%,#7FB3FF)'
+  }
+];
+
+let newsIndex = 0;
+const newsFeatureEl = document.getElementById('newsFeature');
+const newsFeatureImg = document.getElementById('newsFeatureImg');
+const newsFeatureTagText = document.getElementById('newsFeatureTagText');
+const newsFeatureDate = document.getElementById('newsFeatureDate');
+const newsFeatureTitle = document.getElementById('newsFeatureTitle');
+const newsFeatureDesc = document.getElementById('newsFeatureDesc');
+
+function renderNews(index) {
+  const n = newsItems[index];
+  if (!n) return;
+  newsFeatureTagText.textContent = n.tag;
+  newsFeatureDate.textContent = n.date;
+  newsFeatureTitle.textContent = n.title;
+  newsFeatureDesc.textContent = n.desc;
+  newsFeatureImg.style.background = n.grad;
+}
+
+function autoPlayNews() {
+  newsIndex = (newsIndex + 1) % newsItems.length;
+  newsFeatureEl.classList.remove('anim');
+  void newsFeatureEl.offsetWidth;
+  newsFeatureEl.classList.add('anim');
+  setTimeout(function () {
+    renderNews(newsIndex);
+  }, 320);
+}
+
+setInterval(autoPlayNews, 5000);
+
+document.querySelectorAll('.news-item').forEach(function (item) {
+  item.addEventListener('click', function () {
+    const idx = parseInt(item.getAttribute('data-news'), 10) || 0;
+    let mapIdx = (idx + 1) % newsItems.length;
+    newsIndex = mapIdx;
+    newsFeatureEl.classList.remove('anim');
+    void newsFeatureEl.offsetWidth;
+    newsFeatureEl.classList.add('anim');
+    setTimeout(function () { renderNews(mapIdx); }, 320);
+  });
+});
+
+/* ============================================================
+   11. 启动
+   ============================================================ */
+renderWork(0);
+document.body.classList.toggle('is-home', mainSwiper.activeIndex === 0);
+setTimeout(() => animateSlide(mainSwiper.activeIndex), 120);
+</script>
+</body>
+</html>
