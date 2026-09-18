@@ -271,7 +271,7 @@ body.is-home .nav-burger span{background:#fff;}
           mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
 }
 
-/* ---------- 侧边导航（加箭头） ---------- */
+/* ---------- 侧边导航 ---------- */
 .side-nav{
   flex:none;position:relative;z-index:2;
   width:clamp(48px,3.6vw,60px);
@@ -537,6 +537,50 @@ body.is-home .nav-burger span{background:#fff;}
   border:1px solid rgba(55,120,229,.18);
   font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--blue);
 }
+
+/* ---------- 下载区 ---------- */
+.works-downloads{
+  display:none;
+  flex-wrap:wrap;
+  gap:6px;
+  padding:0 clamp(18px,2vw,28px);
+  margin-bottom:10px;
+}
+.works-dl-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:6px 10px;
+  background:var(--blue-soft);
+  border:1px solid var(--blue-line);
+  color:var(--blue);
+  font-family:var(--mono);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.04em;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:background .25s var(--ease),color .25s var(--ease),
+             border-color .25s var(--ease),transform .25s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.works-dl-btn:hover{
+  background:var(--blue);
+  color:#fff;
+  border-color:var(--blue);
+  transform:translateY(-1px);
+}
+.works-dl-btn:active{transform:translateY(0);}
+.works-dl-btn svg{
+  width:11px;height:11px;flex:none;
+  transition:transform .3s var(--ease);
+}
+.works-dl-btn:hover svg{transform:translateY(1px);}
+.works-dl-btn.loading{
+  pointer-events:none;
+  opacity:.6;
+}
+
 .works-btn{
   align-self:flex-end;
   margin:0 clamp(18px,2vw,28px) clamp(16px,2.4vh,24px);
@@ -1127,6 +1171,9 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
   flex:none;
   animation:dotPulse 1.4s var(--ease) infinite;
 }
+.toast .toast-dot.loading{
+  background:#FFC46B;
+}
 
 /* ============================================================
    11. 响应式 - 平板
@@ -1301,6 +1348,19 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
   }
   .works-meta{gap:5px 6px;}
   .works-meta span{padding:3px 8px;font-size:9.5px;}
+
+  .works-downloads{
+    padding:0 16px;
+    gap:5px;
+    margin-bottom:10px;
+  }
+  .works-dl-btn{
+    padding:5px 8px;
+    font-size:9px;
+    gap:4px;
+  }
+  .works-dl-btn svg{width:10px;height:10px;}
+
   .works-btn{
     align-self:stretch;
     margin:0 16px 16px;
@@ -1585,6 +1645,9 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
                   <span>二创</span>
                 </div>
               </div>
+
+              <!-- 下载区 -->
+              <div class="works-downloads" id="workDownloads"></div>
 
               <button class="btn-block works-btn" type="button" id="workBtn">
                 <span>查看作品</span>
@@ -1923,7 +1986,7 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
 
 <!-- 弹窗提示 -->
 <div class="toast" id="toast">
-  <span class="toast-dot"></span>
+  <span class="toast-dot" id="toastDot"></span>
   <span id="toastText">功能正在测试，暂不开放</span>
 </div>
 
@@ -1995,8 +2058,10 @@ if (document.readyState === 'loading') {
 }
 
 /* ============================================================
-   3. 学社作品数据（新增超雄伪人网 + 更新星能封面）
+   3. 学社作品数据
    ============================================================ */
+const DOWNLOAD_BASE = 'https://stellarsage2023.github.io/st/';
+
 const worksData = [
   {
     badge: '最近', badgeStyle: 'blue',
@@ -2080,14 +2145,22 @@ const worksData = [
     badge: '策划中', badgeStyle: 'white',
     cat: 'SHORT VIDEO', year: '2026',
     title: '校园篇：防早恋防霸凌',
-    desc: '正在策划的校园主题短片，聚焦早恋与霸凌两个话题，用学生的视角讲学生自己的故事。目前处于剧本打磨阶段。',
+    desc: '正在策划的校园主题短片，聚焦早恋与霸凌两个话题，用学生的视角讲学生自己的故事。五份拍摄文档全部开源，可在线预览或下载。',
     tags: ['短片', '策划中', '校园'],
     grad: 'linear-gradient(135deg,#1f5bbf,#3778e5 50%,#7FB3FF)',
     pano: '',
     cover: 'https://user-assets.sxlcdn.com/images/1138507/FmCzNFEsghmhcM_Qe7amhHSHRl3L.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png',
     isPano: false,
     isVideo: false,
-    link: ''
+    link: 'https://stellarsage2023.github.io/st/Script1',
+    linkText: '查看剧本',
+    downloads: [
+      { name: '剧本',       url: DOWNLOAD_BASE + '01_剧本_《青春不偏航》.md',        save: '01_剧本_青春不偏航.md' },
+      { name: '拍摄执行单', url: DOWNLOAD_BASE + '02_拍摄执行单_《青春不偏航》.md',  save: '02_拍摄执行单_青春不偏航.md' },
+      { name: '后期脚本',   url: DOWNLOAD_BASE + '03_后期脚本_《青春不偏航》.md',    save: '03_后期脚本_青春不偏航.md' },
+      { name: '动作指导',   url: DOWNLOAD_BASE + '04_动作指导_《青春不偏航》.md',    save: '04_动作指导_青春不偏航.md' },
+      { name: '台词本',     url: DOWNLOAD_BASE + '05_台词本_《青春不偏航》.md',      save: '05_台词本_青春不偏航.md' }
+    ]
   }
 ];
 
@@ -2103,7 +2176,8 @@ const workEls = {
   desc:     document.getElementById('workDesc'),
   badge:    document.getElementById('workBadge'),
   meta:     document.getElementById('workMeta'),
-  btn:      document.getElementById('workBtn')
+  btn:      document.getElementById('workBtn'),
+  downloads: document.getElementById('workDownloads')
 };
 
 const workNavItems = document.querySelectorAll('[data-work]');
@@ -2156,6 +2230,36 @@ function renderWork(index) {
     }
   }
 
+  /* 下载区 —— 用按钮 + fetch 实现真正下载 */
+  if (d.downloads && d.downloads.length) {
+    workEls.downloads.style.display = 'flex';
+    workEls.downloads.innerHTML = '';
+    d.downloads.forEach(function(item){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'works-dl-btn';
+      btn.title = '下载 ' + (item.save || item.name + '.md');
+      btn.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
+          '<polyline points="7 10 12 15 17 10"/>' +
+          '<line x1="12" y1="15" x2="12" y2="3"/>' +
+        '</svg>' +
+        '<span>' + item.name + '</span>';
+      btn.addEventListener('click', function(){
+        downloadFile(item.url, item.save || (item.name + '.md'), btn);
+      });
+      workEls.downloads.appendChild(btn);
+    });
+  } else {
+    workEls.downloads.style.display = 'none';
+    workEls.downloads.innerHTML = '';
+  }
+
+  /* 主按钮文字 */
+  var btnText = workEls.btn.querySelector('span');
+  if (btnText) btnText.textContent = d.linkText || '查看作品';
+
   if (d.link) {
     workEls.btn.removeAttribute('data-toast');
     workEls.btn.onclick = function () { window.open(d.link, '_blank'); };
@@ -2164,6 +2268,41 @@ function renderWork(index) {
     workEls.btn.setAttribute('data-toast', '');
     workEls.btn.classList.remove('slide-in', 'slide-out');
   }
+}
+
+/* ============================================================
+   下载：fetch + Blob（跨域也能直接落盘）
+   ============================================================ */
+function downloadFile(url, filename, btnEl){
+  if (btnEl) btnEl.classList.add('loading');
+  showToast('正在下载 ' + filename, 'loading');
+
+  fetch(url, { mode: 'cors', cache: 'no-store' })
+    .then(function(res){
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.blob();
+    })
+    .then(function(blob){
+      var objUrl = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = objUrl;
+      a.download = filename;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(objUrl); }, 300);
+      showToast('已开始下载 ' + filename, 'ok');
+    })
+    .catch(function(err){
+      console.error('下载失败：', err);
+      showToast('下载失败，请在新窗口打开');
+      /* 兜底：跳转链接让浏览器自己处理 */
+      setTimeout(function(){ window.open(url, '_blank'); }, 600);
+    })
+    .finally(function(){
+      if (btnEl) btnEl.classList.remove('loading');
+    });
 }
 
 function scrollNavItemIntoView(index){
@@ -2195,7 +2334,6 @@ workNavItems.forEach(function (item) {
   item.addEventListener('click', function () {
     const idx = parseInt(item.getAttribute('data-work'), 10) || 0;
     switchWork(idx);
-    /* 手动切换后重置自动轮播计时 */
     restartWorkAutoplay();
   });
 });
@@ -2229,14 +2367,11 @@ function restartWorkAutoplay() {
   startWorkAutoplay();
 }
 
-/* 鼠标悬停在作品卡片上时暂停自动轮播 */
 workEls.showcase.addEventListener('mouseenter', stopWorkAutoplay);
 workEls.showcase.addEventListener('mouseleave', startWorkAutoplay);
-/* 触屏设备：按下暂停，抬起恢复 */
 workEls.showcase.addEventListener('touchstart', stopWorkAutoplay, { passive: true });
 workEls.showcase.addEventListener('touchend', startWorkAutoplay, { passive: true });
 
-/* 切换到作品页时启动自动轮播，离开时停止 */
 mainSwiper.on('slideChangeTransitionStart', function (sw) {
   if (sw.activeIndex === 1) {
     startWorkAutoplay();
@@ -2280,16 +2415,20 @@ aboutNavItems.forEach(item => {
    ============================================================ */
 const toastEl = document.getElementById('toast');
 const toastText = document.getElementById('toastText');
+const toastDot = document.getElementById('toastDot');
 let toastTimer = null;
 
-function showToast(msg) {
+function showToast(msg, type) {
   toastText.textContent = msg || '功能正在测试，暂不开放';
   toastEl.classList.add('show');
+  if (toastDot) {
+    toastDot.classList.toggle('loading', type === 'loading');
+  }
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(function () {
     toastEl.classList.remove('show');
     toastTimer = null;
-  }, 2000);
+  }, 2200);
 }
 
 document.addEventListener('click', function (e) {
