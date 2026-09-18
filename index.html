@@ -271,11 +271,13 @@ body.is-home .nav-burger span{background:#fff;}
           mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
 }
 
+/* ---------- 侧边导航（加箭头） ---------- */
 .side-nav{
   flex:none;position:relative;z-index:2;
   width:clamp(48px,3.6vw,60px);
-  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
-  padding:clamp(6px,1.6vh,16px) 0;gap:clamp(16px,3.6vh,36px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:clamp(6px,1.6vh,16px) 0;
+  gap:clamp(8px,1.6vh,14px);
 }
 .side-nav-mark{
   width:clamp(32px,2.8vw,40px);aspect-ratio:1;flex:none;
@@ -288,14 +290,51 @@ body.is-home .nav-burger span{background:#fff;}
   content:"";position:absolute;inset:0;
   border:1px solid var(--blue);transform:translate(4px,4px);opacity:.3;
 }
+
+.side-nav-arrow{
+  width:clamp(28px,2.4vw,34px);
+  aspect-ratio:1;
+  display:grid;place-items:center;
+  background:var(--bg);
+  border:1px solid var(--border);
+  color:var(--muted);
+  cursor:pointer;
+  flex:none;
+  transition:color .3s var(--ease),border-color .3s var(--ease),
+             background .3s var(--ease),transform .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.side-nav-arrow:hover{
+  color:var(--blue);
+  border-color:var(--blue-line);
+  transform:scale(1.08);
+}
+.side-nav-arrow:active{transform:scale(.96);}
+.side-nav-arrow svg{width:14px;height:14px;}
+
+.side-nav-scroll{
+  position:relative;
+  flex:0 1 auto;
+  max-height:clamp(200px,32vh,280px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:none;
+  scroll-behavior:smooth;
+  padding:4px 0;
+}
+.side-nav-scroll::-webkit-scrollbar{display:none;}
+.side-nav-scroll::before{
+  content:"";position:absolute;
+  top:0;bottom:0;left:50%;width:1px;
+  background:linear-gradient(to bottom,transparent,var(--border) 12%,var(--border) 88%,transparent);
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+
 .side-nav-list{
   display:flex;flex-direction:column;align-items:center;
-  gap:clamp(14px,3.4vh,30px);position:relative;
-}
-.side-nav-list::before{
-  content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;
-  background:linear-gradient(to bottom,transparent,var(--border) 12%,var(--border) 88%,transparent);
-  transform:translateX(-50%);z-index:-1;
+  gap:clamp(10px,2.2vh,18px);
+  position:relative;
 }
 .side-nav-item{
   width:clamp(32px,2.8vw,40px);aspect-ratio:1;
@@ -306,6 +345,7 @@ body.is-home .nav-burger span{background:#fff;}
   transition:color .35s var(--ease),border-color .35s var(--ease),
              background .35s var(--ease),transform .35s var(--ease),box-shadow .35s var(--ease);
   -webkit-tap-highlight-color:transparent;
+  flex:none;
 }
 @media (hover:hover) and (pointer:fine){
   .side-nav-item:hover{
@@ -322,6 +362,7 @@ body.is-home .nav-burger span{background:#fff;}
 .side-nav-foot{
   writing-mode:vertical-rl;font-family:var(--mono);font-size:10px;
   letter-spacing:.32em;color:var(--muted);text-transform:uppercase;
+  flex:none;
 }
 
 .works-stage{
@@ -383,8 +424,18 @@ body.is-home .nav-burger span{background:#fff;}
   background-size:cover;background-position:center;
   transform-origin:center;
   transition:transform 10s linear;
+  z-index:0;
 }
-.works-showcase:hover .works-media-pano{transform:scale(1.06);}
+.works-media-video{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  display:none;
+  z-index:0;
+  transition:transform 10s linear;
+}
+.works-showcase:hover .works-media-pano,
+.works-showcase:hover .works-media-video{transform:scale(1.06);}
 .works-media::before{
   content:"";position:absolute;inset:0;
   background-image:
@@ -938,8 +989,16 @@ body.is-home .nav-burger span{background:#fff;}
   flex:none;position:relative;z-index:2;
   border-top:1px solid var(--border);
   padding:clamp(20px,2.8vh,28px) 0 clamp(18px,2.4vh,24px);
-  display:grid;grid-template-columns:auto 1fr auto;
-  align-items:center;gap:clamp(20px,3vw,48px);
+  display:flex;
+  flex-direction:column;
+  gap:clamp(14px,2vh,20px);
+}
+.news-footer-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:clamp(16px,3vw,40px);
+  flex-wrap:wrap;
 }
 .news-footer-brand{
   display:inline-flex;align-items:center;gap:10px;
@@ -953,10 +1012,58 @@ body.is-home .nav-burger span{background:#fff;}
   transition:transform .4s var(--ease);
 }
 .news-footer-brand:hover .dot{transform:rotate(45deg) scale(1.2);}
+
+.news-footer-social{
+  display:flex;
+  align-items:center;
+  gap:clamp(14px,2vw,24px);
+  flex-wrap:wrap;
+}
+.social-link{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 14px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.14em;
+  color:var(--text-2);
+  text-transform:uppercase;
+  transition:color .3s var(--ease),border-color .3s var(--ease),
+             background .3s var(--ease),transform .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.social-link:hover{
+  color:#fff;
+  background:var(--blue);
+  border-color:var(--blue);
+  transform:translateY(-2px);
+}
+.social-link svg{
+  width:14px;height:14px;
+  flex:none;
+  transition:transform .3s var(--ease);
+}
+.social-link:hover svg{transform:scale(1.1);}
+
+.news-footer-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:clamp(16px,3vw,40px);
+  flex-wrap:wrap;
+}
 .news-footer-nav{
-  display:flex;gap:clamp(16px,2vw,28px);justify-content:center;
-  flex-wrap:wrap;font-family:var(--mono);font-size:11px;
-  letter-spacing:.16em;color:var(--muted);text-transform:uppercase;
+  display:flex;
+  gap:clamp(16px,2vw,28px);
+  flex-wrap:wrap;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.16em;
+  color:var(--muted);
+  text-transform:uppercase;
 }
 .news-footer-nav a{
   transition:color .3s var(--ease),transform .3s var(--ease);
@@ -1035,9 +1142,12 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     padding:calc(var(--nav-h) + 22px) clamp(16px,3.5vw,40px) 32px;
     gap:clamp(14px,2.6vw,28px);
   }
-  .side-nav{width:clamp(40px,4vw,50px);gap:clamp(12px,2.6vh,24px);}
+  .side-nav{width:clamp(40px,4vw,50px);gap:clamp(6px,1.2vh,10px);}
   .side-nav-mark{width:clamp(28px,2.6vw,34px);font-size:10px;}
+  .side-nav-arrow{width:clamp(24px,2.2vw,28px);}
+  .side-nav-arrow svg{width:12px;height:12px;}
   .side-nav-item{width:clamp(28px,2.6vw,34px);font-size:10px;}
+  .side-nav-scroll{max-height:clamp(180px,30vh,240px);}
   .side-nav-foot{font-size:9px;}
 
   .works-stage,.about-stage,.join-stage{padding-top:clamp(38px,6vh,60px);}
@@ -1059,25 +1169,28 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
 
   .slide-news{padding:calc(var(--nav-h) + 22px) clamp(16px,3.5vw,40px) 0;}
   .news-content{grid-template-columns:1.3fr 1fr;gap:22px;}
-  .news-footer{grid-template-columns:1fr;gap:14px;text-align:center;}
-  .news-footer-brand{justify-content:center;}
-  .news-footer-copy{text-align:center;}
+
+  .news-footer-top,
+  .news-footer-bottom{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+  }
+  .news-footer-copy{text-align:left;}
 }
 
 /* ============================================================
-   13. 响应式 - 移动端（重新定制布局）
+   13. 响应式 - 移动端
    ============================================================ */
 @media (max-width:680px){
   :root{--nav-h:60px;}
 
-  /* ---------- 导航栏 ---------- */
   .nav{padding:0 16px;}
   .nav-logo{padding:0 12px 0 16px;margin-left:-16px;gap:12px;}
   .nav-logo-line{height:20px;width:2px;}
   .nav-logo img{height:36px;}
   .nav-burger{width:40px;height:40px;}
 
-  /* ---------- 首页 ---------- */
   .home-title{
     font-size:clamp(17px,5vw,26px);
     letter-spacing:.04em;
@@ -1087,7 +1200,6 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
   .scroll-hint{bottom:32px;}
   .scroll-hint .mouse{width:20px;height:32px;}
 
-  /* ---------- 学社作品 / 学社信息 / 加入我们：改为上下布局 ---------- */
   .slide-works,
   .slide-about,
   .slide-join{
@@ -1097,14 +1209,13 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     padding:calc(var(--nav-h) + 14px) 16px 20px;
   }
 
-  /* ---------- 侧边竖排导航改为顶部横栏 ---------- */
   .side-nav{
     width:100%;
     flex:none;
     flex-direction:row;
     align-items:center;
     justify-content:flex-start;
-    gap:14px;
+    gap:12px;
     padding:0 0 14px;
     border-bottom:1px solid var(--border-soft);
     margin-bottom:16px;
@@ -1116,22 +1227,26 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     flex:none;
   }
   .side-nav-mark::after{transform:translate(3px,3px);}
+  .side-nav-arrow{display:none;}
+  .side-nav-scroll{
+    flex:1 1 auto;
+    max-height:none;
+    overflow:visible;
+    padding:0;
+  }
+  .side-nav-scroll::before{display:none;}
   .side-nav-list{
     flex-direction:row;
     gap:8px;
     align-items:center;
   }
-  .side-nav-list::before{display:none;}
   .side-nav-item{
     width:28px;
     height:28px;
     font-size:10px;
   }
-  .side-nav-foot{
-    display:none;
-  }
+  .side-nav-foot{display:none;}
 
-  /* ---------- 舞台区 ---------- */
   .works-stage,
   .about-stage,
   .join-stage{
@@ -1143,7 +1258,6 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     align-items:stretch;
   }
 
-  /* ---------- 标题改为静态定位 ---------- */
   .stage-head{
     position:static;
     margin-bottom:16px;
@@ -1154,7 +1268,6 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
   .stage-head .head-titles h2{font-size:20px;}
   .stage-head .head-titles p{font-size:9px;letter-spacing:.26em;}
 
-  /* ---------- 学社作品卡片 ---------- */
   .works-showcase{
     display:flex;
     flex-direction:column;
@@ -1174,9 +1287,7 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     border-left:0;
     border-top:1px solid var(--border);
   }
-  .works-info-tag{
-    padding:12px 16px;
-  }
+  .works-info-tag{padding:12px 16px;}
   .works-info-body{
     justify-content:center;
     padding:14px 16px;
@@ -1200,20 +1311,9 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
   .works-orbit.o1{width:62%;}
   .works-orbit.o2{width:42%;}
   .works-orbit.o3{width:20%;}
-  .works-pano-badge{
-    padding:5px 10px;
-    font-size:9.5px;
-    left:14px;
-    bottom:12px;
-  }
-  .works-badge{
-    padding:4px 10px;
-    font-size:10.5px;
-    left:14px;
-    top:12px;
-  }
+  .works-pano-badge{padding:5px 10px;font-size:9.5px;left:14px;bottom:12px;}
+  .works-badge{padding:4px 10px;font-size:10.5px;left:14px;top:12px;}
 
-  /* ---------- 学社信息 ---------- */
   .about-inner{max-width:100%;width:100%;}
   .about-tabs{
     margin-bottom:20px;
@@ -1230,15 +1330,8 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     padding:12px 0;
     flex:none;
   }
-  .about-grid{
-    grid-template-columns:minmax(0,1fr);
-    gap:24px;
-  }
-  .about-text p{
-    font-size:12.5px;
-    line-height:1.85;
-    margin-bottom:12px;
-  }
+  .about-grid{grid-template-columns:minmax(0,1fr);gap:24px;}
+  .about-text p{font-size:12.5px;line-height:1.85;margin-bottom:12px;}
   .about-link{
     width:100%;
     justify-content:space-between;
@@ -1258,25 +1351,15 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
   .tl-title{font-size:14px;}
   .tl-desc{font-size:12.5px;line-height:1.65;}
 
-  /* ---------- 加入我们 ---------- */
   .join-inner{max-width:100%;width:100%;}
-  .join-grid{
-    grid-template-columns:minmax(0,1fr);
-    gap:14px;
-  }
-  .join-card{
-    padding:24px 22px;
-    gap:14px;
-  }
+  .join-grid{grid-template-columns:minmax(0,1fr);gap:14px;}
+  .join-card{padding:24px 22px;gap:14px;}
   .join-card-icon{width:52px;}
   .join-card h3{font-size:17px;}
   .join-card p{font-size:12.5px;line-height:1.75;}
   .join-card-en{font-size:9.5px;letter-spacing:.22em;}
   .join-card-en-sub{font-size:9px;letter-spacing:.18em;}
-  .join-cta{
-    padding:24px 22px;
-    gap:22px;
-  }
+  .join-cta{padding:24px 22px;gap:22px;}
   .join-cta-body h3{font-size:19px;line-height:1.35;}
   .join-cta-body p{font-size:12.5px;line-height:1.8;}
   .join-cta-actions{gap:10px;flex-direction:column;}
@@ -1289,26 +1372,12 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     justify-content:center;
   }
 
-  /* ---------- 学社动态 ---------- */
-  .slide-news{
-    padding:calc(var(--nav-h) + 14px) 16px 0;
-  }
-  .news-main{
-    gap:14px;
-    padding-bottom:14px;
-  }
-  .news-header{
-    padding-bottom:14px;
-    align-items:flex-end;
-  }
-  .news-eyebrow{
-    font-size:10px;
-    letter-spacing:.26em;
-    margin-bottom:8px;
-  }
+  .slide-news{padding:calc(var(--nav-h) + 14px) 16px 0;}
+  .news-main{gap:14px;padding-bottom:14px;}
+  .news-header{padding-bottom:14px;align-items:flex-end;}
+  .news-eyebrow{font-size:10px;letter-spacing:.26em;margin-bottom:8px;}
   .news-header h2{font-size:22px;}
   .news-more{font-size:11px;letter-spacing:.14em;}
-
   .news-content{
     grid-template-columns:minmax(0,1fr);
     gap:14px;
@@ -1316,29 +1385,12 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     min-height:0;
     overflow:auto;
   }
-
-  /* 主卡片 */
-  .news-feature{
-    flex:none;
-    min-height:0;
-  }
-  .news-feature-img{
-    min-height:150px;
-    aspect-ratio:16/9;
-  }
-  .news-feature-tag{
-    padding:5px 10px;
-    font-size:9.5px;
-    left:14px;
-    top:12px;
-  }
+  .news-feature{flex:none;min-height:0;}
+  .news-feature-img{min-height:150px;aspect-ratio:16/9;}
+  .news-feature-tag{padding:5px 10px;font-size:9.5px;left:14px;top:12px;}
   .news-feature-body{padding:16px;}
   .news-feature-body .date{font-size:10.5px;margin-bottom:8px;}
-  .news-feature-body h3{
-    font-size:15px;
-    line-height:1.4;
-    margin-bottom:8px;
-  }
+  .news-feature-body h3{font-size:15px;line-height:1.4;margin-bottom:8px;}
   .news-feature-body p{
     font-size:12px;
     line-height:1.65;
@@ -1346,44 +1398,39 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     -webkit-line-clamp:3;
   }
   .news-readmore{font-size:11px;letter-spacing:.12em;}
-
-  /* 列表 */
-  .news-list{
-    flex:none;
-    gap:1px;
-  }
-  .news-item{
-    flex:none;
-    padding:14px 16px;
-    gap:7px;
-  }
+  .news-list{flex:none;gap:1px;}
+  .news-item{flex:none;padding:14px 16px;gap:7px;}
   .news-item:hover{padding-left:20px;}
   .news-item .meta{font-size:10.5px;gap:10px;}
-  .news-item h4{
-    font-size:13px;
-    line-height:1.55;
-  }
-  .news-item .news-readmore{
-    font-size:10px;
-    letter-spacing:.14em;
-  }
+  .news-item h4{font-size:13px;line-height:1.55;}
+  .news-item .news-readmore{font-size:10px;letter-spacing:.14em;}
 
-  /* 页脚 */
   .news-footer{
-    grid-template-columns:1fr;
-    gap:10px;
-    padding:16px 0 14px;
-    text-align:center;
+    gap:16px;
+    padding:18px 0 16px;
   }
-  .news-footer-brand{
+  .news-footer-top,
+  .news-footer-bottom{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:12px;
+  }
+  .news-footer-brand{justify-content:center;font-size:11px;letter-spacing:.24em;}
+  .news-footer-social{
+    gap:10px;
     justify-content:center;
-    font-size:11px;
-    letter-spacing:.24em;
+  }
+  .social-link{
+    padding:9px 16px;
+    font-size:10.5px;
+    letter-spacing:.12em;
   }
   .news-footer-nav{
     gap:14px;
     font-size:10px;
     letter-spacing:.14em;
+    justify-content:center;
   }
   .news-footer-copy{
     text-align:center;
@@ -1391,7 +1438,6 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     letter-spacing:.18em;
   }
 
-  /* ---------- 页码指示器 ---------- */
   .page-indicator{
     right:14px;
     bottom:14px;
@@ -1401,7 +1447,6 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
   .page-indicator .current{font-size:12px;}
   .page-indicator .progress{width:44px;}
 
-  /* ---------- 弹窗 ---------- */
   .toast{
     left:14px;
     right:14px;
@@ -1412,9 +1457,7 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
     font-size:13px;
     padding:12px 20px;
   }
-  .toast.show{
-    transform:translate(0,-50%) scale(1);
-  }
+  .toast.show{transform:translate(0,-50%) scale(1);}
 }
 </style>
 </head>
@@ -1473,12 +1516,31 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
 
         <nav class="side-nav" aria-label="作品导航" data-anim="left">
           <span class="side-nav-mark">SS</span>
-          <ul class="side-nav-list">
-            <li class="side-nav-item on" data-work="0">01</li>
-            <li class="side-nav-item" data-work="1">02</li>
-            <li class="side-nav-item" data-work="2">03</li>
-            <li class="side-nav-item" data-work="3">04</li>
-          </ul>
+
+          <button class="side-nav-arrow" type="button" data-dir="up" aria-label="上一个作品">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="18 15 12 9 6 15"/>
+            </svg>
+          </button>
+
+          <div class="side-nav-scroll" id="worksScroll">
+            <ul class="side-nav-list" id="worksList">
+              <li class="side-nav-item on" data-work="0">01</li>
+              <li class="side-nav-item" data-work="1">02</li>
+              <li class="side-nav-item" data-work="2">03</li>
+              <li class="side-nav-item" data-work="3">04</li>
+              <li class="side-nav-item" data-work="4">05</li>
+              <li class="side-nav-item" data-work="5">06</li>
+              <li class="side-nav-item" data-work="6">07</li>
+            </ul>
+          </div>
+
+          <button class="side-nav-arrow" type="button" data-dir="down" aria-label="下一个作品">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
           <span class="side-nav-foot">Works Collection</span>
         </nav>
 
@@ -1497,6 +1559,7 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
 
             <div class="works-media" id="workMedia">
               <div class="works-media-pano" id="workPano"></div>
+              <video class="works-media-video" id="workVideo" muted loop playsinline preload="metadata"></video>
               <span class="works-badge blue" id="workBadge">最近</span>
               <span class="works-pano-badge" id="workPanoBadge">
                 <i></i>
@@ -1515,11 +1578,11 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
 
               <div class="works-info-body">
                 <h3 id="workTitle">建宸高中艺术网站</h3>
-                <p id="workDesc">受建宸高级中学委托完成的校园艺术网站，从视觉设计到前端实现全部由学社成员完成，是我们第一个真正上线的网页作品。</p>
+                <p id="workDesc">我们自发为建宸高级中学搭建的艺术网站，属于二创项目。网站借助 AI 辅助搭建，代码托管在 GitHub 上，是学社第一个真实上线的网页作品。</p>
                 <div class="works-meta" id="workMeta">
                   <span>网页</span>
                   <span>前端</span>
-                  <span>全景</span>
+                  <span>二创</span>
                 </div>
               </div>
 
@@ -1808,18 +1871,41 @@ body.is-home .page-indicator{opacity:0;pointer-events:none;}
 
         </div>
 
+        <!-- 页脚 -->
         <footer class="news-footer" data-anim="up" data-anim-delay="3">
-          <span class="news-footer-brand">
-            <span class="dot"></span>
-            STELLARSAGE
-          </span>
-          <nav class="news-footer-nav">
-            <a href="#" data-toast>主站</a>
-            <a href="#" data-toast>学社作品</a>
-            <a href="#" data-toast>学社信息</a>
-            <a href="#" data-toast>加入我们</a>
-          </nav>
-          <span class="news-footer-copy">© 2026 StellarSage Studio</span>
+
+          <div class="news-footer-top">
+            <span class="news-footer-brand">
+              <span class="dot"></span>
+              STELLARSAGE
+            </span>
+
+            <div class="news-footer-social">
+              <a class="social-link" href="https://space.bilibili.com/3493087561124092" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.659.373-.908l.106-.093c.338-.266.7-.373 1.08-.32.38.053.7.226.96.52L9.2 4.64h5.6l2.174-2.094c.26-.294.58-.467.96-.52.38-.053.742.054 1.08.32l.106.093c.25.25.374.552.374.908 0 .356-.124.659-.374.908l-1.306 1.398zM9.6 15.333c.564 0 1.045-.196 1.44-.587.396-.392.594-.875.594-1.446 0-.572-.198-1.055-.594-1.447-.395-.391-.876-.587-1.44-.587-.564 0-1.045.196-1.44.587-.396.392-.594.875-.594 1.447 0 .571.198 1.054.594 1.446.395.391.876.587 1.44.587zm4.8 0c.564 0 1.045-.196 1.44-.587.396-.392.594-.875.594-1.446 0-.572-.198-1.055-.594-1.447-.395-.391-.876-.587-1.44-.587-.564 0-1.045.196-1.44.587-.396.392-.594.875-.594 1.447 0 .571.198 1.054.594 1.446.395.391.876.587 1.44.587z"/>
+                </svg>
+                BILIBILI
+              </a>
+              <a class="social-link" href="https://www.douyin.com/user/MS4wLjABAAAALPgF8nI750s51crxkJ5Fpy1XaCi67Ti_FAz3LdKk0mv3cL-bUkEqbgV_4VBm2VW9" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.97a8.18 8.18 0 0 0 4.76 1.52V7a4.83 4.83 0 0 1-1-.31z"/>
+                </svg>
+                DOUYIN
+              </a>
+            </div>
+          </div>
+
+          <div class="news-footer-bottom">
+            <nav class="news-footer-nav">
+              <a href="#" data-toast>主站</a>
+              <a href="#" data-toast>学社作品</a>
+              <a href="#" data-toast>学社信息</a>
+              <a href="#" data-toast>加入我们</a>
+            </nav>
+            <span class="news-footer-copy">© 2026 StellarSage Studio</span>
+          </div>
+
         </footer>
 
       </div>
@@ -1882,16 +1968,34 @@ const mainSwiper = new Swiper('#mainSwiper', {
   }
 });
 
-/* 开场：触发首页动画 */
-window.addEventListener('load', function () {
+/* ---------- 开屏修复 ---------- */
+function triggerInitialAnimation(){
   document.body.classList.toggle('is-home', mainSwiper.activeIndex === 0);
-  setTimeout(function () {
-    animateSlide(mainSwiper.activeIndex);
-  }, 200);
-});
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      animateSlide(mainSwiper.activeIndex);
+    });
+  });
+  setTimeout(function(){
+    const slide = mainSwiper.slides[mainSwiper.activeIndex];
+    if (slide) {
+      slide.querySelectorAll('[data-anim]').forEach(function(el){
+        if (!el.classList.contains('anim-in')) {
+          el.classList.add('anim-in');
+        }
+      });
+    }
+  }, 700);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', triggerInitialAnimation);
+} else {
+  triggerInitialAnimation();
+}
 
 /* ============================================================
-   3. 学社作品数据
+   3. 学社作品数据（新增超雄伪人网 + 更新星能封面）
    ============================================================ */
 const worksData = [
   {
@@ -1904,7 +2008,73 @@ const worksData = [
     pano: 'https://raw.githubusercontent.com/stellarsage2023/JCGZ/refs/heads/main/dji_fly_20251129_134936_558_1764404326078_pano_op.jpg',
     cover: '',
     isPano: true,
+    isVideo: false,
     link: 'https://stellarsage2023.github.io/JCGZ/'
+  },
+  {
+    badge: '推荐', badgeStyle: 'blue',
+    cat: 'WEB', year: '2026',
+    title: '星宸学社官网',
+    desc: '你现在看到的这个网站，就是学社成员自己设计、自己搭建的。从布局到动效，每一处都是我们自己写的。',
+    tags: ['官网', '前端', '自研'],
+    grad: 'linear-gradient(135deg,#2d3748,#4A5568 50%,#9AA4B2)',
+    pano: '',
+    cover: 'https://user-assets.sxlcdn.com/images/1138507/Fn4d5i0P-7771F9gtm98TB5DEH2_.jpg?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/interlace/1/format/jpg',
+    isPano: false,
+    isVideo: false,
+    link: ''
+  },
+  {
+    badge: '推荐', badgeStyle: 'blue',
+    cat: 'WEB', year: '2026',
+    title: '星能工作室网站',
+    desc: '星宸学社所属的星能工作室官方网站。由一群因创作相遇的伙伴共同搭建，承载着工作室的创作理念与作品展示。',
+    tags: ['网页', '工作室', '官方'],
+    grad: 'linear-gradient(135deg,#5b3fd6,#8B5CF6 50%,#C4B5FD)',
+    pano: '',
+    cover: 'https://user-assets.sxlcdn.com/images/1138507/lhV8Cy5wdFbyP-odo9ehitOrvWdv.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png',
+    isPano: false,
+    isVideo: false,
+    link: 'https://stellarcn2020.github.io/st/'
+  },
+  {
+    badge: '推荐', badgeStyle: 'blue',
+    cat: 'WEB', year: '2026',
+    title: '极光创工作室网站',
+    desc: '为极光创工作室搭建的官方网站，从页面设计到前端开发全部由学社成员完成，是他们对外展示作品与服务的窗口。',
+    tags: ['网页', '前端', '合作'],
+    grad: 'linear-gradient(135deg,#0f9e8e,#10B981 50%,#5EEAD4)',
+    pano: '',
+    cover: 'https://user-assets.sxlcdn.com/images/1138507/FlLofIlpGqi0ycU_yLoGcVCB3s3E.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png',
+    isPano: false,
+    isVideo: false,
+    link: 'https://jgcgzs.github.io/acns/'
+  },
+  {
+    badge: '最近', badgeStyle: 'white',
+    cat: 'WEB', year: '2026',
+    title: '地球OL网站',
+    desc: '一个以“地球Online”为概念的艺术网站，用游戏化的方式呈现现实世界的运行逻辑。学社成员参与设计并搭建。',
+    tags: ['网页', '概念', '艺术'],
+    grad: 'linear-gradient(135deg,#d97706,#F59E0B 50%,#FCD34D)',
+    pano: '',
+    cover: 'https://iloveplanet.oss-cn-hangzhou.aliyuncs.com/video%2F1703122393214-734833856-%25E3%2580%258A%25E5%258D%258E%25E5%25A4%258F%25E5%25B1%25B1%25E6%25B0%25B4%25E3%2580%258B%25E8%25A7%2586%25E9%25A2%2591%25E5%258F%25B71080.mp4',
+    isPano: false,
+    isVideo: true,
+    link: 'https://stellarcn2020.github.io/Earth-Online/'
+  },
+  {
+    badge: '前身', badgeStyle: 'white',
+    cat: 'WEB', year: '2024',
+    title: '超雄伪人网',
+    desc: '学社前身「超雄伪人」小组的线上据点。基于上线了快捷小白建站搭建，是这群人最早聚在一起做东西的地方。',
+    tags: ['网页', '前身', '小白建站'],
+    grad: 'linear-gradient(135deg,#6B7280,#9AA4B2 50%,#D1D5DB)',
+    pano: '',
+    cover: 'https://user-assets.sxlcdn.com/images/1138507/Fli_Cn5C9Br17-oOYrVTvhdc8JTd.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png',
+    isPano: false,
+    isVideo: false,
+    link: 'https://chaoxiong.mysxl.cn/'
   },
   {
     badge: '策划中', badgeStyle: 'white',
@@ -1916,30 +2086,7 @@ const worksData = [
     pano: '',
     cover: 'https://user-assets.sxlcdn.com/images/1138507/FmCzNFEsghmhcM_Qe7amhHSHRl3L.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png',
     isPano: false,
-    link: ''
-  },
-  {
-    badge: '推荐', badgeStyle: 'blue',
-    cat: 'WEB', year: '2026',
-    title: '极光创工作室网站',
-    desc: '为极光创工作室搭建的官方网站，从页面设计到前端开发全部由学社成员完成，是他们对外展示作品与服务的窗口。',
-    tags: ['网页', '前端', '合作'],
-    grad: 'linear-gradient(135deg,#5b3fd6,#8B5CF6 50%,#C4B5FD)',
-    pano: '',
-    cover: 'https://user-assets.sxlcdn.com/images/1138507/FlLofIlpGqi0ycU_yLoGcVCB3s3E.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png',
-    isPano: false,
-    link: 'https://jgcgzs.github.io/acns/'
-  },
-  {
-    badge: '最近', badgeStyle: 'white',
-    cat: 'WEB', year: '2026',
-    title: '星宸学社官网',
-    desc: '你现在看到的这个网站，就是学社成员自己设计、自己搭建的。从布局到动效，每一处都是我们自己写的。',
-    tags: ['官网', '前端', '自研'],
-    grad: 'linear-gradient(135deg,#0f9e8e,#10B981 50%,#5EEAD4)',
-    pano: '',
-    cover: 'https://user-assets.sxlcdn.com/images/1138507/Fn4d5i0P-7771F9gtm98TB5DEH2_.jpg?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/interlace/1/format/jpg',
-    isPano: false,
+    isVideo: false,
     link: ''
   }
 ];
@@ -1948,6 +2095,7 @@ const workEls = {
   showcase: document.getElementById('worksShowcase'),
   media:    document.getElementById('workMedia'),
   pano:     document.getElementById('workPano'),
+  video:    document.getElementById('workVideo'),
   panoBadge:document.getElementById('workPanoBadge'),
   cat:      document.getElementById('workCat'),
   year:     document.getElementById('workYear'),
@@ -1959,10 +2107,13 @@ const workEls = {
 };
 
 const workNavItems = document.querySelectorAll('[data-work]');
+const worksScroll = document.getElementById('worksScroll');
+let currentWorkIndex = 0;
 
 function renderWork(index) {
   const d = worksData[index];
   if (!d) return;
+
   workEls.cat.textContent   = d.cat;
   workEls.year.textContent  = d.year;
   workEls.title.textContent = d.title;
@@ -1971,21 +2122,38 @@ function renderWork(index) {
   workEls.badge.textContent = d.badge;
   workEls.badge.className = 'works-badge ' + d.badgeStyle;
 
-  if (d.isPano && d.pano) {
-    workEls.pano.style.backgroundImage = 'url(' + d.pano + ')';
-    workEls.pano.style.backgroundSize = 'cover';
-    workEls.pano.style.backgroundPosition = 'center';
-    workEls.panoBadge.style.display = 'inline-flex';
-  } else if (d.cover) {
-    workEls.pano.style.backgroundImage = 'url(' + d.cover + ')';
-    workEls.pano.style.backgroundSize = 'cover';
-    workEls.pano.style.backgroundPosition = 'center';
-    workEls.panoBadge.style.display = 'none';
-  } else {
+  if (d.isVideo && d.cover) {
     workEls.pano.style.backgroundImage = d.grad;
     workEls.pano.style.backgroundSize = 'cover';
     workEls.pano.style.backgroundPosition = 'center';
+    workEls.video.style.display = 'block';
+    if (workEls.video.getAttribute('src') !== d.cover) {
+      workEls.video.setAttribute('src', d.cover);
+      workEls.video.load();
+    }
+    const p = workEls.video.play();
+    if (p && p.catch) p.catch(function(){});
     workEls.panoBadge.style.display = 'none';
+  } else {
+    workEls.video.style.display = 'none';
+    try { workEls.video.pause(); } catch(e){}
+
+    if (d.isPano && d.pano) {
+      workEls.pano.style.backgroundImage = 'url(' + d.pano + ')';
+      workEls.pano.style.backgroundSize = 'cover';
+      workEls.pano.style.backgroundPosition = 'center';
+      workEls.panoBadge.style.display = 'inline-flex';
+    } else if (d.cover) {
+      workEls.pano.style.backgroundImage = 'url(' + d.cover + ')';
+      workEls.pano.style.backgroundSize = 'cover';
+      workEls.pano.style.backgroundPosition = 'center';
+      workEls.panoBadge.style.display = 'none';
+    } else {
+      workEls.pano.style.backgroundImage = d.grad;
+      workEls.pano.style.backgroundSize = 'cover';
+      workEls.pano.style.backgroundPosition = 'center';
+      workEls.panoBadge.style.display = 'none';
+    }
   }
 
   if (d.link) {
@@ -1998,19 +2166,83 @@ function renderWork(index) {
   }
 }
 
+function scrollNavItemIntoView(index){
+  const item = workNavItems[index];
+  if (!item || !worksScroll) return;
+  const containerRect = worksScroll.getBoundingClientRect();
+  const itemRect = item.getBoundingClientRect();
+  if (itemRect.top < containerRect.top) {
+    worksScroll.scrollTop -= (containerRect.top - itemRect.top) + 8;
+  } else if (itemRect.bottom > containerRect.bottom) {
+    worksScroll.scrollTop += (itemRect.bottom - containerRect.bottom) + 8;
+  }
+}
+
 function switchWork(index) {
+  if (index < 0) index = worksData.length - 1;
+  if (index >= worksData.length) index = 0;
+  currentWorkIndex = index;
+
   workEls.showcase.classList.remove('anim');
   void workEls.showcase.offsetWidth;
   workEls.showcase.classList.add('anim');
   setTimeout(function () { renderWork(index); }, 340);
   workNavItems.forEach((n, i) => n.classList.toggle('on', i === index));
+  scrollNavItemIntoView(index);
 }
 
 workNavItems.forEach(function (item) {
   item.addEventListener('click', function () {
     const idx = parseInt(item.getAttribute('data-work'), 10) || 0;
     switchWork(idx);
+    /* 手动切换后重置自动轮播计时 */
+    restartWorkAutoplay();
   });
+});
+
+document.querySelectorAll('.side-nav-arrow').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    const dir = btn.getAttribute('data-dir');
+    if (dir === 'up') switchWork(currentWorkIndex - 1);
+    else switchWork(currentWorkIndex + 1);
+    restartWorkAutoplay();
+  });
+});
+
+/* ---------- 作品自动轮播 ---------- */
+let workAutoplayTimer = null;
+const WORK_AUTOPLAY_INTERVAL = 6000;
+
+function startWorkAutoplay() {
+  stopWorkAutoplay();
+  workAutoplayTimer = setInterval(function () {
+    switchWork(currentWorkIndex + 1);
+  }, WORK_AUTOPLAY_INTERVAL);
+}
+function stopWorkAutoplay() {
+  if (workAutoplayTimer) {
+    clearInterval(workAutoplayTimer);
+    workAutoplayTimer = null;
+  }
+}
+function restartWorkAutoplay() {
+  startWorkAutoplay();
+}
+
+/* 鼠标悬停在作品卡片上时暂停自动轮播 */
+workEls.showcase.addEventListener('mouseenter', stopWorkAutoplay);
+workEls.showcase.addEventListener('mouseleave', startWorkAutoplay);
+/* 触屏设备：按下暂停，抬起恢复 */
+workEls.showcase.addEventListener('touchstart', stopWorkAutoplay, { passive: true });
+workEls.showcase.addEventListener('touchend', startWorkAutoplay, { passive: true });
+
+/* 切换到作品页时启动自动轮播，离开时停止 */
+mainSwiper.on('slideChangeTransitionStart', function (sw) {
+  if (sw.activeIndex === 1) {
+    startWorkAutoplay();
+  } else {
+    stopWorkAutoplay();
+  }
 });
 
 /* ============================================================
