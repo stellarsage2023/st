@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>青春不偏航 · 剧本汇报</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+:root{
+  --bg:#FFFFFF;--bg-soft:#F4F6FA;--bg-dark:#0A0D14;
+  --text:#0A0A0A;--text-2:#4A5568;--muted:#9AA4B2;
+  --blue:#3778e5;--blue-light:#5B9EFF;--slide:#2d3748;
+  --blue-soft:rgba(55,120,229,.08);--blue-line:rgba(55,120,229,.25);
+  --border:rgba(0,0,0,.08);--border-soft:rgba(0,0,0,.04);
+  --nav-h:72px;
+  --ease:cubic-bezier(.22,.8,.22,1);
+  /* 丝滑缓动 —— ease-out-expo */
+  --ease-silk:cubic-bezier(.16,1,.3,1);
+  --ease-back:cubic-bezier(.34,1.56,.64,1);
+  --sans:"HarmonyOS Sans SC","PingFang SC","Source Han Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono","SF Mono",ui-monospace,Consolas,monospace;
+  --serif:Georgia,"Source Han Serif SC","Songti SC",serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;border-radius:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+ul{list-style:none;}
+h1,h2,h3,h4,p{margin:0;}
+button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer;}
+::selection{background:var(--blue);color:#fff;}
+::-webkit-scrollbar{display:none;}
+
+/* ============================================================
+   导航
+   ============================================================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;padding:0 44px;
+  background:rgba(255,255,255,.94);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+  border-bottom:1px solid var(--border-soft);
+  transition:background .5s var(--ease),border-color .5s var(--ease);
+}
+body.on-dark .nav{background:rgba(10,13,20,.7);border-bottom-color:rgba(255,255,255,.06);}
+.nav-logo{display:inline-flex;align-items:center;gap:16px;height:var(--nav-h);padding:0 16px 0 44px;margin-left:-44px;background:rgba(255,255,255,.96);transition:background .5s var(--ease);}
+body.on-dark .nav-logo{background:rgba(255,255,255,.92);}
+.nav-logo-line{width:2px;height:22px;background:rgba(0,0,0,.22);flex:none;}
+.nav-logo img{height:40px;width:auto;}
+.nav-back{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--text-2);text-transform:uppercase;transition:color .3s var(--ease),gap .3s var(--ease);}
+body.on-dark .nav-back{color:rgba(255,255,255,.65);}
+.nav-back:hover{color:var(--blue);gap:12px;}
+.nav-back svg{width:14px;height:14px;}
+
+/* ============================================================
+   左右两组上下按钮（矩形）
+   ============================================================ */
+.arrow-group{
+  position:fixed;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:8px;z-index:900;
+}
+.arrow-group.left{left:26px;}
+.arrow-group.right{right:26px;}
+
+.arrow-btn{
+  width:48px;height:48px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(0,0,0,.1);
+  color:var(--text);cursor:pointer;
+  /* 矩形 */
+  border-radius:0;
+  backdrop-filter:blur(16px) saturate(180%);
+  box-shadow:0 6px 20px rgba(0,0,0,.06);
+  transition:
+    background .35s var(--ease),
+    color .35s var(--ease),
+    border-color .35s var(--ease),
+    box-shadow .35s var(--ease),
+    opacity .35s var(--ease),
+    transform .5s var(--ease-silk);
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+  overflow:hidden;
+}
+.arrow-btn::before{
+  content:"";
+  position:absolute;inset:0;
+  background:var(--blue);
+  transform:translateY(100%);
+  transition:transform .55s var(--ease-silk);
+  z-index:0;
+}
+.arrow-btn svg{
+  width:20px;height:20px;
+  position:relative;z-index:1;
+  transition:transform .55s var(--ease-silk),color .35s var(--ease);
+}
+.arrow-btn.up:hover:not(:disabled)::before{transform:translateY(0);}
+.arrow-btn.down:hover:not(:disabled)::before{transform:translateY(0);}
+.arrow-btn.up:hover:not(:disabled){transform:translateY(-2px);border-color:var(--blue);box-shadow:0 12px 30px rgba(55,120,229,.3);}
+.arrow-btn.down:hover:not(:disabled){transform:translateY(2px);border-color:var(--blue);box-shadow:0 12px 30px rgba(55,120,229,.3);}
+.arrow-btn:hover:not(:disabled){color:#fff;}
+.arrow-btn:active:not(:disabled){transform:scale(.96);}
+.arrow-btn:disabled{opacity:.22;cursor:not-allowed;pointer-events:none;}
+body.on-dark .arrow-btn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.9);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+body.on-dark .arrow-btn::before{background:var(--blue-light);}
+body.on-dark .arrow-btn:hover:not(:disabled){border-color:var(--blue-light);box-shadow:0 12px 30px rgba(91,158,255,.4);}
+
+/* ============================================================
+   步进揭示动画（丝滑 · 模糊+位移+透明度）
+   ============================================================ */
+[data-step]{
+  opacity:0;
+  transform:translateY(28px) scale(.985);
+  filter:blur(6px);
+  transition:
+    opacity .95s var(--ease-silk),
+    transform .95s var(--ease-silk),
+    filter .95s var(--ease-silk);
+  will-change:opacity,transform,filter;
+}
+[data-step].revealed{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  filter:blur(0);
+}
+
+/* ============================================================
+   Swiper
+   ============================================================ */
+.main-swiper{width:100%;height:100%;}
+.main-swiper .swiper-slide{position:relative;overflow:hidden;background:var(--bg);}
+.slide{width:100%;height:100%;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+
+@keyframes breathe{0%,100%{opacity:.85;transform:scale(1);}50%{opacity:1;transform:scale(1.06);}}
+@keyframes float{0%,100%{transform:translateY(0) translateX(0);opacity:.4;}50%{transform:translateY(-20px) translateX(8px);opacity:.9;}}
+@keyframes floatAlt{0%,100%{transform:translateY(0) translateX(0);opacity:.6;}50%{transform:translateY(18px) translateX(-10px);opacity:.9;}}
+@keyframes spinSlow{from{transform:translate(-50%,-50%) rotate(0deg);}to{transform:translate(-50%,-50%) rotate(360deg);}}
+@keyframes spinSlow2{from{transform:translate(-50%,-50%) rotate(360deg);}to{transform:translate(-50%,-50%) rotate(0deg);}}
+@keyframes shine{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.75);}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(55,120,229,.4);}50%{box-shadow:0 0 0 16px rgba(55,120,229,0);}}
+
+/* ============================================================
+   按钮
+   ============================================================ */
+.btn-block{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:15px 28px;background:var(--blue);color:#fff;
+  font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.02em;line-height:1;
+  border:0;cursor:pointer;overflow:hidden;white-space:nowrap;
+  transition:transform .35s var(--ease-silk),box-shadow .35s var(--ease);
+  -webkit-tap-highlight-color:transparent;user-select:none;
+}
+.btn-block::before{content:"";position:absolute;inset:0;background:var(--slide);z-index:0;transform:translateY(-100%);pointer-events:none;}
+.btn-block > *{position:relative;z-index:1;}
+.btn-block.slide-in::before{transform:translateY(0);transition:transform .6s var(--ease-silk);}
+.btn-block.slide-out::before{transform:translateY(100%);transition:transform .6s var(--ease-silk);}
+.btn-block:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(45,55,72,.28);}
+.btn-block svg{width:15px;height:15px;flex:none;transition:transform .45s var(--ease-silk);}
+.btn-block:hover svg{transform:translateX(4px);}
+
+/* ============================================================
+   通用
+   ============================================================ */
+.page-mark{
+  position:absolute;right:clamp(88px,10vw,140px);top:calc(var(--nav-h) + 20px);
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--muted);
+  display:inline-flex;align-items:center;gap:10px;z-index:5;
+}
+body.on-dark .page-mark{color:rgba(255,255,255,.35);}
+.page-mark b{color:var(--blue);font-weight:700;}
+body.on-dark .page-mark b{color:var(--blue-light);}
+
+.page-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--blue);margin-bottom:10px;}
+body.on-dark .page-eyebrow{color:var(--blue-light);}
+
+.pad{padding:calc(var(--nav-h) + 36px) clamp(100px,11vw,160px) 44px;position:relative;}
+.pad::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(55,120,229,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(55,120,229,.05) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+          mask-image:radial-gradient(ellipse 90% 72% at 50% 45%,#000 25%,transparent 100%);
+}
+.pad > *{position:relative;z-index:1;}
+.pad.on-dark-grid::before{
+  background-image:
+    linear-gradient(rgba(91,158,255,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(91,158,255,.08) 1px,transparent 1px);
+}
+
+.page-header{
+  flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  padding-bottom:18px;border-bottom:1px solid var(--border);
+  margin-bottom:clamp(26px,4vh,40px);
+}
+.page-header h2{font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-.025em;line-height:1.1;color:var(--text);}
+.page-header .en{font-family:var(--mono);font-size:11.5px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase;white-space:nowrap;padding-bottom:6px;}
+body.on-dark .page-header{border-color:rgba(255,255,255,.08);}
+body.on-dark .page-header h2{color:#fff;}
+body.on-dark .page-header .en{color:rgba(255,255,255,.4);}
+
+/* ============================================================
+   01 封面
+   ============================================================ */
+.slide-cover{align-items:center;justify-content:center;background:var(--bg-dark);}
+.cover-bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
+.cover-bg .glow{position:absolute;filter:blur(80px);opacity:.7;}
+.cover-bg .g1{width:520px;height:520px;background:radial-gradient(circle,rgba(55,120,229,.45),transparent 70%);top:-12%;right:-8%;animation:breathe 9s ease-in-out infinite;}
+.cover-bg .g2{width:440px;height:440px;background:radial-gradient(circle,rgba(91,158,255,.3),transparent 70%);bottom:-16%;left:-6%;animation:breathe 12s ease-in-out infinite reverse;}
+.cover-bg .grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(55,120,229,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(55,120,229,.08) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 72% 62% at 50% 50%,#000 25%,transparent 100%);
+          mask-image:radial-gradient(ellipse 72% 62% at 50% 50%,#000 25%,transparent 100%);
+}
+.cover-content{position:relative;z-index:2;text-align:center;padding:0 40px;max-width:900px;width:100%;}
+.cover-label{
+  font-family:var(--mono);font-size:11px;letter-spacing:.44em;color:var(--blue-light);text-transform:uppercase;
+  margin-bottom:28px;display:inline-block;padding:6px 16px;
+  border:1px solid rgba(91,158,255,.35);background:rgba(55,120,229,.08);
+}
+.cover-title{font-size:clamp(44px,7vw,96px);font-weight:800;letter-spacing:-.04em;line-height:1;color:#fff;margin-bottom:22px;}
+.cover-title .word{display:inline-block;margin-right:4px;}
+.cover-title .word em{font-style:normal;background:linear-gradient(135deg,var(--blue),var(--blue-light));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.cover-sub{font-size:clamp(15px,1.5vw,19px);color:rgba(255,255,255,.72);line-height:1.7;margin-bottom:10px;}
+.cover-sub-en{font-family:var(--mono);font-size:11px;letter-spacing:.42em;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:48px;}
+.cover-meta{display:flex;align-items:center;justify-content:center;gap:clamp(20px,3.2vw,52px);flex-wrap:wrap;}
+.cover-meta-item{display:inline-flex;flex-direction:column;align-items:center;gap:5px;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:rgba(255,255,255,.35);text-transform:uppercase;}
+.cover-meta-item b{font-family:var(--sans);font-size:clamp(16px,1.7vw,22px);font-weight:700;letter-spacing:-.02em;color:#fff;line-height:1.1;}
+.cover-meta-item b em{font-style:normal;font-size:.62em;color:var(--blue-light);margin-left:2px;}
+
+/* ============================================================
+   02 剧情线
+   ============================================================ */
+.line-flow{flex:1;display:flex;flex-direction:column;justify-content:center;gap:clamp(20px,3.5vh,36px);min-height:0;}
+.line-intro{text-align:center;max-width:720px;margin:0 auto;}
+.line-intro p{font-size:clamp(14px,1.15vw,16.5px);line-height:1.95;color:var(--text-2);}
+.line-intro p strong{color:var(--text);font-weight:700;}
+
+.story-rail{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(12px,1.6vw,20px);padding-top:36px;}
+.story-rail::before{
+  content:"";position:absolute;left:10%;right:10%;top:14px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--blue) 8%,var(--blue) 92%,transparent);z-index:0;
+}
+.rail-node{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;z-index:1;}
+/* 矩形节点 */
+.rail-dot{
+  position:relative;width:30px;height:30px;
+  display:grid;place-items:center;
+  background:var(--bg);
+  border:2px solid var(--blue);
+  color:var(--blue);
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  transition:
+    background .45s var(--ease-silk),
+    color .45s var(--ease-silk),
+    transform .55s var(--ease-back),
+    box-shadow .45s var(--ease-silk);
+}
+.rail-node:hover .rail-dot{background:var(--blue);color:#fff;transform:scale(1.12);box-shadow:0 0 0 8px rgba(55,120,229,.12);}
+.rail-card{
+  position:relative;width:100%;padding:18px 16px;background:var(--bg-soft);
+  border:1px solid var(--border);
+  transition:border-color .45s var(--ease-silk),transform .55s var(--ease-silk),box-shadow .45s var(--ease-silk),background .45s var(--ease-silk);
+}
+.rail-node:hover .rail-card{border-color:var(--blue-line);transform:translateY(-4px);box-shadow:0 16px 40px rgba(55,120,229,.12);background:var(--bg);}
+.rail-card h4{font-size:14px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.01em;}
+.rail-card h4 em{font-style:normal;color:var(--blue);}
+.rail-card p{font-size:11.5px;line-height:1.7;color:var(--text-2);}
+.rail-card .mini-tag{display:inline-block;margin-top:8px;padding:2px 8px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--blue);background:var(--blue-soft);border:1px solid var(--blue-line);text-transform:uppercase;}
+
+.threads{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,22px);margin-top:8px;}
+.thread{
+  position:relative;padding:18px 22px;background:var(--bg-soft);border-left:3px solid var(--blue);
+  overflow:hidden;isolation:isolate;
+  transition:padding-left .45s var(--ease-silk),transform .45s var(--ease-silk);
+}
+.thread::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--blue-soft),transparent 90%);transform:translateX(-100%);z-index:0;transition:transform .8s var(--ease-silk);}
+.thread:hover::before{transform:translateX(0);}
+.thread:hover{padding-left:30px;transform:translateX(4px);}
+.thread > *{position:relative;z-index:1;}
+.thread .k{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--blue);text-transform:uppercase;margin-bottom:6px;}
+.thread h5{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-.005em;}
+.thread p{font-size:12.5px;line-height:1.75;color:var(--text-2);}
+
+/* ============================================================
+   03 角色
+   ============================================================ */
+.roles-grid{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:18px;min-height:0;}
+.role-card{
+  position:relative;padding:24px 26px;background:var(--bg-soft);
+  border:1px solid var(--border);overflow:hidden;
+  display:flex;flex-direction:column;gap:10px;
+  transition:border-color .5s var(--ease-silk),transform .55s var(--ease-silk),box-shadow .5s var(--ease-silk),background .5s var(--ease-silk);
+}
+.role-card:hover{border-color:var(--blue-line);transform:translateY(-4px);box-shadow:0 16px 40px rgba(55,120,229,.12);background:var(--bg);}
+.role-card .role-id{display:inline-flex;align-items:baseline;gap:10px;align-self:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase;}
+.role-card .role-id b{font-family:var(--sans);font-size:26px;letter-spacing:-.02em;color:var(--blue);font-weight:800;line-height:1;}
+.role-card h3{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.01em;}
+.role-card .role-desc{font-size:13px;line-height:1.8;color:var(--text-2);}
+.role-card .role-rel{font-size:11.5px;line-height:1.7;color:var(--muted);padding-top:10px;border-top:1px dashed var(--border);}
+.role-card .role-rel strong{color:var(--blue);font-weight:600;}
+
+/* ============================================================
+   场景页
+   ============================================================ */
+.scene-layout{flex:1;display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(36px,4.5vw,64px);min-height:0;}
+.scene-info{display:flex;flex-direction:column;justify-content:center;gap:18px;}
+.scene-act-num{font-family:var(--mono);font-size:clamp(48px,6vw,80px);font-weight:700;color:var(--blue);letter-spacing:-.04em;line-height:1;opacity:.15;}
+.scene-title{font-size:clamp(22px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.25;color:var(--text);margin-top:-30px;}
+.scene-meta{
+  display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--muted);
+  text-transform:uppercase;padding-bottom:12px;border-bottom:1px solid var(--border);
+}
+.scene-meta span{display:inline-flex;align-items:center;gap:6px;}
+.scene-meta i{width:6px;height:6px;background:var(--blue);flex:none;}
+.scene-desc{font-size:clamp(13.5px,1.05vw,15px);line-height:2;color:var(--text-2);}
+.scene-desc strong{color:var(--text);font-weight:600;}
+
+.script-lines{display:flex;flex-direction:column;justify-content:center;gap:14px;min-height:0;padding-left:clamp(24px,3vw,40px);border-left:2px solid var(--border);}
+.script-line{display:flex;flex-direction:column;gap:6px;padding:14px 0;}
+.script-line .who{
+  display:inline-flex;align-items:center;gap:8px;align-self:flex-start;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--blue);text-transform:uppercase;
+  padding:3px 10px;background:var(--blue-soft);border:1px solid var(--blue-line);
+}
+.script-line .who i{width:5px;height:5px;background:var(--blue);flex:none;}
+.script-line .what{font-family:var(--serif);font-size:clamp(14px,1.1vw,16px);line-height:1.9;color:var(--text);}
+.script-line .stage{font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--muted);font-style:italic;padding-left:2px;}
+.script-line.narration .what{font-family:var(--sans);font-size:13.5px;color:var(--text-2);font-style:italic;}
+
+.scene-slide.dark{background:var(--bg-dark);color:#fff;}
+.scene-slide.dark .scene-title{color:#fff;}
+.scene-slide.dark .scene-desc{color:rgba(255,255,255,.6);}
+.scene-slide.dark .scene-desc strong{color:#fff;}
+.scene-slide.dark .scene-meta{color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.1);}
+.scene-slide.dark .scene-meta i{background:var(--blue-light);}
+.scene-slide.dark .scene-act-num{color:var(--blue-light);opacity:.2;}
+.scene-slide.dark .script-lines{border-left-color:rgba(255,255,255,.1);}
+.scene-slide.dark .script-line .who{color:var(--blue-light);background:rgba(55,120,229,.16);border-color:var(--blue-line);}
+.scene-slide.dark .script-line .who i{background:var(--blue-light);}
+.scene-slide.dark .script-line .what{color:#fff;}
+.scene-slide.dark .script-line .stage{color:rgba(255,255,255,.4);}
+.scene-slide.dark .script-line.narration .what{color:rgba(255,255,255,.65);}
+
+/* ============================================================
+   升华字幕
+   ============================================================ */
+.slide-subtitle{align-items:center;justify-content:center;background:var(--bg-dark);position:relative;}
+.slide-subtitle::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 500px at 50% 50%,rgba(55,120,229,.18),transparent 65%);pointer-events:none;}
+.subtitle-inner{position:relative;z-index:1;max-width:880px;text-align:center;padding:0 40px;}
+.subtitle-label{font-family:var(--mono);font-size:11px;letter-spacing:.44em;color:var(--blue-light);text-transform:uppercase;margin-bottom:36px;}
+.subtitle-line{font-size:clamp(17px,1.9vw,25px);line-height:1.9;color:rgba(255,255,255,.85);margin-bottom:18px;letter-spacing:-.01em;}
+.subtitle-line em{font-style:normal;background:linear-gradient(135deg,var(--blue),var(--blue-light));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-weight:600;}
+.subtitle-line:last-child{margin-bottom:0;}
+
+/* ============================================================
+   创作构思
+   ============================================================ */
+.idea-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:18px;min-height:0;}
+.idea-card{
+  position:relative;padding:22px 26px;background:var(--bg-soft);
+  border-left:3px solid var(--blue);overflow:hidden;isolation:isolate;
+  display:flex;flex-direction:column;gap:8px;
+  transition:padding-left .45s var(--ease-silk),transform .45s var(--ease-silk);
+}
+.idea-card::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--blue-soft),transparent 90%);transform:translateX(-100%);z-index:0;transition:transform .8s var(--ease-silk);}
+.idea-card:hover::before{transform:translateX(0);}
+.idea-card:hover{padding-left:34px;transform:translateX(4px);}
+.idea-card > *{position:relative;z-index:1;}
+.idea-card .idx{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--blue);margin-bottom:2px;}
+.idea-card h4{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.005em;margin-bottom:4px;}
+.idea-card p{font-size:13px;line-height:1.85;color:var(--text-2);}
+.idea-card p strong{color:var(--blue);font-weight:600;}
+
+/* ============================================================
+   招募
+   ============================================================ */
+.slide-recruit{background:var(--bg);position:relative;overflow:hidden;}
+.recruit-bg{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.recruit-bg .orb{position:absolute;filter:blur(60px);opacity:.35;}
+.recruit-bg .o1{width:360px;height:360px;background:radial-gradient(circle,rgba(55,120,229,.55),transparent 70%);top:-10%;left:-5%;animation:breathe 10s ease-in-out infinite;}
+.recruit-bg .o2{width:300px;height:300px;background:radial-gradient(circle,rgba(91,158,255,.45),transparent 70%);bottom:-12%;right:-6%;animation:breathe 13s ease-in-out infinite reverse;}
+.recruit-bg .grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(55,120,229,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(55,120,229,.05) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,#000 20%,transparent 100%);
+          mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,#000 20%,transparent 100%);
+}
+.recruit-bg .particle{position:absolute;width:5px;height:5px;background:var(--blue);opacity:.4;box-shadow:0 0 12px rgba(55,120,229,.6);}
+.recruit-bg .p1{top:22%;left:12%;animation:float 8s ease-in-out infinite;}
+.recruit-bg .p2{top:65%;left:8%;animation:floatAlt 10s ease-in-out infinite;}
+.recruit-bg .p3{top:35%;right:14%;animation:float 9s ease-in-out infinite reverse;}
+.recruit-bg .p4{top:78%;right:22%;animation:floatAlt 11s ease-in-out infinite;}
+
+.recruit-grid{flex:1;display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(36px,4.5vw,64px);min-height:0;}
+.recruit-left{display:flex;flex-direction:column;justify-content:center;gap:16px;}
+.recruit-left h3{font-size:clamp(22px,2.2vw,30px);font-weight:800;letter-spacing:-.022em;line-height:1.4;color:var(--text);}
+.recruit-left h3 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--blue),var(--blue-light));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.recruit-left p{font-size:clamp(13.5px,1.05vw,15px);line-height:1.95;color:var(--text-2);}
+.recruit-left p strong{color:var(--blue);font-weight:600;}
+.recruit-cta{margin-top:8px;display:flex;gap:12px;flex-wrap:wrap;}
+.recruit-cta .btn-block{padding:16px 32px;font-size:14.5px;animation:glowPulse 3s var(--ease) infinite;}
+.recruit-cta .btn-block:hover{animation:none;}
+
+.role-stack{display:flex;flex-direction:column;gap:10px;justify-content:center;min-height:0;}
+.role-row{
+  position:relative;display:grid;grid-template-columns:50px 1fr auto;gap:18px;
+  padding:16px 22px;background:var(--bg-soft);border:1px solid var(--border);
+  align-items:center;overflow:hidden;isolation:isolate;cursor:pointer;
+  transition:padding-left .5s var(--ease-silk),border-color .45s var(--ease-silk),
+             background .45s var(--ease-silk),box-shadow .45s var(--ease-silk);
+}
+.role-row:hover{padding-left:28px;border-color:var(--blue-line);background:var(--bg);box-shadow:0 14px 36px rgba(55,120,229,.14);}
+.role-row .ic{
+  width:44px;height:44px;display:grid;place-items:center;
+  background:var(--blue-soft);border:1px solid var(--blue-line);color:var(--blue);
+  transition:background .45s var(--ease-silk),color .45s var(--ease-silk),transform .55s var(--ease-back),box-shadow .45s var(--ease-silk);
+}
+.role-row:hover .ic{background:var(--blue);color:#fff;transform:rotate(-6deg) scale(1.08);}
+.role-row .ic svg{width:22px;height:22px;}
+.role-row .info h4{font-size:14.5px;font-weight:700;color:var(--text);margin-bottom:3px;transition:color .3s var(--ease);}
+.role-row:hover .info h4{color:var(--blue);}
+.role-row .info p{font-size:12px;line-height:1.65;color:var(--text-2);}
+.role-row .need{
+  padding:4px 12px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--blue);background:var(--blue-soft);border:1px solid var(--blue-line);
+  transition:background .45s var(--ease-silk),color .45s var(--ease-silk),border-color .45s var(--ease-silk);
+}
+.role-row:hover .need{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+/* ============================================================
+   结尾
+   ============================================================ */
+.slide-end{align-items:center;justify-content:center;background:var(--bg-dark);position:relative;overflow:hidden;}
+.end-bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
+.end-bg .glow{position:absolute;filter:blur(80px);opacity:.8;}
+.end-bg .g1{width:600px;height:600px;background:radial-gradient(circle,rgba(55,120,229,.5),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 8s ease-in-out infinite;}
+.end-bg .g2{width:400px;height:400px;background:radial-gradient(circle,rgba(91,158,255,.4),transparent 70%);top:20%;left:15%;animation:breathe 11s ease-in-out infinite reverse;}
+.end-bg .g3{width:360px;height:360px;background:radial-gradient(circle,rgba(91,158,255,.3),transparent 70%);bottom:10%;right:12%;animation:breathe 9s ease-in-out infinite;}
+.end-bg .grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(55,120,229,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(55,120,229,.08) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,#000 20%,transparent 100%);
+          mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,#000 20%,transparent 100%);
+}
+/* 矩形旋转环 */
+.end-bg .ring{
+  position:absolute;
+  top:50%;left:50%;
+  border:1px solid rgba(91,158,255,.15);
+  pointer-events:none;
+}
+.end-bg .ring.r1{width:440px;height:440px;border-style:dashed;animation:spinSlow 40s linear infinite;}
+.end-bg .ring.r2{width:580px;height:580px;border-color:rgba(91,158,255,.08);animation:spinSlow2 60s linear infinite;}
+.end-bg .ring.r3{width:320px;height:320px;border-style:dotted;border-color:rgba(91,158,255,.25);animation:spinSlow 30s linear infinite;}
+.end-bg .spark{position:absolute;width:5px;height:5px;background:var(--blue-light);box-shadow:0 0 14px rgba(91,158,255,.9);}
+.end-bg .s1{top:18%;left:20%;animation:float 7s ease-in-out infinite;}
+.end-bg .s2{top:35%;right:16%;animation:floatAlt 9s ease-in-out infinite;}
+.end-bg .s3{bottom:22%;left:14%;animation:float 8s ease-in-out infinite reverse;}
+.end-bg .s4{bottom:18%;right:22%;animation:floatAlt 10s ease-in-out infinite;}
+.end-bg .s5{top:12%;right:38%;animation:float 6s ease-in-out infinite;}
+.end-bg .s6{top:55%;left:8%;animation:floatAlt 11s ease-in-out infinite;}
+
+.end-content{position:relative;z-index:2;text-align:center;padding:0 40px;max-width:900px;}
+.end-label{font-family:var(--mono);font-size:11px;letter-spacing:.44em;color:var(--blue-light);text-transform:uppercase;margin-bottom:28px;display:inline-block;padding:6px 16px;border:1px solid rgba(91,158,255,.35);background:rgba(55,120,229,.1);}
+.end-title{font-size:clamp(34px,5vw,64px);font-weight:800;letter-spacing:-.03em;line-height:1.2;color:#fff;margin-bottom:28px;}
+.end-title .word{display:inline-block;}
+.end-title em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--blue) 0%,var(--blue-light) 50%,var(--blue) 100%);
+  background-size:200% 100%;background-position:0% 50%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shine 4s ease-in-out infinite;display:inline-block;
+}
+.end-sub{font-size:clamp(14px,1.3vw,17px);color:rgba(255,255,255,.65);line-height:1.85;max-width:560px;margin:0 auto 40px;}
+.end-cta{display:inline-flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.end-cta .btn-block{padding:17px 36px;font-size:14.5px;}
+.end-cta .btn-block.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);}
+.end-cta .btn-block.secondary::before{background:rgba(255,255,255,.15);}
+
+/* ============================================================
+   页码
+   ============================================================ */
+.page-indicator{
+  position:fixed;right:88px;bottom:36px;z-index:60;
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);
+  transition:color .5s var(--ease);
+}
+body.on-dark .page-indicator{color:rgba(255,255,255,.4);}
+.page-indicator .current{color:var(--blue);font-size:14px;font-weight:700;}
+body.on-dark .page-indicator .current{color:var(--blue-light);}
+.page-indicator .progress{width:72px;height:2px;background:rgba(0,0,0,.1);position:relative;overflow:hidden;}
+body.on-dark .page-indicator .progress{background:rgba(255,255,255,.15);}
+.page-indicator .progress-bar{position:absolute;left:0;top:0;height:100%;width:8.3%;background:var(--blue);transition:width .65s var(--ease-silk);}
+body.on-dark .page-indicator .progress-bar{background:var(--blue-light);}
+
+.step-hint{
+  position:fixed;left:88px;bottom:36px;z-index:60;
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;
+  color:var(--muted);text-transform:uppercase;
+  transition:opacity .45s var(--ease),color .45s var(--ease);
+  pointer-events:none;
+}
+body.on-dark .step-hint{color:rgba(255,255,255,.35);}
+.step-hint svg{width:12px;height:12px;}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast{
+  position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(24px);z-index:2000;
+  display:inline-flex;align-items:center;gap:10px;padding:14px 24px;
+  background:var(--text);color:#fff;font-size:13.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .35s var(--ease),transform .35s var(--ease);
+  box-shadow:0 14px 40px rgba(0,0,0,.22);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast .toast-dot{width:7px;height:7px;background:var(--blue-light);flex:none;animation:pulse 1.4s var(--ease) infinite;}
+
+/* ============================================================
+   手机竖屏旋转提示
+   ============================================================ */
+.rotate-tip{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg-dark);color:#fff;
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:0 40px;text-align:center;
+}
+.rotate-tip .tip-inner{position:relative;max-width:340px;}
+.rotate-tip .phone-icon{
+  width:96px;height:170px;
+  margin:0 auto 36px;
+  border:3px solid rgba(255,255,255,.85);
+  /* 矩形手机 */
+  border-radius:2px;
+  position:relative;
+  animation:phoneRotate 3s ease-in-out infinite;
+  transform-origin:center center;
+  box-shadow:0 0 0 8px rgba(91,158,255,.12);
+}
+.rotate-tip .phone-icon::before{
+  content:"";position:absolute;
+  left:50%;top:8px;transform:translateX(-50%);
+  width:30px;height:3px;
+  background:rgba(255,255,255,.6);
+}
+.rotate-tip .phone-icon::after{
+  content:"";position:absolute;
+  left:50%;bottom:6px;transform:translateX(-50%);
+  width:14px;height:14px;
+  border:2px solid rgba(255,255,255,.6);
+}
+@keyframes phoneRotate{
+  0%,20%{transform:rotate(0deg);}
+  50%,70%{transform:rotate(-90deg);}
+  100%{transform:rotate(0deg);}
+}
+.rotate-tip h3{font-size:22px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px;color:#fff;}
+.rotate-tip p{font-size:14px;line-height:1.7;color:rgba(255,255,255,.55);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;}
+.rotate-tip .tip-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:360px;height:360px;background:radial-gradient(circle,rgba(55,120,229,.25),transparent 65%);filter:blur(60px);pointer-events:none;z-index:-1;animation:breathe 6s ease-in-out infinite;}
+
+@media (max-width:820px) and (orientation:portrait){
+  .rotate-tip{display:flex;}
+  .nav,.main-swiper,.arrow-group,.page-indicator,.step-hint,.toast{display:none !important;}
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width:1024px){
+  :root{--nav-h:64px;}
+  .nav{padding:0 20px;}
+  .nav-logo{padding:0 12px 0 20px;margin-left:-20px;}
+  .nav-logo img{height:34px;}
+  .arrow-group.left{left:12px;}
+  .arrow-group.right{right:12px;}
+  .arrow-btn{width:42px;height:42px;}
+  .arrow-btn svg{width:17px;height:17px;}
+  .pad{padding:calc(var(--nav-h) + 20px) 70px 28px;}
+  .page-mark{right:70px;}
+  .page-indicator{right:70px;}
+  .step-hint{left:70px;}
+  .scene-layout,.idea-grid,.recruit-grid{grid-template-columns:1fr;gap:20px;overflow:auto;}
+  .roles-grid{grid-template-columns:1fr;}
+  .script-lines{padding-left:16px;}
+  .story-rail{grid-template-columns:repeat(3,1fr);gap:12px;}
+  .threads{grid-template-columns:1fr;}
+}
+@media (max-width:680px){
+  .pad{padding:calc(var(--nav-h) + 14px) 56px 20px;}
+  .page-mark{right:56px;top:calc(var(--nav-h) + 12px);}
+  .page-indicator{right:56px;bottom:20px;}
+  .step-hint{left:56px;bottom:20px;font-size:9.5px;}
+  .cover-title{font-size:clamp(32px,10vw,52px);}
+  .story-rail{grid-template-columns:1fr 1fr;}
+  .end-title{font-size:24px;}
+}
+</style>
+</head>
+<body>
+
+<div class="rotate-tip">
+  <div class="tip-inner">
+    <div class="tip-glow"></div>
+    <div class="phone-icon"></div>
+    <h3>请旋转屏幕</h3>
+    <p>Rotate your device</p>
+  </div>
+</div>
+
+<header class="nav">
+  <a class="nav-logo" href="https://stellarsage2023.github.io/st/" target="_blank" rel="noopener">
+    <span class="nav-logo-line"></span>
+    <img src="https://user-assets.sxlcdn.com/images/1138507/Fl8euAZgWWS1PH92jqEcts2zgcns.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png" alt="星宸学社">
+  </a>
+  <a class="nav-back" href="https://stellarsage2023.github.io/st/" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <span>返回星宸学社</span>
+  </a>
+</header>
+
+<div class="arrow-group left">
+  <button class="arrow-btn up" id="leftUp" aria-label="上一步" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+  <button class="arrow-btn down" id="leftDown" aria-label="下一步" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+</div>
+
+<div class="arrow-group right">
+  <button class="arrow-btn up" id="rightUp" aria-label="上一步" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+  <button class="arrow-btn down" id="rightDown" aria-label="下一步" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+</div>
+
+<div class="swiper main-swiper" id="mainSwiper">
+  <div class="swiper-wrapper">
+
+    <!-- 01 封面 -->
+    <div class="swiper-slide" data-dark="1">
+      <div class="slide slide-cover">
+        <div class="cover-bg"><div class="glow g1"></div><div class="glow g2"></div><div class="grid"></div></div>
+        <span class="page-mark"><b>01</b> / 12</span>
+        <div class="cover-content">
+          <span class="cover-label" data-step="1">建宸高级中学 × 星宸学社</span>
+          <h1 class="cover-title">
+            <span class="word" data-step="1">青春</span><span class="word" data-step="1"><em>不偏航</em></span>
+          </h1>
+          <p class="cover-sub" data-step="1">防早恋 · 防霸凌 · 校园安全教育微电影</p>
+          <p class="cover-sub-en" data-step="1">剧本汇报</p>
+          <div class="cover-meta" data-step="1">
+            <div class="cover-meta-item"><b>6<em>min</em></b><span>片长</span></div>
+            <div class="cover-meta-item"><b>5<em>幕</em></b><span>结构</span></div>
+            <div class="cover-meta-item"><b>6<em>人</em></b><span>主要角色</span></div>
+            <div class="cover-meta-item"><b>16:9</b><span>横版</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 剧情线 -->
+    <div class="swiper-slide">
+      <div class="slide pad">
+        <span class="page-mark"><b>02</b> / 12</span>
+        <header class="page-header" data-step="1">
+          <div><div class="page-eyebrow">剧情线</div><h2>先看整体故事走向</h2></div>
+          <span class="en">Story Arc</span>
+        </header>
+        <div class="line-flow">
+          <div class="line-intro" data-step="1">
+            <p>一个高中班级，一节语文课，一次表白，一场霸凌，和一个被阻止的结局。<strong>五幕，五段，各自有明确的功能。</strong></p>
+          </div>
+          <div class="story-rail">
+            <div class="rail-node" data-step="2"><div class="rail-dot">01</div><div class="rail-card"><h4>语文课 · <em>预防</em></h4><p>龙老师讲《百合花》，说真正的好感是尊重、不打扰。课上也讲：遇到欺负，第一时间告诉老师。</p><span class="mini-tag">预防针</span></div></div>
+            <div class="rail-node" data-step="2"><div class="rail-dot">02</div><div class="rail-card"><h4>课间表白 · <em>埋雷</em></h4><p>A 表白被拒。B 的视线落在 C 身上。A 笑容僵住，恨意埋下。</p><span class="mini-tag">反面</span></div></div>
+            <div class="rail-node" data-step="2"><div class="rail-dot">03</div><div class="rail-card"><h4>放学走廊 · <em>示范</em></h4><p>C 用课堂上学到的《百合花》婉拒 B。不说教，有温度。</p><span class="mini-tag">正确</span></div></div>
+            <div class="rail-node" data-step="2"><div class="rail-dot">04</div><div class="rail-card"><h4>厕所霸凌 · <em>爆发</em></h4><p>C 被 A 带小跟班堵住。安全拍摄，全程借位，鼓点卡点。</p><span class="mini-tag">反面</span></div></div>
+            <div class="rail-node" data-step="2"><div class="rail-dot">05</div><div class="rail-card"><h4>告师 · <em>落点</em></h4><p>B 没硬拼，跑去告诉老师。老师制止，A 被处分。结尾黑屏留白。</p><span class="mini-tag">正确</span></div></div>
+          </div>
+          <div class="threads">
+            <div class="thread" data-step="3"><div class="k">主线 · 早恋</div><h5>A 表白 → C 示范</h5><p>错误处理与正确处理形成对照：A 越界伤人，C 克制清醒。</p></div>
+            <div class="thread" data-step="3"><div class="k">主线 · 霸凌</div><h5>被堵 → 被看见 → 被制止</h5><p>从受害到求助到落点，完整展示霸凌的因果链。</p></div>
+            <div class="thread" data-step="3"><div class="k">主线 · 课堂</div><h5>《百合花》贯穿全片</h5><p>课堂上讲的每一句，都在后面的剧情里被回应。</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 角色 -->
+    <div class="swiper-slide">
+      <div class="slide pad">
+        <span class="page-mark"><b>03</b> / 12</span>
+        <header class="page-header" data-step="1">
+          <div><div class="page-eyebrow">角色</div><h2>谁在演什么</h2></div>
+          <span class="en">Characters</span>
+        </header>
+        <div class="roles-grid">
+          <div class="role-card" data-step="1"><span class="role-id"><b>A</b> 女主一</span><h3>大姐头 · 反面主角</h3><p class="role-desc">有气场，说话冲，先拽后怂。暗恋 B 被拒后迁怒 C，主导厕所霸凌，最终被学校处分。念检讨时还会掏小抄。</p><p class="role-rel"><strong>关键戏：</strong>表白、变脸、霸凌、检讨、走廊黑屏</p></div>
+          <div class="role-card" data-step="1"><span class="role-id"><b>B</b> 男主</span><h3>学霸 · 正面主角</h3><p class="role-desc">温柔客气，遇事冷静。被 A 表白，向 C 表白被婉拒，目睹霸凌后跑去告诉老师——全片"正确做法"的承载者。</p><p class="role-rel"><strong>关键戏：</strong>被表白、婉拒表白、走廊告白、告老师</p></div>
+          <div class="role-card" data-step="1"><span class="role-id"><b>C</b> 女主二</span><h3>清醒者 · 受害主角</h3><p class="role-desc">低调、自律、不卑不亢。用课堂上学的《百合花》婉拒 B，后被 A 霸凌。全程不露正脸，只出声音和背影。</p><p class="role-rel"><strong>关键戏：</strong>走廊婉拒、被霸凌（借位）</p></div>
+          <div class="role-card" data-step="2"><span class="role-id"><b>龙老师</b> 语文老师</span><h3>班主任 · 讲台上的人</h3><p class="role-desc">严肃中带幽默，有威信。课上讲《百合花》做预防教育，课后制止霸凌，检讨环节还得哭笑不得地批错别字。</p><p class="role-rel"><strong>关键戏：</strong>讲课、制止霸凌、批改检讨</p></div>
+          <div class="role-card" data-step="2"><span class="role-id">小跟班 1 / 2</span><h3>助威者 · 反派帮凶</h3><p class="role-desc">有偷感、爱跟风。一个锁门，一个端水堵门。霸凌现场她们是把风的和动手的。</p><p class="role-rel"><strong>关键戏：</strong>厕所霸凌全程</p></div>
+          <div class="role-card" data-step="2"><span class="role-id">同学甲乙丙</span><h3>喜剧三人组 · 笑点担当</h3><p class="role-desc">甲打瞌睡喊"到"答"有车有房"；乙开场追试卷假摔；丙传纸条被念"中午食堂吃啥"。全片三个笑点。</p><p class="role-rel"><strong>关键戏：</strong>第一幕喜剧段落</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 第一幕 -->
+    <div class="swiper-slide">
+      <div class="slide pad scene-slide">
+        <span class="page-mark"><b>04</b> / 12</span>
+        <header class="page-header" data-step="1">
+          <div><div class="page-eyebrow">第一幕 · 镜 01–19</div><h2>语文课</h2></div>
+          <span class="en">Act One</span>
+        </header>
+        <div class="scene-layout">
+          <div class="scene-info" data-step="1">
+            <div class="scene-act-num">01</div>
+            <h3 class="scene-title">语文课 · 预防教育</h3>
+            <div class="scene-meta"><span><i></i>日 · 内</span><span><i></i>教室</span><span><i></i>喜剧 + 预防</span></div>
+            <p class="scene-desc">开场三分钟，先用两个喜剧点把观众拉进来——同学甲打瞌睡被粉笔砸醒喊"到"，同学乙追被风吹散的试卷滑倒。然后进入正题：<strong>龙老师讲《百合花》</strong>。这节课讲的每一句话，都会在后面被剧情回应。课间还有第三个笑点：同学丙传纸条被念"中午食堂吃啥"。最后，A 在窗口偷看 B——恨意的种子从这里埋下。</p>
+          </div>
+          <div class="script-lines">
+            <div class="script-line narration" data-step="2"><div class="what">粉笔头正中同学甲的脑门。同学甲惊醒，猛地站起来。</div></div>
+            <div class="script-line" data-step="2"><span class="who"><i></i>同学甲</span><div class="what">"到！"</div><div class="stage">全班哄堂大笑。</div></div>
+            <div class="script-line" data-step="3"><span class="who"><i></i>龙老师</span><div class="what">"坐。梦里讲到哪了？"</div></div>
+            <div class="script-line" data-step="3"><span class="who"><i></i>同学甲</span><div class="what">"报告老师……梦里您刚说要默写。"</div></div>
+            <div class="script-line" data-step="4"><span class="who"><i></i>龙老师</span><div class="what">"《百合花》里，通讯员和新媳妇从头到尾没说过一句喜欢，可那床百合花被子，比任何表白都重。真正的好感，是尊重对方、不打扰对方、盼着对方好——不是急着说出口，是把它放得干干净净，变成自己向上的劲。记住了吗？"</div><div class="stage">讲这段时语速放慢，每句之间停半秒。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 第二幕 -->
+    <div class="swiper-slide">
+      <div class="slide pad scene-slide">
+        <span class="page-mark"><b>05</b> / 12</span>
+        <header class="page-header" data-step="1">
+          <div><div class="page-eyebrow">第二幕 · 镜 20–26</div><h2>课间表白</h2></div>
+          <span class="en">Act Two</span>
+        </header>
+        <div class="scene-layout">
+          <div class="scene-info" data-step="1">
+            <div class="scene-act-num">02</div>
+            <h3 class="scene-title">课间表白 · 反面示范</h3>
+            <div class="scene-meta"><span><i></i>日 · 内</span><span><i></i>教室</span><span><i></i>埋雷</span></div>
+            <p class="scene-desc">小跟班推了 A 一把。A 走到 B 桌前表白，被温柔拒绝。B 说"我已经有喜欢的人了"时，视线飘向门口——<strong>C 正抱着作业本站在那里。</strong>A 顺着看过去，笑容僵住。这是全片的转折点：<strong>B 的一个眼神，让 A 把所有恨意都放到了 C 身上。</strong>上课铃响，A 转身离开，手在桌面下攥成拳。</p>
+          </div>
+          <div class="script-lines">
+            <div class="script-line" data-step="2"><span class="who"><i></i>A</span><div class="what">"我喜欢你很久了，做我男朋友呗。"</div><div class="stage">故作轻松，手在身前绞手指，声音微微发抖。</div></div>
+            <div class="script-line" data-step="2"><span class="who"><i></i>B</span><div class="what">"谢谢你欣赏我，但是不好意思啊，我已经有喜欢的人了。"</div><div class="stage">先微笑再轻轻摇头。说"有喜欢的人"时，眼神自然飘向门口。</div></div>
+            <div class="script-line narration" data-step="3"><div class="what">A 顺着 B 的视线看过去。C 正抱着作业本站在办公室门口。A 的笑容僵住，眼神从不服气变成恨意。</div></div>
+            <div class="script-line narration" data-step="3"><div class="what">上课铃响。A 转身走回座位，坐下时重重落座，手在桌面下攥成拳。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 第三幕 -->
+    <div class="swiper-slide">
+      <div class="slide pad scene-slide">
+        <span class="page-mark"><b>06</b> / 12</span>
+        <header class="page-header" data-step="1">
+          <div><div class="page-eyebrow">第三幕 · 镜 27–31</div><h2>放学走廊</h2></div>
+          <span class="en">Act Three</span>
+        </header>
+        <div class="scene-layout">
+          <div class="scene-info" data-step="1">
+            <div class="scene-act-num">03</div>
+            <h3 class="scene-title">放学走廊 · 正确示范</h3>
+            <div class="scene-meta"><span><i></i>日 · 外</span><span><i></i>走廊</span><span><i></i>夕阳侧光</span></div>
+            <p class="scene-desc">全片最暖的一场戏。B 和 C 并肩走出教室，边走边对答案。题目讲完，安静两秒，B 鼓起勇气开口——却被 C 用语文课上的《百合花》温柔接住。<strong>不说教，不冷脸，用对方能接受的方式，说一件正确的事。</strong>这段戏用下午四五点的夕阳侧光，色调温和，是整部片子的"正确答案"。</p>
+          </div>
+          <div class="script-lines">
+            <div class="script-line" data-step="2"><span class="who"><i></i>B</span><div class="what">"那个……其实……"</div><div class="stage">脚步慢下来，手插兜又拿出来，低头看鞋。</div></div>
+            <div class="script-line" data-step="2"><span class="who"><i></i>C</span><div class="what">"你是不是想说，你喜欢我？"</div><div class="stage">停下脚步，歪头笑一下。不是调侃，是"我都知道，没关系"。</div></div>
+            <div class="script-line" data-step="3"><span class="who"><i></i>C</span><div class="what">"龙老师今天刚讲的《百合花》，你听懂了吗？"</div></div>
+            <div class="script-line" data-step="3"><span class="who"><i></i>B</span><div class="what">"听懂了。"</div></div>
+            <div class="script-line" data-step="4"><span class="who"><i></i>C</span><div class="what">"那我们就先各自站好。先把这次月考考好了，行不行？以后有的是时间。"</div><div class="stage">把书包往肩上一甩，动作利落。</div></div>
+            <div class="script-line" data-step="4"><span class="who"><i></i>B</span><div class="what">"……行。"</div><div class="stage">抬头，释然一笑。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 07 第四幕 -->
+    <div class="swiper-slide" data-dark="1">
+      <div class="slide pad scene-slide dark on-dark-grid">
+        <span class="page-mark"><b>07</b> / 12</span>
+        <header class="page-header" data-step="1">
+          <div><div class="page-eyebrow">第四幕 · 镜 32–40</div><h2>厕所霸凌</h2></div>
+          <span class="en">Act Four</span>
+        </header>
+        <div class="scene-layout">
+          <div class="scene-info" data-step="1">
+            <div class="scene-act-num">04</div>
+            <h3 class="scene-title">厕所霸凌 · 反面案例</h3>
+            <div class="scene-meta"><span><i></i>日 · 内</span><span><i></i>女厕所</span><span><i></i>冷色 · 手持</span></div>
+            <p class="scene-desc">C 独自走进女厕所。角落里，A 带着两个小跟班在等她。<strong>锁门、堵门、抓衣领、揪头发、泼水、扇巴掌</strong>——整个段落没有一句台词，全靠动作和卡点。所有动作全部借位完成：抓衣领只抓布料，踢腿只拍轨迹，扇巴掌离脸 5 厘米，泼水泼向镜头。<strong>拍得安全，但成片的效果是完整的冲击力。</strong></p>
+          </div>
+          <div class="script-lines">
+            <div class="script-line" data-step="2"><span class="who"><i></i>C</span><div class="what">"你们要干嘛？！"</div><div class="stage">洗手时听到门响，转头。声音发抖，但强装镇定。</div></div>
+            <div class="script-line" data-step="2"><span class="who"><i></i>A</span><div class="what">"上。"</div><div class="stage">一个字。抬下巴示意小跟班，声音低沉，不喊。</div></div>
+            <div class="script-line narration" data-step="3"><div class="what">小跟班1 反手锁门，"咔嗒"一声。小跟班2 叉腰堵在门口。A 缓缓走近 C，不说话，抬下巴。</div></div>
+            <div class="script-line narration" data-step="3"><div class="what">抓衣领、推搡、抬脚、揪头发、泼水、扇巴掌——全程借位，镜头只拍施暴方。鼓点骤停在最后一个巴掌。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 08 第五幕 -->
+    <div class="swiper-slide">
+      <div class="slide pad scene-slide">
+        <span class="page-mark"><b>08</b> / 12</span>
+        <header class="page-header" data-step="1">
+          <div><div class="page-eyebrow">第五幕 · 镜 41–55</div><h2>告师 · 处分 · 升华</h2></div>
+          <span class="en">Act Five</span>
+        </header>
+        <div class="scene-layout">
+          <div class="scene-info" data-step="1">
+            <div class="scene-act-num">05</div>
+            <h3 class="scene-title">告师 · 处分 · 黑屏</h3>
+            <div class="scene-meta"><span><i></i>日 · 内/外</span><span><i></i>多场景</span><span><i></i>落点</span></div>
+            <p class="scene-desc">B 路过厕所，从门缝里看见了一切。他没有冲进去硬拼——<strong>转身狂奔去找龙老师。</strong>这就是课堂上讲的"第一时间告诉老师"。龙老师赶到，制止霸凌，把三人带去办公室。<strong>班长在班会上宣布开除。</strong>本以为故事到此为止——处分后的 A 走在走廊，被人无意撞到，慢慢抬头，眼神再次凶狠。</p>
+          </div>
+          <div class="script-lines">
+            <div class="script-line" data-step="2"><span class="who"><i></i>B</span><div class="what">"报告！龙老师，一楼女厕打起来了，C 被打了！"</div><div class="stage">撑住办公室门框，弯腰喘气，断断续续。</div></div>
+            <div class="script-line" data-step="2"><span class="who"><i></i>龙老师</span><div class="what">"什么？！走！"</div><div class="stage">从椅子上弹起，椅子刮地，抓教案就往外走。</div></div>
+            <div class="script-line" data-step="3"><span class="who"><i></i>龙老师</span><div class="what">"你们三个，跟我来办公室。"</div><div class="stage">先蹲下看 C，再缓缓抬头看三人。一个字一个字说清。</div></div>
+            <div class="script-line" data-step="3"><span class="who"><i></i>A</span><div class="what">"……至此，我深刻认识到自己的错误，向 C 同学道歉。对不起。"</div><div class="stage">照稿念，"对不起"几乎听不见。念到一半卡壳，掏小抄。</div></div>
+            <div class="script-line" data-step="4"><span class="who"><i></i>班长</span><div class="what">"由于 A、小跟班1、小跟班2 三位同学屡教不改……学校给予开除处理。大家引以为戒。"</div></div>
+            <div class="script-line" data-step="4"><span class="who"><i></i>A</span><div class="what">"你要干嘛？！"</div><div class="stage">被撞后慢慢抬头，眼神变狠，攥拳。说完直接黑屏。</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 升华字幕 -->
+    <div class="swiper-slide" data-dark="1">
+      <div class="slide slide-subtitle">
+        <span class="page-mark"><b>09</b> / 12</span>
+        <div class="subtitle-inner">
+          <div class="subtitle-label" data-step="1">黑场字幕</div>
+          <p class="subtitle-line" data-step="1">高中时代的心动，很正常。</p>
+          <p class="subtitle-line" data-step="2">但那不是爱情，是你第一次学着理解一个人。<em>真正的喜欢，是把成绩一起往上拉，不是把彼此往下拽。</em></p>
+          <p class="subtitle-line" data-step="3">看见有人被围在角落，去找老师，让这件事被看见，就是最勇敢的选择。</p>
+          <p class="subtitle-line" data-step="4">被围住的人请记住：<em>错的是动手的人，不是你。</em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 创作构思 -->
+    <div class="swiper-slide">
+      <div class="slide pad">
+        <span class="page-mark"><b>10</b> / 12</span>
+        <header class="page-header" data-step="1">
+          <div><div class="page-eyebrow">创作构思</div><h2>我们为什么这样写</h2></div>
+          <span class="en">Approach</span>
+        </header>
+        <div class="idea-grid">
+          <div class="idea-card" data-step="1"><div class="idx">01 / 伏笔</div><h4>用课堂做全片的预防针</h4><p>《百合花》不是随便选的课文——它讲的就是"不说出口的喜欢"。<strong>课堂讲的每一句，后面都在剧情里被回应。</strong></p></div>
+          <div class="idea-card" data-step="1"><div class="idx">02 / 对照</div><h4>把"正确"和"错误"都拍出来</h4><p>C 用课堂上学到的道理婉拒 B——<strong>正确处理的示范</strong>。A 表白被拒后迁怒——<strong>错误处理的示范</strong>。对比鲜明。</p></div>
+          <div class="idea-card" data-step="2"><div class="idx">03 / 落点</div><h4>B 不硬拼，去告诉老师</h4><p>很多校园片拍到霸凌现场就停了，但<strong>"看到之后该怎么做"才是最有价值的部分。</strong>B 的行为直接回应课堂台词。</p></div>
+          <div class="idea-card" data-step="2"><div class="idx">04 / 悬念</div><h4>黑屏前的最后一句</h4><p>A 被处分后还凶狠——<strong>说明种子没消失。</strong>黑屏留白，让观众自己往下想，比说教更有力量。</p></div>
+          <div class="idea-card" data-step="3"><div class="idx">05 / 安全</div><h4>霸凌戏全程借位</h4><p>抓衣领只抓布料、踢腿只拍轨迹、扇巴掌离脸 5cm、泼水泼向镜头。<strong>既拍出冲击力，也保护演员。</strong></p></div>
+          <div class="idea-card" data-step="3"><div class="idx">06 / 闭环</div><h4>五幕是一个整体</h4><p>预防 → 埋雷 → 示范 → 爆发 → 落点。<strong>每一幕都有明确功能，没有一秒钟是浪费的。</strong></p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 招募 -->
+    <div class="swiper-slide">
+      <div class="slide slide-recruit">
+        <div class="recruit-bg">
+          <div class="orb o1"></div><div class="orb o2"></div><div class="grid"></div>
+          <div class="particle p1"></div><div class="particle p2"></div>
+          <div class="particle p3"></div><div class="particle p4"></div>
+        </div>
+        <div class="pad recruit-inner">
+          <span class="page-mark"><b>11</b> / 12</span>
+          <header class="page-header" data-step="1">
+            <div><div class="page-eyebrow">招募</div><h2>如果剧本能拍，我们需要人</h2></div>
+            <span class="en">Recruit</span>
+          </header>
+          <div class="recruit-grid">
+            <div class="recruit-left" data-step="1">
+              <h3>拍完这部片子，<br><em>需要一群人。</em></h3>
+              <p><strong>群演：</strong>不用表演经验，不用背台词。你只需要愿意在镜头前做自己——上课、笑场、听处分。</p>
+              <p><strong>社团：</strong>摄影、剪辑、编剧、设计、网页、游戏。<strong>或者你什么都不会，但愿意学。</strong></p>
+              <p>这是一次真实的拍摄经历。你会出现在一部完整的校园微电影里，被全校看见。</p>
+              <div class="recruit-cta">
+                <button class="btn-block" type="button" data-toast>
+                  <span>报名群演</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="role-stack">
+              <div class="role-row" data-step="2">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                <div class="info"><h4>全班群演</h4><p>上课、笑场、听处分。穿全套校服，听指挥即可。</p></div>
+                <span class="need">多人</span>
+              </div>
+              <div class="role-row" data-step="3">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+                <div class="info"><h4>同学甲 · 喜剧担当</h4><p>打瞌睡、喊"到"、答"有车有房"。全场笑点。</p></div>
+                <span class="need">1 人</span>
+              </div>
+              <div class="role-row" data-step="4">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+                <div class="info"><h4>同学乙 · 追试卷</h4><p>跑得快，会假摔（要轻）。开场第一个笑点。</p></div>
+                <span class="need">1 人</span>
+              </div>
+              <div class="role-row" data-step="5">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+                <div class="info"><h4>同学丙 · 传纸条</h4><p>皮、怂。被抓瞬间表情凝固。第二大笑点。</p></div>
+                <span class="need">1 人</span>
+              </div>
+              <div class="role-row" data-step="6">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                <div class="info"><h4>路人</h4><p>走廊撞到 A，说"不好意思"。一句台词，一个动作。</p></div>
+                <span class="need">1 人</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 结尾 · 静态页（无 data-step，直接全部显示） -->
+    <div class="swiper-slide" data-dark="1" data-static="1">
+      <div class="slide slide-end">
+        <div class="end-bg">
+          <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+          <div class="grid"></div>
+          <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+          <div class="spark s1"></div><div class="spark s2"></div>
+          <div class="spark s3"></div><div class="spark s4"></div>
+          <div class="spark s5"></div><div class="spark s6"></div>
+        </div>
+        <span class="page-mark"><b>12</b> / 12</span>
+        <div class="end-content">
+          <div class="end-label">青春不偏航 · 星宸学社</div>
+          <h2 class="end-title">
+            <span class="word">和同频的人，</span><br>
+            <span class="word">做<em>有挑战的事</em>。</span>
+          </h2>
+          <p class="end-sub">如果你愿意参与拍摄、加入社团，或者只是想看看我们下一部片子会拍什么——欢迎联系我们。</p>
+          <div class="end-cta">
+            <a class="btn-block" href="https://stellarsage2023.github.io/st/" target="_blank" rel="noopener">
+              <span>星宸学社官网</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <button class="btn-block secondary" type="button" data-toast>
+              <span>联系我们</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="page-indicator">
+  <span class="current" id="pageCurrent">01</span>
+  <span>/ 12</span>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+
+<div class="step-hint" id="stepHint">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+  <span id="stepHintText">按 ↓ 继续</span>
+</div>
+
+<div class="toast" id="toast"><span class="toast-dot"></span><span id="toastText">功能正在测试，暂不开放</span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+const TOTAL = 12;
+
+let currentStep = 1;
+let maxStep = 1;
+
+/* ============================================================
+   步进
+   ============================================================ */
+function collectSteps(index){
+  const slide = mainSwiper.slides[index];
+  if (!slide) return [];
+  const list = slide.querySelectorAll('[data-step]');
+  maxStep = 1;
+  list.forEach(function(el){
+    const s = parseInt(el.dataset.step, 10) || 1;
+    if (s > maxStep) maxStep = s;
+  });
+  return list;
+}
+
+function applySteps(index, step){
+  const slide = mainSwiper.slides[index];
+  if (!slide) return;
+  const stepEls = slide.querySelectorAll('[data-step]');
+  const grouped = {};
+  stepEls.forEach(function(el){
+    const s = parseInt(el.dataset.step, 10) || 1;
+    if (!grouped[s]) grouped[s] = [];
+    grouped[s].push(el);
+  });
+  stepEls.forEach(function(el){
+    const s = parseInt(el.dataset.step, 10) || 1;
+    if (s <= step) {
+      if (s === step) {
+        const group = grouped[s] || [];
+        const idx = group.indexOf(el);
+        el.style.transitionDelay = (Math.max(idx, 0) * 0.09) + 's';
+      } else {
+        el.style.transitionDelay = '0s';
+      }
+      el.classList.add('revealed');
+    } else {
+      el.classList.remove('revealed');
+      el.style.transitionDelay = '0s';
+    }
+  });
+  updateStepHint();
+}
+
+function initPage(index){
+  const slide = mainSwiper.slides[index];
+  if (!slide) return;
+  /* 静态页（结尾）: 全部显示，不参与步进 */
+  if (slide.dataset.static === '1') {
+    maxStep = 1;
+    currentStep = 1;
+    slide.querySelectorAll('[data-step]').forEach(function(el){
+      el.classList.add('revealed');
+      el.style.transitionDelay = '0s';
+    });
+    updateStepHint(true);
+    return;
+  }
+  currentStep = 1;
+  collectSteps(index);
+  applySteps(index, currentStep);
+}
+
+function stepNext(){
+  if (currentStep >= maxStep) return false;
+  currentStep++;
+  applySteps(mainSwiper.activeIndex, currentStep);
+  return true;
+}
+function stepPrev(){
+  if (currentStep <= 1) return false;
+  currentStep--;
+  applySteps(mainSwiper.activeIndex, currentStep);
+  return true;
+}
+function updateStepHint(isStatic){
+  const txt = document.getElementById('stepHintText');
+  const hint = document.getElementById('stepHint');
+  if (!txt) return;
+  if (isStatic) {
+    txt.textContent = '结束页 · 直接离开';
+    hint.style.opacity = '0.35';
+    return;
+  }
+  if (currentStep >= maxStep) {
+    txt.textContent = '继续 ↓ 翻到下一页';
+    hint.style.opacity = '0.35';
+  } else {
+    txt.textContent = '按 ↓ 继续（' + currentStep + ' / ' + maxStep + '）';
+    hint.style.opacity = '1';
+  }
+}
+
+/* ============================================================
+   Swiper
+   ============================================================ */
+const mainSwiper = new Swiper('#mainSwiper', {
+  direction: 'vertical',
+  speed: 900,
+  mousewheel: false,
+  keyboard: false,
+  resistanceRatio: 0.65,
+  on: {
+    slideChangeTransitionStart: function(sw){
+      const el = sw.slides[sw.activeIndex];
+      document.body.classList.toggle('on-dark', !!(el && el.dataset.dark === '1'));
+      updateArrowState();
+      initPage(sw.activeIndex);
+    },
+    slideChange: function(sw){
+      const i = sw.activeIndex;
+      document.getElementById('pageCurrent').textContent = ('0'+(i+1)).slice(-2);
+      document.getElementById('progressBar').style.width = ((i+1)/TOTAL*100)+'%';
+    }
+  }
+});
+
+function goNext(){
+  if (stepNext()) return;
+  mainSwiper.slideNext();
+}
+function goPrev(){
+  if (stepPrev()) return;
+  mainSwiper.slidePrev();
+}
+function updateArrowState(){
+  const isStart = mainSwiper.isBeginning && currentStep <= 1;
+  const isEnd = mainSwiper.isEnd && currentStep >= maxStep;
+  document.getElementById('leftUp').disabled = isStart;
+  document.getElementById('rightUp').disabled = isStart;
+  document.getElementById('leftDown').disabled = isEnd;
+  document.getElementById('rightDown').disabled = isEnd;
+}
+
+['leftUp','rightUp'].forEach(function(id){
+  document.getElementById(id).addEventListener('click', function(){ goPrev(); });
+});
+['leftDown','rightDown'].forEach(function(id){
+  document.getElementById(id).addEventListener('click', function(){ goNext(); });
+});
+
+document.addEventListener('keydown', function(e){
+  const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+  if (tag === 'input' || tag === 'textarea') return;
+  if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+    e.preventDefault(); goNext();
+  } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+    e.preventDefault(); goPrev();
+  }
+});
+
+let wheelLocked = false;
+let wheelTimer = null;
+document.addEventListener('wheel', function(e){
+  if (!e.target.closest || !e.target.closest('.main-swiper')) return;
+  e.preventDefault();
+  if (wheelLocked) return;
+  wheelLocked = true;
+  if (e.deltaY > 0) goNext();
+  else if (e.deltaY < 0) goPrev();
+  clearTimeout(wheelTimer);
+  wheelTimer = setTimeout(function(){ wheelLocked = false; updateArrowState(); }, 700);
+}, { passive: false, capture: true });
+
+function bootstrap(){
+  const first = mainSwiper.slides[0];
+  document.body.classList.toggle('on-dark', !!(first && first.dataset.dark === '1'));
+  initPage(mainSwiper.activeIndex);
+  updateArrowState();
+  setTimeout(function(){
+    if (currentStep >= 1) applySteps(mainSwiper.activeIndex, currentStep);
+  }, 100);
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootstrap);
+else bootstrap();
+
+/* 按钮滑动 */
+function setupSlideButton(btn){
+  let t = null;
+  function on(){ if(t){clearTimeout(t);t=null;} btn.classList.remove('slide-out'); void btn.offsetWidth; btn.classList.add('slide-in'); }
+  function off(){ btn.classList.remove('slide-in'); btn.classList.add('slide-out'); t=setTimeout(function(){ btn.classList.remove('slide-out'); t=null; },620); }
+  btn.addEventListener('mouseenter', on);
+  btn.addEventListener('mouseleave', off);
+  btn.addEventListener('touchstart', on, {passive:true});
+  btn.addEventListener('touchend', off, {passive:true});
+  btn.addEventListener('touchcancel', off, {passive:true});
+}
+document.querySelectorAll('.btn-block').forEach(setupSlideButton);
+
+/* Toast */
+const toastEl = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+let toastTimer = null;
+function showToast(msg){
+  toastText.textContent = msg || '功能正在测试，暂不开放';
+  toastEl.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); toastTimer = null; }, 2000);
+}
+document.addEventListener('click', function(e){
+  const target = e.target.closest('[data-toast]');
+  if (!target) return;
+  if (target.tagName === 'A'){
+    const href = target.getAttribute('href');
+    if (href && href !== '#') return;
+    e.preventDefault();
+  }
+  showToast();
+}, true);
+</script>
+</body>
+</html>
