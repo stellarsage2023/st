@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<title>线上加入 — 星宸学社 STELLARSAGE</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<style>
+/* ============================================================
+   0. 变量 & 缓动库
+   ============================================================ */
+:root{
+  --bg:#FFFFFF;--bg-soft:#F4F6FA;--text:#0A0A0A;--text-2:#4A5568;--muted:#9AA4B2;
+  --blue:#3778e5;--blue-light:#5B9EFF;--cyan:#5CE1E6;--violet:#8B5CF6;
+  --slide:#2d3748;
+  --blue-soft:rgba(55,120,229,.08);--blue-line:rgba(55,120,229,.25);
+  --border:rgba(0,0,0,.08);--border-soft:rgba(0,0,0,.04);
+  --nav-h:76px;
+  --marquee-h:64px;
+  --safe-t:env(safe-area-inset-top, 0px);
+  --safe-b:env(safe-area-inset-bottom, 0px);
+
+  --ease:cubic-bezier(.22,.8,.22,1);
+  --ease-silk:cubic-bezier(.16,1,.3,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --ease-out-quint:cubic-bezier(.22,1,.36,1);
+
+  --t-fast:.45s;
+  --t-mid:.75s;
+  --t-slow:1.05s;
+  --t-slower:1.25s;
+
+  --sans:"HarmonyOS Sans SC","PingFang SC","Source Han Sans SC","Noto Sans SC","Microsoft YaHei","Hiragino Sans GB","Heiti SC","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono","SF Mono",ui-monospace,"Cascadia Mono","Roboto Mono",Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;border-radius:0;}
+html,body{height:100%;}
+body{
+  height:100%;height:100dvh;min-height:-webkit-fill-available;
+  overflow:hidden;overscroll-behavior:none;
+  background-color:var(--bg);
+  background-image:url('https://user-assets.sxlcdn.com/images/1138507/FoJbdG1qYL9zpumk7UGh_HtSR_Pe.png?imageMogr2/strip/auto-orient/thumbnail/1920x/quality/90!/format/png');
+  background-size:cover;background-position:center;
+  background-attachment:fixed;background-repeat:no-repeat;
+  color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+ul{list-style:none;}
+h1,h2,h3,h4,p{margin:0;}
+button{font-family:inherit;border:0;background:none;color:inherit;cursor:pointer;}
+::selection{background:var(--blue);color:#fff;}
+::-webkit-scrollbar{display:none;}
+body.no-scroll{overflow:hidden;}
+
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.72) 0%,
+    rgba(255,255,255,.86) 45%,
+    rgba(255,255,255,.94) 100%
+  );
+}
+
+/* ============================================================
+   1. 导航
+   ============================================================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  height:calc(var(--nav-h) + var(--safe-t));
+  padding:var(--safe-t) clamp(16px,3.2vw,48px) 0;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+          backdrop-filter:blur(28px) saturate(180%);
+  border-bottom:1px solid var(--border-soft);
+}
+.nav-logo{
+  display:inline-flex;align-items:center;gap:16px;
+  height:var(--nav-h);margin-left:-2px;
+  transition:opacity .35s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.nav-logo:hover{opacity:.82;}
+.nav-logo-line{
+  width:2px;height:24px;
+  background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.12));
+  flex:none;
+}
+.nav-logo img{height:44px;width:auto;transition:transform .5s var(--ease-silk);}
+.nav-logo:hover img{transform:scale(1.04);}
+
+.nav-right{display:flex;align-items:center;gap:12px;height:var(--nav-h);}
+
+.nav-crumb{
+  display:inline-flex;align-items:center;gap:0;
+  font-family:var(--mono);font-size:11px;
+  letter-spacing:.24em;color:var(--muted);
+  text-transform:uppercase;
+  padding-right:8px;margin-right:4px;
+  border-right:1px solid var(--border-soft);
+  height:22px;
+}
+.nav-crumb .sep{margin:0 9px;color:var(--border);}
+.nav-crumb .cur{color:var(--text);font-weight:700;}
+
+.nav-btn{
+  position:relative;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 16px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  font-family:inherit;
+  font-size:12.5px;font-weight:600;letter-spacing:.02em;
+  color:var(--text-2);
+  overflow:hidden;isolation:isolate;
+  cursor:pointer;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+  transition:color .3s var(--ease),border-color .3s var(--ease),background .3s var(--ease);
+}
+.nav-btn::before{
+  content:"";position:absolute;inset:0;
+  background:var(--blue);
+  transform:translateX(-101%);
+  pointer-events:none;z-index:0;
+  transition:transform .5s var(--ease-silk);
+}
+.nav-btn > *{position:relative;z-index:1;}
+.nav-btn:hover{color:#fff;border-color:var(--blue);}
+.nav-btn:hover::before{transform:translateX(0);}
+.nav-btn svg{width:13px;height:13px;flex:none;transition:transform .35s var(--ease);}
+.nav-btn:hover svg{transform:translateX(2px);}
+
+.nav-btn-switch{
+  border-color:var(--blue-line);
+  background:var(--blue-soft);
+  color:var(--blue);
+}
+.nav-btn-switch:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+.nav-burger{
+  display:none;
+  width:42px;height:42px;
+  position:relative;
+  border:1px solid var(--border);
+  background:var(--bg);
+  cursor:pointer;
+  flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:5px;
+  -webkit-tap-highlight-color:transparent;
+  transition:border-color .3s var(--ease),background .3s var(--ease);
+}
+.nav-burger span{
+  display:block;
+  width:17px;height:1.5px;
+  background:var(--text);
+  transition:transform .4s var(--ease-silk),opacity .3s var(--ease),background .3s var(--ease);
+  transform-origin:center;
+}
+.nav-burger:hover{border-color:var(--blue-line);background:var(--blue-soft);}
+.nav-burger:hover span{background:var(--blue);}
+.nav-burger.is-open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.nav-burger.is-open span:nth-child(2){opacity:0;transform:scaleX(0);}
+.nav-burger.is-open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+
+/* ============================================================
+   2. 抽屉
+   ============================================================ */
+.nav-overlay{
+  position:fixed;inset:0;z-index:1100;
+  background:rgba(10,10,10,.36);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .4s var(--ease),visibility .4s var(--ease);
+}
+.nav-overlay.is-open{opacity:1;visibility:visible;pointer-events:auto;}
+
+.nav-drawer{
+  position:fixed;
+  top:0;right:0;bottom:0;
+  width:min(360px,86vw);
+  z-index:1200;
+  background:rgba(255,255,255,.98);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
+          backdrop-filter:blur(28px) saturate(180%);
+  border-left:1px solid var(--border-soft);
+  padding:calc(var(--safe-t) + 22px) 26px calc(var(--safe-b) + 26px);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform .6s var(--ease-silk);
+  box-shadow:-24px 0 60px rgba(10,10,10,.08);
+}
+.nav-drawer.is-open{transform:translateX(0);}
+
+.drawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:22px;border-bottom:1px solid var(--border-soft);margin-bottom:8px;
+}
+.drawer-brand{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:.28em;color:var(--text);text-transform:uppercase;
+}
+.drawer-brand::before{
+  content:"";width:6px;height:6px;background:var(--blue);
+  transform:rotate(45deg);flex:none;
+}
+.drawer-close{
+  width:36px;height:36px;display:grid;place-items:center;
+  border:1px solid var(--border);background:var(--bg);color:var(--text-2);
+  cursor:pointer;
+  transition:color .3s var(--ease),border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.drawer-close:hover{color:#fff;background:var(--blue);border-color:var(--blue);transform:rotate(90deg);}
+.drawer-close svg{width:14px;height:14px;}
+
+.drawer-nav{display:flex;flex-direction:column;flex:1;padding:8px 0;}
+.drawer-item{
+  position:relative;
+  display:flex;align-items:center;gap:16px;
+  padding:20px 0;
+  border-bottom:1px solid var(--border-soft);
+  color:var(--text);
+  opacity:0;transform:translateX(24px);
+  transition:opacity .55s var(--ease),transform .55s var(--ease),color .3s var(--ease),padding-left .35s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.drawer-item .num{
+  font-family:var(--mono);font-size:11px;
+  letter-spacing:.22em;color:var(--muted);
+  font-weight:400;flex:none;padding-top:3px;
+}
+.drawer-item .txt{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2;}
+.drawer-item .en{
+  display:block;font-family:var(--mono);font-size:10px;
+  letter-spacing:.28em;color:var(--muted);text-transform:uppercase;
+  font-weight:400;margin-top:5px;
+}
+.drawer-item:hover{color:var(--blue);padding-left:8px;}
+.drawer-item:hover .num{color:var(--blue);}
+.drawer-item.is-current{color:var(--blue);padding-left:8px;}
+.drawer-item.is-current .num{color:var(--blue);}
+.drawer-item.is-current::before{
+  content:"";position:absolute;left:0;top:50%;
+  width:3px;height:22px;background:var(--blue);transform:translateY(-50%);
+}
+.drawer-foot{
+  padding-top:20px;border-top:1px solid var(--border-soft);
+  font-family:var(--mono);font-size:10px;
+  letter-spacing:.2em;color:var(--muted);text-transform:uppercase;
+  opacity:0;transition:opacity .5s var(--ease);
+}
+.nav-drawer.is-open .drawer-item:nth-child(1){opacity:1;transform:translateX(0);transition-delay:.16s;}
+.nav-drawer.is-open .drawer-item:nth-child(2){opacity:1;transform:translateX(0);transition-delay:.24s;}
+.nav-drawer.is-open .drawer-item:nth-child(3){opacity:1;transform:translateX(0);transition-delay:.32s;}
+.nav-drawer.is-open .drawer-foot{opacity:1;transition-delay:.4s;}
+
+/* ============================================================
+   3. Swiper
+   ============================================================ */
+.main-swiper{width:100%;height:100%;position:relative;z-index:1;}
+.main-swiper .swiper-slide{position:relative;overflow:hidden;background:transparent;}
+.slide{width:100%;height:100%;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+
+/* ============================================================
+   4. 入场动画系统
+   ============================================================ */
+[data-anim]{
+  opacity:0;
+  filter:blur(10px);
+  will-change:opacity,transform,filter;
+  backface-visibility:hidden;
+  transition:
+    opacity var(--t-slow) var(--ease-silk),
+    transform var(--t-slower) var(--ease-spring),
+    filter var(--t-slow) var(--ease-silk);
+}
+[data-anim].anim-in{
+  opacity:1;
+  transform:translate(0) rotate(0) scale(1) perspective(1200px) rotateX(0) rotateY(0);
+  filter:blur(0);
+}
+[data-anim="rise"]{ transform: translateY(56px) scale(.96); }
+[data-anim="drop"]{ transform: translateY(-56px) scale(.96); }
+[data-anim="tilt-left"]{
+  transform: translateX(-80px) rotateY(14deg) scale(.94);
+  transform-origin: left center;
+}
+[data-anim="tilt-right"]{
+  transform: translateX(80px) rotateY(-14deg) scale(.94);
+  transform-origin: right center;
+}
+[data-anim="zoom"]{ transform: scale(.84) translateY(24px); }
+[data-anim="flip"]{
+  transform: perspective(900px) rotateX(-22deg) translateY(40px) scale(.96);
+  transform-origin: center top;
+}
+[data-anim="soft-up"]{
+  transform: translateY(30px);
+  filter: blur(4px);
+}
+[data-anim][data-anim-delay="1"]{ transition-delay:.1s; }
+[data-anim][data-anim-delay="2"]{ transition-delay:.22s; }
+[data-anim][data-anim-delay="3"]{ transition-delay:.34s; }
+[data-anim][data-anim-delay="4"]{ transition-delay:.46s; }
+[data-anim][data-anim-delay="5"]{ transition-delay:.58s; }
+[data-anim][data-anim-delay="6"]{ transition-delay:.72s; }
+[data-anim][data-anim-delay="7"]{ transition-delay:.88s; }
+
+/* 字符错峰 */
+.chars{ opacity:0; transition: opacity .4s var(--ease-silk); }
+.chars.anim-in{ opacity:1; }
+.chars .ch{
+  display: inline-block;
+  opacity: 0;
+  transform:
+    translateY(1.15em)
+    rotateZ(var(--ch-rz, 8deg))
+    scale(var(--ch-sc, .92));
+  transition:
+    opacity .7s var(--ease-silk),
+    transform 1s var(--ease-spring);
+  will-change: opacity, transform;
+}
+.chars .ch.space{ width: .3em; }
+.chars.anim-in .ch{
+  opacity: 1;
+  transform: translateY(0) rotateZ(0) scale(1);
+  transition-delay: calc(var(--ci, 0) * .052s + .12s);
+}
+
+/* 线条生长 */
+.grow-line{
+  transform: scaleX(0);
+  transform-origin: center center;
+  transition: transform 1.1s var(--ease-silk);
+  will-change: transform;
+}
+.grow-line.anim-in{
+  transform: scaleX(1);
+  transition-delay: .32s;
+}
+
+/* 跑马灯 */
+.marquee{
+  flex:none;
+  height:var(--marquee-h);
+  display:flex;align-items:center;
+  overflow:hidden;position:relative;z-index:2;
+  background:var(--bg-soft);
+  border-top:1px solid var(--border-soft);
+  border-bottom:1px solid var(--border-soft);
+  --marquee-duration:34s;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  opacity:0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--t-slow) var(--ease-silk),
+    transform var(--t-slow) var(--ease-spring);
+}
+.marquee.anim-in{
+  opacity:1;
+  transform: translateY(0);
+  transition-delay: .68s;
+}
+.marquee-track{
+  display:flex;width:max-content;
+  animation:marqueeScroll var(--marquee-duration) linear infinite;
+  will-change:transform;
+}
+.marquee:hover .marquee-track,
+.marquee:active .marquee-track{animation-play-state:paused;}
+.marquee-group{display:flex;flex:0 0 auto;align-items:center;height:100%;}
+@keyframes marqueeScroll{
+  from{transform:translate3d(0,0,0);}
+  to{transform:translate3d(-50%,0,0);}
+}
+.marquee-item{
+  display:inline-flex;align-items:center;gap:clamp(10px,1.2vw,16px);
+  padding-right:clamp(28px,3.4vw,54px);
+  white-space:nowrap;height:100%;
+  font-weight:800;font-size:clamp(13px,1.25vw,17px);
+  letter-spacing:.05em;color:var(--text);
+}
+.marquee-item .sep{
+  width:clamp(7px,.7vw,9px);height:clamp(7px,.7vw,9px);
+  flex:none;background:var(--blue);transform:rotate(45deg);
+}
+.marquee-item .en{
+  font-family:var(--mono);font-weight:400;font-size:.68em;
+  letter-spacing:.22em;color:var(--muted);text-transform:uppercase;
+}
+
+/* ============================================================
+   5. 按钮
+   ============================================================ */
+.btn-block,.btn-slide-x{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 28px;
+  background:var(--blue);color:#fff;
+  font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.02em;line-height:1;
+  border:0;cursor:pointer;overflow:hidden;white-space:nowrap;
+  transition:transform .35s var(--ease-spring),box-shadow .35s var(--ease);
+  -webkit-tap-highlight-color:transparent;user-select:none;
+  max-width:100%;
+}
+.btn-block::before,.btn-slide-x::before{
+  content:"";position:absolute;inset:0;
+  background:var(--slide);z-index:0;
+  transform:translateY(-100%);pointer-events:none;
+}
+.btn-slide-x::before{transform:translateX(-100%);}
+.btn-block > *,.btn-slide-x > *{position:relative;z-index:1;}
+.btn-block.slide-in::before{transform:translateY(0);transition:transform .55s var(--ease-silk);}
+.btn-block.slide-out::before{transform:translateY(100%);transition:transform .55s var(--ease-silk);}
+.btn-slide-x.slide-in::before{transform:translateX(0);transition:transform .55s var(--ease-silk);}
+.btn-slide-x.slide-out::before{transform:translateX(100%);transition:transform .55s var(--ease-silk);}
+.btn-block:hover,.btn-slide-x:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(55,120,229,.26);}
+.btn-block:active,.btn-slide-x:active{transform:translateY(0);box-shadow:none;}
+.btn-block svg,.btn-slide-x svg{width:15px;height:15px;flex:none;transition:transform .4s var(--ease-spring);}
+.btn-block:hover svg,.btn-slide-x:hover svg{transform:translateX(5px);}
+.btn-ghost{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:15px 26px;
+  background:var(--bg);color:var(--text);
+  font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.02em;line-height:1;
+  border:1px solid var(--border);
+  cursor:pointer;white-space:nowrap;
+  transition:border-color .35s var(--ease),color .35s var(--ease),transform .35s var(--ease-spring),box-shadow .35s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-ghost:hover{border-color:var(--blue-line);color:var(--blue);transform:translateY(-3px);box-shadow:0 12px 28px rgba(55,120,229,.12);}
+.btn-ghost svg{width:15px;height:15px;flex:none;}
+
+/* ============================================================
+   6. 内容区
+   ============================================================ */
+.slide-body{
+  flex:1;min-height:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:calc(var(--nav-h) + var(--safe-t) + 24px) clamp(24px,5vw,80px) 24px;
+  position:relative;z-index:2;
+}
+.wrap{width:100%;max-width:1240px;margin:0 auto;}
+
+/* ============================================================
+   7. 封面
+   ============================================================ */
+.cover{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  max-width:820px;margin:0 auto;width:100%;
+}
+.cover-eyebrow{
+  display:inline-flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11px;
+  letter-spacing:.34em;color:var(--blue);
+  text-transform:uppercase;
+  margin-bottom:28px;
+  padding:7px 16px;
+  border:1px solid var(--blue-line);
+  background:var(--blue-soft);
+}
+.cover-eyebrow .dot{
+  width:6px;height:6px;background:var(--blue);flex:none;
+  box-shadow:0 0 0 3px rgba(55,120,229,.2);
+  animation:coverDot 2.2s var(--ease) infinite;
+}
+@keyframes coverDot{
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(.7);opacity:.5;}
+}
+
+.cover-title{
+  font-family:var(--sans);
+  font-size:clamp(48px,8.6vw,114px);
+  font-weight:800;
+  letter-spacing:-.045em;
+  line-height:.94;
+  color:var(--text);
+  margin-bottom:24px;
+  white-space:nowrap;
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  perspective:1200px;
+}
+.cover-title .ch{color:var(--text);}
+.cover-title .ch.accent{color:var(--blue);}
+
+.cover-divider{
+  display:flex;align-items:center;gap:18px;
+  margin-bottom:26px;
+  width:min(100%,420px);
+}
+.cover-divider .grow-line{flex:1;height:1px;background:var(--border);}
+.cover-divider .zh{
+  font-size:clamp(16px,1.5vw,20px);
+  font-weight:700;letter-spacing:.34em;
+  color:var(--text);white-space:nowrap;
+  padding-left:.34em;
+}
+
+.cover-lead{
+  font-size:clamp(13.5px,1.05vw,15.5px);
+  line-height:1.9;color:var(--text-2);
+  max-width:54ch;margin-bottom:34px;
+}
+
+.cover-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+
+.cover-ornament{
+  position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;
+}
+.cover-ornament .node{
+  position:absolute;
+  width:6px;height:6px;
+  background:var(--blue);border-radius:50%;
+  opacity:0;
+  transform:translate(-50%,-50%) scale(0);
+  transition: opacity .9s var(--ease-silk), transform 1.2s var(--ease-spring);
+}
+.cover-ornament.anim-in .node{
+  opacity:.32;
+  transform:translate(-50%,-50%) scale(1);
+  transition-delay: calc(var(--nd, 0) * .14s + .3s);
+}
+.cover-ornament .node::after{
+  content:"";position:absolute;inset:-8px;
+  border:1px solid var(--blue);border-radius:50%;opacity:0;
+  animation:nodePulse 3.4s var(--ease) infinite;
+  animation-delay: calc(var(--nd, 0) * .4s + 1.8s);
+}
+@keyframes nodePulse{
+  0%{ transform:scale(.5); opacity:.5; }
+  60%{ transform:scale(2.4); opacity:0; }
+  100%{ transform:scale(2.4); opacity:0; }
+}
+.cover-ornament .line{
+  position:absolute;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(55,120,229,.4),transparent);
+  transform-origin:left center;opacity:0;
+  transform: scaleX(0) rotate(var(--rot, 0deg));
+  transition: opacity .9s var(--ease-silk), transform 1.4s var(--ease-silk);
+}
+.cover-ornament.anim-in .line{
+  opacity:.55;
+  transform: scaleX(1) rotate(var(--rot, 0deg));
+  transition-delay: calc(var(--ld, 0) * .18s + .5s);
+}
+
+/* ============================================================
+   8. Section 头
+   ============================================================ */
+.sec-head{
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;
+  margin-bottom:clamp(24px,3.4vh,38px);
+}
+.sec-head .head-bar{width:44px;height:3px;background:var(--blue);position:relative;}
+.sec-head .head-bar::before{
+  content:"";position:absolute;left:-10px;top:1px;
+  width:6px;height:1px;background:var(--blue);opacity:.5;
+}
+.sec-head .head-bar::after{
+  content:"";position:absolute;right:-10px;top:1px;
+  width:6px;height:1px;background:var(--blue);opacity:.5;
+}
+.sec-head .head-titles h2{
+  font-size:clamp(22px,2.4vw,32px);
+  font-weight:800;letter-spacing:-.02em;line-height:1.15;color:var(--text);
+}
+.sec-head .head-titles p{
+  margin-top:8px;font-family:var(--mono);
+  font-size:11px;letter-spacing:.3em;
+  color:var(--muted);text-transform:uppercase;
+}
+
+/* ============================================================
+   9. 通道卡片
+   ============================================================ */
+.channels{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:1px;
+  background:var(--border-soft);
+  border:1px solid var(--border-soft);
+  perspective:1400px;
+}
+.channel{
+  position:relative;
+  padding:clamp(26px,3.2vh,38px) clamp(22px,2.4vw,34px);
+  background:rgba(255,255,255,.86);
+  overflow:hidden;isolation:isolate;
+  backface-visibility:hidden;
+  transition: background .4s var(--ease);
+}
+.channel::before{
+  content:"";position:absolute;top:0;left:0;
+  width:3px;height:100%;background:var(--blue);
+  transform:scaleY(0);transform-origin:top center;
+  transition:transform .7s var(--ease-silk);
+  z-index:1;
+}
+.channel:hover::before{transform:scaleY(1);}
+.channel:hover{ background:rgba(255,255,255,.98); }
+.channel .ch-head{
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;
+}
+.channel .ch-index{
+  font-family:var(--mono);font-size:11px;
+  letter-spacing:.24em;color:var(--blue);flex:none;
+}
+.channel .ch-line{flex:1;height:1px;background:var(--border);}
+.channel .ch-en{
+  font-family:var(--mono);font-size:10px;
+  letter-spacing:.22em;color:var(--muted);
+  text-transform:uppercase;flex:none;
+}
+.channel h3{
+  font-size:clamp(17px,1.5vw,21px);
+  font-weight:800;letter-spacing:-.015em;
+  line-height:1.3;color:var(--text);margin-bottom:10px;
+}
+.channel p{
+  font-size:clamp(13px,1vw,14px);
+  line-height:1.85;color:var(--text-2);margin-bottom:16px;
+}
+.channel .ch-tag{
+  display:inline-block;
+  font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--blue);padding:4px 10px;
+  background:var(--blue-soft);border:1px solid var(--blue-line);
+}
+.channel.is-primary{ background:rgba(255,255,255,.94); }
+
+/* 联系胶囊（邮箱 / QQ 群共用） */
+.channel-mail{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:12.5px;
+  letter-spacing:.02em;color:var(--blue);
+  padding:8px 12px;
+  background:var(--blue-soft);
+  border:1px solid var(--blue-line);
+  margin-bottom:14px;
+  word-break:break-all;
+  max-width:100%;
+  transition:background .3s var(--ease),color .3s var(--ease),transform .3s var(--ease-spring);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.channel-mail:hover{background:var(--blue);color:#fff;transform:translateY(-2px);}
+.channel-mail svg{width:14px;height:14px;flex:none;}
+
+/* ============================================================
+   10. 差异说明
+   ============================================================ */
+.diff-note{
+  margin-top:clamp(20px,2.8vh,30px);
+  padding:clamp(22px,2.8vh,30px) clamp(22px,2.4vw,34px);
+  background:rgba(255,255,255,.86);
+  border:1px solid var(--border);
+  position:relative;
+}
+.diff-note::before{
+  content:"";position:absolute;top:0;left:0;
+  width:100%;height:2px;
+  background:linear-gradient(90deg,var(--blue),transparent 60%);
+}
+.diff-note-head{
+  display:flex;align-items:center;gap:12px;margin-bottom:18px;
+}
+.diff-note-head .ico{
+  width:34px;height:34px;flex:none;
+  display:grid;place-items:center;
+  background:var(--blue-soft);border:1px solid var(--blue-line);color:var(--blue);
+}
+.diff-note-head .ico svg{width:17px;height:17px;}
+.diff-note-head h4{
+  font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.01em;
+}
+.diff-list{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px;background:var(--border-soft);border:1px solid var(--border-soft);
+}
+.diff-item{
+  background:var(--bg);
+  padding:clamp(16px,2vh,20px) clamp(14px,1.6vw,20px);
+  position:relative;
+  transition: background .35s var(--ease), transform .35s var(--ease-spring);
+}
+.diff-item:hover{ background:var(--blue-soft); transform:translateY(-2px); }
+.diff-item .label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:10px;
+  letter-spacing:.2em;color:var(--blue);
+  text-transform:uppercase;margin-bottom:9px;
+}
+.diff-item .label::before{
+  content:"";width:5px;height:5px;background:var(--blue);
+  transform:rotate(45deg);flex:none;
+}
+.diff-item h5{
+  font-size:13.5px;font-weight:700;
+  color:var(--text);margin-bottom:6px;letter-spacing:-.005em;
+}
+.diff-item p{font-size:12.5px;line-height:1.75;color:var(--text-2);}
+.diff-item p strong{color:var(--blue);font-weight:600;}
+
+/* ============================================================
+   11. 我们期待
+   ============================================================ */
+.expect-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(14px,1.8vw,22px);
+  perspective:1400px;
+}
+.expect-item{
+  position:relative;display:flex;gap:18px;
+  padding:clamp(20px,2.4vh,28px) clamp(20px,2vw,26px);
+  background:rgba(255,255,255,.86);
+  border:1px solid var(--border);
+  overflow:hidden;isolation:isolate;
+  backface-visibility:hidden;
+  transition:border-color .4s var(--ease),transform .5s var(--ease-spring),box-shadow .5s var(--ease),background .4s var(--ease);
+}
+.expect-item::before{
+  content:"";position:absolute;top:0;left:0;
+  width:3px;height:100%;background:var(--blue);
+  transition:width .4s var(--ease);
+}
+.expect-item:hover{
+  border-color:var(--blue-line);
+  background:var(--bg);
+  transform:translateY(-5px) scale(1.012);
+  box-shadow:0 18px 44px rgba(55,120,229,.16);
+}
+.expect-item:hover::before{width:5px;}
+.expect-icon{
+  width:44px;height:44px;flex:none;
+  display:grid;place-items:center;
+  background:var(--blue-soft);border:1px solid var(--blue-line);
+  color:var(--blue);
+  transition:background .4s var(--ease),color .4s var(--ease),transform .5s var(--ease-spring);
+}
+.expect-item:hover .expect-icon{background:var(--blue);color:#fff;transform:rotate(-8deg) scale(1.08);}
+.expect-icon svg{width:20px;height:20px;}
+.expect-body{min-width:0;}
+.expect-body h4{
+  font-size:15px;font-weight:800;
+  letter-spacing:-.01em;color:var(--text);margin-bottom:6px;
+}
+.expect-body p{font-size:13px;line-height:1.75;color:var(--text-2);}
+
+.coop-note{
+  margin-top:clamp(18px,2.4vh,26px);
+  padding:clamp(18px,2.2vh,24px) clamp(20px,2.2vw,28px);
+  background:rgba(255,255,255,.86);
+  border:1px solid var(--border);
+  display:flex;gap:16px;align-items:flex-start;
+}
+.coop-note-icon{
+  width:38px;height:38px;flex:none;
+  display:grid;place-items:center;
+  background:var(--blue-soft);border:1px solid var(--blue-line);color:var(--blue);
+}
+.coop-note-icon svg{width:18px;height:18px;}
+.coop-note-body h4{
+  font-size:14.5px;font-weight:800;color:var(--text);
+  margin-bottom:6px;letter-spacing:-.01em;
+}
+.coop-note-body p{
+  font-size:clamp(12.5px,.95vw,13.5px);
+  line-height:1.85;color:var(--text-2);
+}
+
+/* ============================================================
+   12. CTA + 二维码
+   ============================================================ */
+.cta-inner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(28px,4.5vw,68px);
+  max-width:1080px;
+  margin:0 auto;
+}
+.cta-copy{
+  flex:1 1 auto;
+  min-width:0;
+  max-width:560px;
+  text-align:left;
+}
+.cta h2{
+  font-size:clamp(26px,3.2vw,42px);
+  font-weight:800;letter-spacing:-.025em;
+  line-height:1.2;color:var(--text);margin-bottom:16px;
+}
+.cta p{
+  font-size:clamp(14px,1.1vw,16px);
+  line-height:1.9;color:var(--text-2);margin-bottom:32px;
+}
+.cta-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-start;}
+
+/* —— 二维码面板 —— */
+.qr-panel{
+  flex:none;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.qr-frame{
+  position:relative;
+  width:clamp(160px,17vw,218px);
+  aspect-ratio:1 / 1;
+  padding:12px;
+  background:#fff;
+  border:1px solid var(--border);
+  box-shadow:0 18px 48px rgba(55,120,229,.10);
+  transition:transform .55s var(--ease-spring),box-shadow .55s var(--ease);
+}
+.qr-frame:hover{
+  transform:translateY(-5px);
+  box-shadow:0 26px 60px rgba(55,120,229,.18);
+}
+
+/* 四角定位框 */
+.qr-frame .cn{
+  position:absolute;
+  width:15px;height:15px;
+  border:1.6px solid var(--blue);
+  opacity:0;
+  transform:scale(.55);
+  pointer-events:none;
+  transition:opacity .55s var(--ease-silk) .95s, transform .65s var(--ease-spring) .95s;
+  z-index:4;
+}
+.qr-frame .cn.tl{top:-4px;left:-4px;border-right:0;border-bottom:0;}
+.qr-frame .cn.tr{top:-4px;right:-4px;border-left:0;border-bottom:0;}
+.qr-frame .cn.bl{bottom:-4px;left:-4px;border-right:0;border-top:0;}
+.qr-frame .cn.br{bottom:-4px;right:-4px;border-left:0;border-top:0;}
+.qr-panel.anim-in .qr-frame .cn{opacity:.85;transform:scale(1);}
+
+/* 扫描光带 */
+.qr-scan{
+  position:absolute;
+  inset:12px;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:3;
+}
+.qr-scan::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(55,120,229,.9),transparent);
+  box-shadow:0 0 12px rgba(55,120,229,.55);
+  opacity:0;
+}
+.qr-panel.anim-in .qr-scan::after{
+  animation:qrScanLine 2.3s var(--ease-silk) 1.15s 2;
+}
+@keyframes qrScanLine{
+  0%{opacity:0;top:0;}
+  10%{opacity:1;}
+  90%{opacity:1;}
+  100%{opacity:0;top:calc(100% - 2px);}
+}
+
+/* 二维码 SVG */
+.qr-svg{width:100%;height:100%;display:block;position:relative;z-index:2;}
+
+/* 二维码模块：错峰生长 */
+.qr-module{
+  opacity:0;
+  transform:scale(.15);
+  transform-box:fill-box;
+  transform-origin:center center;
+  transition:
+    opacity .32s var(--ease-silk),
+    transform .48s var(--ease-spring);
+  transition-delay:var(--qd, 0s);
+  will-change:opacity,transform;
+}
+.qr-modules.anim-in .qr-module{
+  opacity:1;
+  transform:scale(1);
+}
+
+/* 二维码底部说明 */
+.qr-meta{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.2em;color:var(--muted);
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.qr-meta .dot{
+  width:6px;height:6px;background:var(--blue);flex:none;
+  animation:dotPulse 1.8s var(--ease) infinite;
+}
+
+/* ============================================================
+   13. 页码 / Toast
+   ============================================================ */
+.page-indicator{
+  position:fixed;right:38px;
+  bottom:calc(var(--marquee-h) + 26px + var(--safe-b));
+  z-index:60;display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);
+}
+.page-indicator .current{color:var(--blue);font-size:14px;font-weight:700;}
+.page-indicator .progress{width:60px;height:2px;background:rgba(0,0,0,.1);position:relative;overflow:hidden;}
+.page-indicator .progress-bar{
+  position:absolute;left:0;top:0;height:100%;width:25%;
+  background:var(--blue);transition:width .55s var(--ease-silk);
+}
+
+.toast{
+  position:fixed;left:50%;
+  bottom:calc(var(--marquee-h) + 70px + var(--safe-b));
+  transform:translateX(-50%) translateY(24px);
+  z-index:2000;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 24px;background:var(--text);color:#fff;
+  font-size:13.5px;font-weight:600;letter-spacing:.02em;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  box-shadow:0 14px 40px rgba(0,0,0,.22);
+  transition:opacity .35s var(--ease),transform .35s var(--ease-spring);
+  max-width:calc(100vw - 32px);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast .toast-dot{
+  width:7px;height:7px;background:var(--blue-light);flex:none;
+  animation:dotPulse 1.4s var(--ease) infinite;
+}
+@keyframes dotPulse{
+  0%,100%{opacity:1;transform:scale(1);}
+  50%{opacity:.55;transform:scale(.8);}
+}
+
+/* ============================================================
+   14. 平板
+   ============================================================ */
+@media (max-width:1024px){
+  .nav{padding:var(--safe-t) 24px 0;}
+  .nav-logo img{height:40px;}
+  .nav-logo-line{height:22px;}
+  .nav-crumb{display:none;}
+  .nav-btn{padding:9px 14px;font-size:12.5px;}
+  body{background-attachment:scroll;}
+  .channels{grid-template-columns:minmax(0,1fr);}
+  .diff-list{grid-template-columns:minmax(0,1fr);}
+  .expect-grid{grid-template-columns:minmax(0,1fr);}
+  .page-indicator{right:24px;}
+  .cta-inner{gap:clamp(24px,4vw,44px);}
+  .qr-frame{width:clamp(150px,22vw,196px);}
+}
+
+/* ============================================================
+   15. 移动端
+   ============================================================ */
+@media (max-width:680px){
+  :root{--nav-h:56px;--marquee-h:44px;}
+
+  .nav{padding:var(--safe-t) 16px 0;}
+  .nav-logo{gap:11px;margin-left:0;}
+  .nav-logo-line{height:17px;width:2px;}
+  .nav-logo img{height:30px;}
+  .nav-right{gap:0;}
+  .nav-crumb{display:none;}
+  .nav-btn{display:none;}
+  .nav-burger{display:flex;}
+
+  .nav-drawer{width:min(340px,90vw);padding:calc(var(--safe-t) + 18px) 22px calc(var(--safe-b) + 22px);}
+  .drawer-item{padding:18px 0;gap:14px;}
+  .drawer-item .txt{font-size:20px;}
+
+  .slide-body{
+    display:block;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    padding:calc(var(--nav-h) + var(--safe-t) + 14px) 16px 20px;
+    scrollbar-width:none;
+  }
+  .slide-body::-webkit-scrollbar{display:none;}
+  .wrap{max-width:100%;}
+
+  .cover{
+    max-width:100%;
+    min-height:calc(100dvh - var(--nav-h) - var(--safe-t) - var(--marquee-h) - 48px);
+    justify-content:center;padding:0;
+  }
+  .cover-eyebrow{font-size:9.5px;margin-bottom:22px;padding:6px 12px;gap:10px;}
+  .cover-eyebrow .dot{width:5px;height:5px;}
+  .cover-title{
+    font-size:clamp(38px,12vw,60px);
+    margin-bottom:18px;white-space:nowrap;letter-spacing:-.04em;
+  }
+  .cover-divider{gap:14px;margin-bottom:22px;width:100%;}
+  .cover-divider .zh{font-size:15px;letter-spacing:.28em;}
+  .cover-lead{font-size:13px;line-height:1.8;margin-bottom:26px;max-width:100%;}
+  .cover-actions{flex-direction:column;gap:10px;width:100%;}
+  .cover-actions .btn-block,
+  .cover-actions .btn-ghost{width:100%;justify-content:center;}
+
+  .sec-head{gap:12px;margin-bottom:18px;}
+  .sec-head .head-bar{width:34px;height:2.5px;}
+  .sec-head .head-titles h2{font-size:19px;}
+  .sec-head .head-titles p{font-size:9.5px;letter-spacing:.22em;margin-top:6px;}
+
+  .channel{padding:20px 16px;}
+  .channel .ch-head{gap:10px;margin-bottom:12px;}
+  .channel .ch-index{font-size:10px;}
+  .channel .ch-en{font-size:9px;}
+  .channel h3{font-size:16px;margin-bottom:8px;}
+  .channel p{font-size:12.5px;line-height:1.7;margin-bottom:12px;}
+  .channel .ch-tag{font-size:9.5px;padding:3px 8px;}
+  .channel-mail{font-size:11px;padding:7px 10px;margin-bottom:12px;}
+  .channel-mail svg{width:12px;height:12px;}
+
+  .diff-note{padding:18px;margin-top:14px;}
+  .diff-note-head{gap:10px;margin-bottom:14px;}
+  .diff-note-head .ico{width:30px;height:30px;}
+  .diff-note-head .ico svg{width:15px;height:15px;}
+  .diff-note-head h4{font-size:14px;}
+  .diff-list{gap:1px;}
+  .diff-item{padding:14px;}
+  .diff-item .label{font-size:9.5px;margin-bottom:7px;}
+  .diff-item h5{font-size:13px;margin-bottom:5px;}
+  .diff-item p{font-size:12px;line-height:1.7;}
+
+  .expect-grid{gap:10px;}
+  .expect-item{padding:16px;gap:12px;}
+  .expect-icon{width:36px;height:36px;}
+  .expect-icon svg{width:17px;height:17px;}
+  .expect-body h4{font-size:14px;margin-bottom:5px;}
+  .expect-body p{font-size:12.5px;line-height:1.65;}
+
+  .coop-note{padding:14px;gap:12px;margin-top:12px;}
+  .coop-note-icon{width:32px;height:32px;}
+  .coop-note-icon svg{width:15px;height:15px;}
+  .coop-note-body h4{font-size:13.5px;margin-bottom:5px;}
+  .coop-note-body p{font-size:12px;line-height:1.7;}
+
+  /* CTA 移动端：上下排列 */
+  .cta-inner{
+    flex-direction:column;
+    gap:24px;
+    max-width:100%;
+  }
+  .cta-copy{max-width:100%;text-align:left;}
+  .cta h2{font-size:22px;margin-bottom:12px;}
+  .cta p{font-size:13px;line-height:1.8;margin-bottom:20px;}
+  .cta-actions{flex-direction:column;gap:10px;width:100%;justify-content:center;}
+  .cta-actions .btn-block,
+  .cta-actions .btn-ghost{width:100%;justify-content:center;}
+
+  .qr-frame{width:min(56vw,190px);padding:10px;}
+  .qr-scan{inset:10px;}
+  .qr-frame .cn{width:12px;height:12px;border-width:1.4px;}
+  .qr-meta{font-size:9.5px;}
+
+  .marquee{--marquee-duration:28s;}
+  .marquee-item{font-size:13px;gap:9px;padding-right:24px;}
+  .marquee-item .sep{width:6px;height:6px;}
+  .marquee-item .en{font-size:.62em;letter-spacing:.18em;}
+
+  .page-indicator{
+    right:12px;
+    bottom:calc(var(--marquee-h) + 12px + var(--safe-b));
+    gap:7px;font-size:10px;
+  }
+  .page-indicator .current{font-size:12px;}
+  .page-indicator .progress{width:38px;}
+
+  .toast{
+    left:16px;right:16px;bottom:auto;
+    top:calc(50% - var(--marquee-h) / 2);
+    transform:translate(0,-50%) scale(.94);
+    justify-content:center;
+    font-size:12.5px;padding:12px 18px;
+    text-align:center;white-space:normal;
+  }
+  .toast.show{transform:translate(0,-50%) scale(1);}
+
+  [data-anim="rise"]{ transform: translateY(38px) scale(.97); }
+  [data-anim="drop"]{ transform: translateY(-38px) scale(.97); }
+  [data-anim="tilt-left"]{ transform: translateX(-42px) rotateY(0) scale(.97); }
+  [data-anim="tilt-right"]{ transform: translateX(42px) rotateY(0) scale(.97); }
+  [data-anim="zoom"]{ transform: scale(.88) translateY(16px); }
+  [data-anim="flip"]{ transform: perspective(700px) rotateX(-16deg) translateY(28px) scale(.97); }
+}
+
+/* ============================================================
+   16. 小屏 360px
+   ============================================================ */
+@media (max-width:360px){
+  :root{--nav-h:52px;--marquee-h:38px;}
+  .nav{padding:var(--safe-t) 12px 0;}
+  .nav-logo{gap:9px;}
+  .nav-logo-line{height:15px;}
+  .nav-logo img{height:26px;}
+  .nav-burger{width:38px;height:38px;}
+  .nav-burger span{width:15px;}
+  .slide-body{padding:calc(var(--nav-h) + var(--safe-t) + 12px) 14px 16px;}
+  .cover-title{font-size:34px;}
+  .cover-lead{font-size:12.5px;}
+  .sec-head .head-titles h2{font-size:17px;}
+  .channel{padding:18px 14px;}
+  .channel h3{font-size:15px;}
+  .channel p{font-size:12px;}
+  .channel-mail{font-size:10.5px;}
+  .diff-item{padding:12px;}
+  .diff-item h5{font-size:12.5px;}
+  .diff-item p{font-size:11.5px;}
+  .expect-item{padding:14px;gap:11px;}
+  .expect-icon{width:34px;height:34px;}
+  .expect-body h4{font-size:13px;}
+  .expect-body p{font-size:12px;}
+  .cta h2{font-size:20px;}
+  .cta p{font-size:12.5px;}
+  .qr-frame{width:min(60vw,168px);}
+  .marquee-item{font-size:12px;padding-right:20px;}
+  .drawer-item .txt{font-size:18px;}
+}
+
+/* ============================================================
+   17. 无障碍 / 降级
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  .marquee-track,
+  .nav-burger span,
+  .cover-eyebrow .dot,
+  .cover-ornament .node::after,
+  .qr-scan::after,
+  .qr-meta .dot{animation:none !important;}
+  *{transition-duration:.01ms !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 导航 ============ -->
+<header class="nav">
+  <a class="nav-logo" href="https://stellarsage2023.github.io/st/">
+    <span class="nav-logo-line"></span>
+    <img src="https://user-assets.sxlcdn.com/images/1138507/Fl8euAZgWWS1PH92jqEcts2zgcns.png?imageMogr2/strip/auto-orient/thumbnail/1200x9000%3E/quality/90!/format/png" alt="星宸学社">
+  </a>
+
+  <div class="nav-right">
+    <span class="nav-crumb">
+      加入我们 <span class="sep">/</span> <span class="cur">线上加入</span>
+    </span>
+
+    <a class="nav-btn nav-btn-switch" href="https://stellarsage2023.github.io/st/join1">
+      <span class="nav-btn-text">切换同校加入</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </a>
+
+    <a class="nav-btn" href="https://stellarsage2023.github.io/st/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      <span class="nav-btn-text">返回主站</span>
+    </a>
+
+    <button class="nav-burger" id="navBurger" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="navDrawer">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ 抽屉 ============ -->
+<div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
+
+<aside class="nav-drawer" id="navDrawer" aria-hidden="true">
+  <div class="drawer-head">
+    <span class="drawer-brand">StellarSage</span>
+    <button class="drawer-close" id="navClose" type="button" aria-label="关闭菜单">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <nav class="drawer-nav">
+    <a class="drawer-item" href="https://stellarsage2023.github.io/st/">
+      <span class="num">01</span>
+      <div>
+        <span class="txt">主站</span>
+        <span class="en">Home</span>
+      </div>
+    </a>
+    <a class="drawer-item is-current" href="https://stellarsage2023.github.io/st/join2" aria-current="page">
+      <span class="num">02</span>
+      <div>
+        <span class="txt">线上加入</span>
+        <span class="en">Join Online</span>
+      </div>
+    </a>
+    <a class="drawer-item" href="https://stellarsage2023.github.io/st/join1">
+      <span class="num">03</span>
+      <div>
+        <span class="txt">同校加入</span>
+        <span class="en">Join On Campus</span>
+      </div>
+    </a>
+  </nav>
+
+  <div class="drawer-foot">
+    © 2026 StellarSage
+  </div>
+</aside>
+
+<!-- ============ Swiper ============ -->
+<div class="swiper main-swiper" id="mainSwiper">
+  <div class="swiper-wrapper">
+
+    <!-- ============ 第 1 页：封面 ============ -->
+    <div class="swiper-slide">
+      <div class="slide">
+        <div class="slide-body">
+          <div class="cover-ornament" aria-hidden="true">
+            <span class="node" style="--nd:0;left:12%;top:22%;"></span>
+            <span class="node" style="--nd:1;left:86%;top:34%;"></span>
+            <span class="node" style="--nd:2;left:22%;top:78%;"></span>
+            <span class="node" style="--nd:3;left:74%;top:82%;"></span>
+            <span class="line" style="--rot:12deg;--ld:0;left:12%;top:22%;width:74%;"></span>
+            <span class="line" style="--rot:-8deg;--ld:1;left:22%;top:78%;width:52%;"></span>
+          </div>
+
+          <div class="wrap">
+            <div class="cover">
+              <span class="cover-eyebrow" data-anim="drop">
+                <span class="dot"></span>
+                Online · 线上加入
+              </span>
+
+              <h1 class="cover-title chars" id="coverTitle">
+                <span class="ch">J</span><span class="ch">O</span><span class="ch">I</span><span class="ch">N</span>
+                <span class="ch space">&nbsp;</span>
+                <span class="ch accent">O</span><span class="ch accent">N</span><span class="ch accent">L</span><span class="ch accent">I</span><span class="ch accent">N</span><span class="ch accent">E</span>
+              </h1>
+
+              <div class="cover-divider" data-anim="soft-up" data-anim-delay="1">
+                <span class="grow-line"></span>
+                <span class="zh">线上加入</span>
+                <span class="grow-line"></span>
+              </div>
+
+              <p class="cover-lead" data-anim="rise" data-anim-delay="2">
+                无论你在哪座城市、哪所学校，只要有一台能上网的设备，就可以通过线上加入星宸学社。不设技能门槛，也不要求作品集，只在意你愿不愿意动手。
+              </p>
+
+              <div class="cover-actions" data-anim="rise" data-anim-delay="3">
+                <a class="btn-block" href="#page2">
+                  <span>了解加入方式</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+                <a class="btn-ghost" href="https://stellarsage2023.github.io/st/">
+                  <span>返回主站</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="marquee" aria-hidden="true">
+          <div class="marquee-track">
+            <div class="marquee-group">
+              <span class="marquee-item"><i class="sep"></i>JOIN ONLINE<span class="en">线上加入</span></span>
+              <span class="marquee-item"><i class="sep"></i>星宸学社<span class="en">StellarSage</span></span>
+              <span class="marquee-item"><i class="sep"></i>远程协作<span class="en">Remote First</span></span>
+              <span class="marquee-item"><i class="sep"></i>异步沟通<span class="en">Async Work</span></span>
+              <span class="marquee-item"><i class="sep"></i>保持好奇<span class="en">Stay Curious</span></span>
+              <span class="marquee-item"><i class="sep"></i>动手实践<span class="en">Make It Real</span></span>
+            </div>
+            <div class="marquee-group">
+              <span class="marquee-item"><i class="sep"></i>JOIN ONLINE<span class="en">线上加入</span></span>
+              <span class="marquee-item"><i class="sep"></i>星宸学社<span class="en">StellarSage</span></span>
+              <span class="marquee-item"><i class="sep"></i>远程协作<span class="en">Remote First</span></span>
+              <span class="marquee-item"><i class="sep"></i>异步沟通<span class="en">Async Work</span></span>
+              <span class="marquee-item"><i class="sep"></i>保持好奇<span class="en">Stay Curious</span></span>
+              <span class="marquee-item"><i class="sep"></i>动手实践<span class="en">Make It Real</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 第 2 页：加入通道 ============ -->
+    <div class="swiper-slide" id="page2">
+      <div class="slide">
+        <div class="slide-body">
+          <div class="wrap">
+
+            <header class="sec-head" data-anim="flip">
+              <span class="head-bar"></span>
+              <div class="head-titles">
+                <h2>加入通道</h2>
+                <p>How To Join</p>
+              </div>
+            </header>
+
+            <div class="channels">
+
+              <div class="channel is-primary" data-anim="tilt-left" data-anim-delay="1">
+                <div class="ch-head">
+                  <span class="ch-index">01</span>
+                  <span class="ch-line"></span>
+                  <span class="ch-en">Via Mail</span>
+                </div>
+                <h3>邮箱投稿</h3>
+                <p>将你做过的作品、想尝试的方向、感兴趣的内容发到学社邮箱。不限形式，文字、图片、链接都可以。我们看到后会尽快回复。</p>
+                <div class="channel-mail" data-copy="stellarsage@example.com" data-copy-label="邮箱">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <span>stellarsage@example.com</span>
+                </div>
+                <span class="ch-tag">推荐方式</span>
+              </div>
+
+              <div class="channel" data-anim="tilt-right" data-anim-delay="2">
+                <div class="ch-head">
+                  <span class="ch-index">02</span>
+                  <span class="ch-line"></span>
+                  <span class="ch-en">Via QQ</span>
+                </div>
+                <h3>加入 QQ 群</h3>
+                <p>加入学社的 QQ 群，和成员直接沟通。有问题随时在群里问，也可以先潜水看看大家平时在做什么，再决定要不要参与。</p>
+                <div class="channel-mail" data-copy="856272742" data-copy-label="QQ 群">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                  <span>856272742</span>
+                </div>
+                <span class="ch-tag">实时沟通</span>
+              </div>
+
+            </div>
+
+            <div class="diff-note" data-anim="rise" data-anim-delay="3">
+              <div class="diff-note-head">
+                <span class="ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                  </svg>
+                </span>
+                <h4>线上加入，和同校加入到底差在哪</h4>
+              </div>
+              <div class="diff-list">
+                <div class="diff-item">
+                  <span class="label">协作方式</span>
+                  <h5>全程远程</h5>
+                  <p>日常沟通、分享、反馈都在线上完成。没有线下环节，不需要到场。</p>
+                </div>
+                <div class="diff-item">
+                  <span class="label">项目参与</span>
+                  <h5>机会相同</h5>
+                  <p>项目参与和作品投稿的<strong>机会完全一样</strong>，不因加入方式有区别。</p>
+                </div>
+                <div class="diff-item">
+                  <span class="label">适合谁</span>
+                  <h5>异地 / 不便线下</h5>
+                  <p>不在同一所学校、不方便到线下，或更习惯远程协作的人。</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="marquee" aria-hidden="true">
+          <div class="marquee-track">
+            <div class="marquee-group">
+              <span class="marquee-item"><i class="sep"></i>JOIN ONLINE<span class="en">线上加入</span></span>
+              <span class="marquee-item"><i class="sep"></i>邮箱投稿<span class="en">Via Mail</span></span>
+              <span class="marquee-item"><i class="sep"></i>QQ 群<span class="en">Via QQ</span></span>
+              <span class="marquee-item"><i class="sep"></i>星宸学社<span class="en">StellarSage</span></span>
+              <span class="marquee-item"><i class="sep"></i>保持好奇<span class="en">Stay Curious</span></span>
+              <span class="marquee-item"><i class="sep"></i>动手实践<span class="en">Make It Real</span></span>
+            </div>
+            <div class="marquee-group">
+              <span class="marquee-item"><i class="sep"></i>JOIN ONLINE<span class="en">线上加入</span></span>
+              <span class="marquee-item"><i class="sep"></i>邮箱投稿<span class="en">Via Mail</span></span>
+              <span class="marquee-item"><i class="sep"></i>QQ 群<span class="en">Via QQ</span></span>
+              <span class="marquee-item"><i class="sep"></i>星宸学社<span class="en">StellarSage</span></span>
+              <span class="marquee-item"><i class="sep"></i>保持好奇<span class="en">Stay Curious</span></span>
+              <span class="marquee-item"><i class="sep"></i>动手实践<span class="en">Make It Real</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 第 3 页：我们期待 ============ -->
+    <div class="swiper-slide">
+      <div class="slide">
+        <div class="slide-body">
+          <div class="wrap">
+
+            <header class="sec-head" data-anim="flip">
+              <span class="head-bar"></span>
+              <div class="head-titles">
+                <h2>我们期待这样的你</h2>
+                <p>What We Look For</p>
+              </div>
+            </header>
+
+            <div class="expect-grid">
+
+              <div class="expect-item" data-anim="zoom" data-anim-delay="1">
+                <div class="expect-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l3 6 6 1-4.5 4.4 1.1 6.1L12 16.7 6.4 19.5l1.1-6.1L3 9l6-1z"/>
+                  </svg>
+                </div>
+                <div class="expect-body">
+                  <h4>有意愿即可</h4>
+                  <p>无需事先掌握技能，也不要求作品集。只要你想动手，剩下的可以一起学。</p>
+                </div>
+              </div>
+
+              <div class="expect-item" data-anim="zoom" data-anim-delay="2">
+                <div class="expect-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 7v5l3 3"/>
+                  </svg>
+                </div>
+                <div class="expect-body">
+                  <h4>能持续投入</h4>
+                  <p>不追求一步到位，更看重能否把一件事持续做下去。</p>
+                </div>
+              </div>
+
+              <div class="expect-item" data-anim="zoom" data-anim-delay="3">
+                <div class="expect-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                  </svg>
+                </div>
+                <div class="expect-body">
+                  <h4>习惯线上沟通</h4>
+                  <p>主要靠文字、语音、共享文档推进。不需要随时在线，但愿意回应。</p>
+                </div>
+              </div>
+
+              <div class="expect-item" data-anim="zoom" data-anim-delay="4">
+                <div class="expect-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                </div>
+                <div class="expect-body">
+                  <h4>保持好奇</h4>
+                  <p>遇到不了解的内容愿意主动提问，愿意尝试没做过的事。</p>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="coop-note" data-anim="rise" data-anim-delay="5">
+              <div class="coop-note-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="5" width="18" height="14"/>
+                  <circle cx="8.5" cy="10" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+              <div class="coop-note-body">
+                <h4>协作方式说明</h4>
+                <p>所有沟通、协作、作品分享都在线上完成。没有签到、没有例会、没有固定在线时间，按自己的节奏推进即可。</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="marquee" aria-hidden="true">
+          <div class="marquee-track">
+            <div class="marquee-group">
+              <span class="marquee-item"><i class="sep"></i>JOIN ONLINE<span class="en">线上加入</span></span>
+              <span class="marquee-item"><i class="sep"></i>有意愿即可<span class="en">Just Show Up</span></span>
+              <span class="marquee-item"><i class="sep"></i>持续投入<span class="en">Keep Going</span></span>
+              <span class="marquee-item"><i class="sep"></i>远程协作<span class="en">Work Remote</span></span>
+              <span class="marquee-item"><i class="sep"></i>保持好奇<span class="en">Stay Curious</span></span>
+              <span class="marquee-item"><i class="sep"></i>星宸学社<span class="en">StellarSage</span></span>
+            </div>
+            <div class="marquee-group">
+              <span class="marquee-item"><i class="sep"></i>JOIN ONLINE<span class="en">线上加入</span></span>
+              <span class="marquee-item"><i class="sep"></i>有意愿即可<span class="en">Just Show Up</span></span>
+              <span class="marquee-item"><i class="sep"></i>持续投入<span class="en">Keep Going</span></span>
+              <span class="marquee-item"><i class="sep"></i>远程协作<span class="en">Work Remote</span></span>
+              <span class="marquee-item"><i class="sep"></i>保持好奇<span class="en">Stay Curious</span></span>
+              <span class="marquee-item"><i class="sep"></i>星宸学社<span class="en">StellarSage</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 第 4 页：CTA + 二维码 ============ -->
+    <div class="swiper-slide">
+      <div class="slide">
+        <div class="slide-body">
+          <div class="wrap">
+            <div class="cta-inner">
+
+              <div class="cta-copy">
+                <h2 data-anim="rise">准备好一起做点东西了吗</h2>
+                <p data-anim="rise" data-anim-delay="1">
+                  不需要会什么特别的东西，也不需要提前准备。只要你愿意动手，我们就可以一起，把想法真正做出来。
+                </p>
+
+                <div class="cta-actions" data-anim="rise" data-anim-delay="2">
+                  <button class="btn-block" type="button" data-copy="856272742" data-copy-label="QQ 群">
+                    <span>加入 QQ 群</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                  </button>
+                  <a class="btn-ghost" href="https://stellarsage2023.github.io/st/">
+                    <span>返回主站</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- —— 二维码面板 —— -->
+              <div class="qr-panel" data-anim="zoom" data-anim-delay="3">
+                <div class="qr-frame">
+                  <span class="qr-scan" aria-hidden="true"></span>
+                  <span class="cn tl" aria-hidden="true"></span>
+                  <span class="cn tr" aria-hidden="true"></span>
+                  <span class="cn bl" aria-hidden="true"></span>
+                  <span class="cn br" aria-hidden="true"></span>
+
+                  <svg xmlns="http://www.w3.org/2000/svg" class="qr-svg" viewBox="0 0 45 45" shape-rendering="crispEdges" role="img" aria-label="QQ 群二维码">
+                    <rect class="qr-bg" width="45" height="45" fill="#ffffff"/>
+                    <g class="qr-modules" fill="#0a0a0a">
+<rect class="qr-module" x="2" y="2" width="1" height="1" data-x="0" data-y="0"/><rect class="qr-module" x="3" y="2" width="1" height="1" data-x="1" data-y="0"/><rect class="qr-module" x="4" y="2" width="1" height="1" data-x="2" data-y="0"/><rect class="qr-module" x="5" y="2" width="1" height="1" data-x="3" data-y="0"/><rect class="qr-module" x="6" y="2" width="1" height="1" data-x="4" data-y="0"/><rect class="qr-module" x="7" y="2" width="1" height="1" data-x="5" data-y="0"/><rect class="qr-module" x="8" y="2" width="1" height="1" data-x="6" data-y="0"/><rect class="qr-module" x="10" y="2" width="1" height="1" data-x="8" data-y="0"/><rect class="qr-module" x="11" y="2" width="1" height="1" data-x="9" data-y="0"/><rect class="qr-module" x="12" y="2" width="1" height="1" data-x="10" data-y="0"/><rect class="qr-module" x="15" y="2" width="1" height="1" data-x="13" data-y="0"/><rect class="qr-module" x="18" y="2" width="1" height="1" data-x="16" data-y="0"/><rect class="qr-module" x="20" y="2" width="1" height="1" data-x="18" data-y="0"/><rect class="qr-module" x="23" y="2" width="1" height="1" data-x="21" data-y="0"/><rect class="qr-module" x="25" y="2" width="1" height="1" data-x="23" data-y="0"/><rect class="qr-module" x="27" y="2" width="1" height="1" data-x="25" data-y="0"/><rect class="qr-module" x="29" y="2" width="1" height="1" data-x="27" data-y="0"/><rect class="qr-module" x="34" y="2" width="1" height="1" data-x="32" data-y="0"/><rect class="qr-module" x="36" y="2" width="1" height="1" data-x="34" data-y="0"/><rect class="qr-module" x="37" y="2" width="1" height="1" data-x="35" data-y="0"/><rect class="qr-module" x="38" y="2" width="1" height="1" data-x="36" data-y="0"/><rect class="qr-module" x="39" y="2" width="1" height="1" data-x="37" data-y="0"/><rect class="qr-module" x="40" y="2" width="1" height="1" data-x="38" data-y="0"/><rect class="qr-module" x="41" y="2" width="1" height="1" data-x="39" data-y="0"/><rect class="qr-module" x="42" y="2" width="1" height="1" data-x="40" data-y="0"/><rect class="qr-module" x="2" y="3" width="1" height="1" data-x="0" data-y="1"/><rect class="qr-module" x="8" y="3" width="1" height="1" data-x="6" data-y="1"/><rect class="qr-module" x="12" y="3" width="1" height="1" data-x="10" data-y="1"/><rect class="qr-module" x="13" y="3" width="1" height="1" data-x="11" data-y="1"/><rect class="qr-module" x="14" y="3" width="1" height="1" data-x="12" data-y="1"/><rect class="qr-module" x="16" y="3" width="1" height="1" data-x="14" data-y="1"/><rect class="qr-module" x="17" y="3" width="1" height="1" data-x="15" data-y="1"/><rect class="qr-module" x="20" y="3" width="1" height="1" data-x="18" data-y="1"/><rect class="qr-module" x="21" y="3" width="1" height="1" data-x="19" data-y="1"/><rect class="qr-module" x="22" y="3" width="1" height="1" data-x="20" data-y="1"/><rect class="qr-module" x="23" y="3" width="1" height="1" data-x="21" data-y="1"/><rect class="qr-module" x="24" y="3" width="1" height="1" data-x="22" data-y="1"/><rect class="qr-module" x="26" y="3" width="1" height="1" data-x="24" data-y="1"/><rect class="qr-module" x="28" y="3" width="1" height="1" data-x="26" data-y="1"/><rect class="qr-module" x="31" y="3" width="1" height="1" data-x="29" data-y="1"/><rect class="qr-module" x="32" y="3" width="1" height="1" data-x="30" data-y="1"/><rect class="qr-module" x="33" y="3" width="1" height="1" data-x="31" data-y="1"/><rect class="qr-module" x="34" y="3" width="1" height="1" data-x="32" data-y="1"/><rect class="qr-module" x="36" y="3" width="1" height="1" data-x="34" data-y="1"/><rect class="qr-module" x="42" y="3" width="1" height="1" data-x="40" data-y="1"/><rect class="qr-module" x="2" y="4" width="1" height="1" data-x="0" data-y="2"/><rect class="qr-module" x="4" y="4" width="1" height="1" data-x="2" data-y="2"/><rect class="qr-module" x="5" y="4" width="1" height="1" data-x="3" data-y="2"/><rect class="qr-module" x="6" y="4" width="1" height="1" data-x="4" data-y="2"/><rect class="qr-module" x="8" y="4" width="1" height="1" data-x="6" data-y="2"/><rect class="qr-module" x="11" y="4" width="1" height="1" data-x="9" data-y="2"/><rect class="qr-module" x="17" y="4" width="1" height="1" data-x="15" data-y="2"/><rect class="qr-module" x="19" y="4" width="1" height="1" data-x="17" data-y="2"/><rect class="qr-module" x="20" y="4" width="1" height="1" data-x="18" data-y="2"/><rect class="qr-module" x="24" y="4" width="1" height="1" data-x="22" data-y="2"/><rect class="qr-module" x="29" y="4" width="1" height="1" data-x="27" data-y="2"/><rect class="qr-module" x="31" y="4" width="1" height="1" data-x="29" data-y="2"/><rect class="qr-module" x="33" y="4" width="1" height="1" data-x="31" data-y="2"/><rect class="qr-module" x="34" y="4" width="1" height="1" data-x="32" data-y="2"/><rect class="qr-module" x="36" y="4" width="1" height="1" data-x="34" data-y="2"/><rect class="qr-module" x="38" y="4" width="1" height="1" data-x="36" data-y="2"/><rect class="qr-module" x="39" y="4" width="1" height="1" data-x="37" data-y="2"/><rect class="qr-module" x="40" y="4" width="1" height="1" data-x="38" data-y="2"/><rect class="qr-module" x="42" y="4" width="1" height="1" data-x="40" data-y="2"/><rect class="qr-module" x="2" y="5" width="1" height="1" data-x="0" data-y="3"/><rect class="qr-module" x="4" y="5" width="1" height="1" data-x="2" data-y="3"/><rect class="qr-module" x="5" y="5" width="1" height="1" data-x="3" data-y="3"/><rect class="qr-module" x="6" y="5" width="1" height="1" data-x="4" data-y="3"/><rect class="qr-module" x="8" y="5" width="1" height="1" data-x="6" data-y="3"/><rect class="qr-module" x="10" y="5" width="1" height="1" data-x="8" data-y="3"/><rect class="qr-module" x="11" y="5" width="1" height="1" data-x="9" data-y="3"/><rect class="qr-module" x="12" y="5" width="1" height="1" data-x="10" data-y="3"/><rect class="qr-module" x="13" y="5" width="1" height="1" data-x="11" data-y="3"/><rect class="qr-module" x="14" y="5" width="1" height="1" data-x="12" data-y="3"/><rect class="qr-module" x="18" y="5" width="1" height="1" data-x="16" data-y="3"/><rect class="qr-module" x="19" y="5" width="1" height="1" data-x="17" data-y="3"/><rect class="qr-module" x="23" y="5" width="1" height="1" data-x="21" data-y="3"/><rect class="qr-module" x="25" y="5" width="1" height="1" data-x="23" data-y="3"/><rect class="qr-module" x="26" y="5" width="1" height="1" data-x="24" data-y="3"/><rect class="qr-module" x="27" y="5" width="1" height="1" data-x="25" data-y="3"/><rect class="qr-module" x="28" y="5" width="1" height="1" data-x="26" data-y="3"/><rect class="qr-module" x="29" y="5" width="1" height="1" data-x="27" data-y="3"/><rect class="qr-module" x="32" y="5" width="1" height="1" data-x="30" data-y="3"/><rect class="qr-module" x="34" y="5" width="1" height="1" data-x="32" data-y="3"/><rect class="qr-module" x="36" y="5" width="1" height="1" data-x="34" data-y="3"/><rect class="qr-module" x="38" y="5" width="1" height="1" data-x="36" data-y="3"/><rect class="qr-module" x="39" y="5" width="1" height="1" data-x="37" data-y="3"/><rect class="qr-module" x="40" y="5" width="1" height="1" data-x="38" data-y="3"/><rect class="qr-module" x="42" y="5" width="1" height="1" data-x="40" data-y="3"/><rect class="qr-module" x="2" y="6" width="1" height="1" data-x="0" data-y="4"/><rect class="qr-module" x="4" y="6" width="1" height="1" data-x="2" data-y="4"/><rect class="qr-module" x="5" y="6" width="1" height="1" data-x="3" data-y="4"/><rect class="qr-module" x="6" y="6" width="1" height="1" data-x="4" data-y="4"/><rect class="qr-module" x="8" y="6" width="1" height="1" data-x="6" data-y="4"/><rect class="qr-module" x="10" y="6" width="1" height="1" data-x="8" data-y="4"/><rect class="qr-module" x="15" y="6" width="1" height="1" data-x="13" data-y="4"/><rect class="qr-module" x="23" y="6" width="1" height="1" data-x="21" data-y="4"/><rect class="qr-module" x="25" y="6" width="1" height="1" data-x="23" data-y="4"/><rect class="qr-module" x="28" y="6" width="1" height="1" data-x="26" data-y="4"/><rect class="qr-module" x="29" y="6" width="1" height="1" data-x="27" data-y="4"/><rect class="qr-module" x="30" y="6" width="1" height="1" data-x="28" data-y="4"/><rect class="qr-module" x="31" y="6" width="1" height="1" data-x="29" data-y="4"/><rect class="qr-module" x="32" y="6" width="1" height="1" data-x="30" data-y="4"/><rect class="qr-module" x="34" y="6" width="1" height="1" data-x="32" data-y="4"/><rect class="qr-module" x="36" y="6" width="1" height="1" data-x="34" data-y="4"/><rect class="qr-module" x="38" y="6" width="1" height="1" data-x="36" data-y="4"/><rect class="qr-module" x="39" y="6" width="1" height="1" data-x="37" data-y="4"/><rect class="qr-module" x="40" y="6" width="1" height="1" data-x="38" data-y="4"/><rect class="qr-module" x="42" y="6" width="1" height="1" data-x="40" data-y="4"/><rect class="qr-module" x="2" y="7" width="1" height="1" data-x="0" data-y="5"/><rect class="qr-module" x="8" y="7" width="1" height="1" data-x="6" data-y="5"/><rect class="qr-module" x="10" y="7" width="1" height="1" data-x="8" data-y="5"/><rect class="qr-module" x="12" y="7" width="1" height="1" data-x="10" data-y="5"/><rect class="qr-module" x="13" y="7" width="1" height="1" data-x="11" data-y="5"/><rect class="qr-module" x="14" y="7" width="1" height="1" data-x="12" data-y="5"/><rect class="qr-module" x="15" y="7" width="1" height="1" data-x="13" data-y="5"/><rect class="qr-module" x="17" y="7" width="1" height="1" data-x="15" data-y="5"/><rect class="qr-module" x="20" y="7" width="1" height="1" data-x="18" data-y="5"/><rect class="qr-module" x="21" y="7" width="1" height="1" data-x="19" data-y="5"/><rect class="qr-module" x="23" y="7" width="1" height="1" data-x="21" data-y="5"/><rect class="qr-module" x="24" y="7" width="1" height="1" data-x="22" data-y="5"/><rect class="qr-module" x="26" y="7" width="1" height="1" data-x="24" data-y="5"/><rect class="qr-module" x="30" y="7" width="1" height="1" data-x="28" data-y="5"/><rect class="qr-module" x="31" y="7" width="1" height="1" data-x="29" data-y="5"/><rect class="qr-module" x="33" y="7" width="1" height="1" data-x="31" data-y="5"/><rect class="qr-module" x="36" y="7" width="1" height="1" data-x="34" data-y="5"/><rect class="qr-module" x="42" y="7" width="1" height="1" data-x="40" data-y="5"/><rect class="qr-module" x="2" y="8" width="1" height="1" data-x="0" data-y="6"/><rect class="qr-module" x="3" y="8" width="1" height="1" data-x="1" data-y="6"/><rect class="qr-module" x="4" y="8" width="1" height="1" data-x="2" data-y="6"/><rect class="qr-module" x="5" y="8" width="1" height="1" data-x="3" data-y="6"/><rect class="qr-module" x="6" y="8" width="1" height="1" data-x="4" data-y="6"/><rect class="qr-module" x="7" y="8" width="1" height="1" data-x="5" data-y="6"/><rect class="qr-module" x="8" y="8" width="1" height="1" data-x="6" data-y="6"/><rect class="qr-module" x="10" y="8" width="1" height="1" data-x="8" data-y="6"/><rect class="qr-module" x="12" y="8" width="1" height="1" data-x="10" data-y="6"/><rect class="qr-module" x="14" y="8" width="1" height="1" data-x="12" data-y="6"/><rect class="qr-module" x="16" y="8" width="1" height="1" data-x="14" data-y="6"/><rect class="qr-module" x="18" y="8" width="1" height="1" data-x="16" data-y="6"/><rect class="qr-module" x="20" y="8" width="1" height="1" data-x="18" data-y="6"/><rect class="qr-module" x="22" y="8" width="1" height="1" data-x="20" data-y="6"/><rect class="qr-module" x="24" y="8" width="1" height="1" data-x="22" data-y="6"/><rect class="qr-module" x="26" y="8" width="1" height="1" data-x="24" data-y="6"/><rect class="qr-module" x="28" y="8" width="1" height="1" data-x="26" data-y="6"/><rect class="qr-module" x="30" y="8" width="1" height="1" data-x="28" data-y="6"/><rect class="qr-module" x="32" y="8" width="1" height="1" data-x="30" data-y="6"/><rect class="qr-module" x="34" y="8" width="1" height="1" data-x="32" data-y="6"/><rect class="qr-module" x="36" y="8" width="1" height="1" data-x="34" data-y="6"/><rect class="qr-module" x="37" y="8" width="1" height="1" data-x="35" data-y="6"/><rect class="qr-module" x="38" y="8" width="1" height="1" data-x="36" data-y="6"/><rect class="qr-module" x="39" y="8" width="1" height="1" data-x="37" data-y="6"/><rect class="qr-module" x="40" y="8" width="1" height="1" data-x="38" data-y="6"/><rect class="qr-module" x="41" y="8" width="1" height="1" data-x="39" data-y="6"/><rect class="qr-module" x="42" y="8" width="1" height="1" data-x="40" data-y="6"/><rect class="qr-module" x="10" y="9" width="1" height="1" data-x="8" data-y="7"/><rect class="qr-module" x="12" y="9" width="1" height="1" data-x="10" data-y="7"/><rect class="qr-module" x="13" y="9" width="1" height="1" data-x="11" data-y="7"/><rect class="qr-module" x="17" y="9" width="1" height="1" data-x="15" data-y="7"/><rect class="qr-module" x="19" y="9" width="1" height="1" data-x="17" data-y="7"/><rect class="qr-module" x="20" y="9" width="1" height="1" data-x="18" data-y="7"/><rect class="qr-module" x="23" y="9" width="1" height="1" data-x="21" data-y="7"/><rect class="qr-module" x="26" y="9" width="1" height="1" data-x="24" data-y="7"/><rect class="qr-module" x="28" y="9" width="1" height="1" data-x="26" data-y="7"/><rect class="qr-module" x="29" y="9" width="1" height="1" data-x="27" data-y="7"/><rect class="qr-module" x="31" y="9" width="1" height="1" data-x="29" data-y="7"/><rect class="qr-module" x="32" y="9" width="1" height="1" data-x="30" data-y="7"/><rect class="qr-module" x="34" y="9" width="1" height="1" data-x="32" data-y="7"/><rect class="qr-module" x="2" y="10" width="1" height="1" data-x="0" data-y="8"/><rect class="qr-module" x="6" y="10" width="1" height="1" data-x="4" data-y="8"/><rect class="qr-module" x="8" y="10" width="1" height="1" data-x="6" data-y="8"/><rect class="qr-module" x="9" y="10" width="1" height="1" data-x="7" data-y="8"/><rect class="qr-module" x="10" y="10" width="1" height="1" data-x="8" data-y="8"/><rect class="qr-module" x="14" y="10" width="1" height="1" data-x="12" data-y="8"/><rect class="qr-module" x="16" y="10" width="1" height="1" data-x="14" data-y="8"/><rect class="qr-module" x="17" y="10" width="1" height="1" data-x="15" data-y="8"/><rect class="qr-module" x="18" y="10" width="1" height="1" data-x="16" data-y="8"/><rect class="qr-module" x="19" y="10" width="1" height="1" data-x="17" data-y="8"/><rect class="qr-module" x="22" y="10" width="1" height="1" data-x="20" data-y="8"/><rect class="qr-module" x="23" y="10" width="1" height="1" data-x="21" data-y="8"/><rect class="qr-module" x="24" y="10" width="1" height="1" data-x="22" data-y="8"/><rect class="qr-module" x="31" y="10" width="1" height="1" data-x="29" data-y="8"/><rect class="qr-module" x="33" y="10" width="1" height="1" data-x="31" data-y="8"/><rect class="qr-module" x="34" y="10" width="1" height="1" data-x="32" data-y="8"/><rect class="qr-module" x="35" y="10" width="1" height="1" data-x="33" data-y="8"/><rect class="qr-module" x="36" y="10" width="1" height="1" data-x="34" data-y="8"/><rect class="qr-module" x="37" y="10" width="1" height="1" data-x="35" data-y="8"/><rect class="qr-module" x="38" y="10" width="1" height="1" data-x="36" data-y="8"/><rect class="qr-module" x="39" y="10" width="1" height="1" data-x="37" data-y="8"/><rect class="qr-module" x="42" y="10" width="1" height="1" data-x="40" data-y="8"/><rect class="qr-module" x="2" y="11" width="1" height="1" data-x="0" data-y="9"/><rect class="qr-module" x="5" y="11" width="1" height="1" data-x="3" data-y="9"/><rect class="qr-module" x="6" y="11" width="1" height="1" data-x="4" data-y="9"/><rect class="qr-module" x="9" y="11" width="1" height="1" data-x="7" data-y="9"/><rect class="qr-module" x="11" y="11" width="1" height="1" data-x="9" data-y="9"/><rect class="qr-module" x="14" y="11" width="1" height="1" data-x="12" data-y="9"/><rect class="qr-module" x="18" y="11" width="1" height="1" data-x="16" data-y="9"/><rect class="qr-module" x="19" y="11" width="1" height="1" data-x="17" data-y="9"/><rect class="qr-module" x="24" y="11" width="1" height="1" data-x="22" data-y="9"/><rect class="qr-module" x="27" y="11" width="1" height="1" data-x="25" data-y="9"/><rect class="qr-module" x="29" y="11" width="1" height="1" data-x="27" data-y="9"/><rect class="qr-module" x="31" y="11" width="1" height="1" data-x="29" data-y="9"/><rect class="qr-module" x="32" y="11" width="1" height="1" data-x="30" data-y="9"/><rect class="qr-module" x="34" y="11" width="1" height="1" data-x="32" data-y="9"/><rect class="qr-module" x="35" y="11" width="1" height="1" data-x="33" data-y="9"/><rect class="qr-module" x="36" y="11" width="1" height="1" data-x="34" data-y="9"/><rect class="qr-module" x="38" y="11" width="1" height="1" data-x="36" data-y="9"/><rect class="qr-module" x="42" y="11" width="1" height="1" data-x="40" data-y="9"/><rect class="qr-module" x="2" y="12" width="1" height="1" data-x="0" data-y="10"/><rect class="qr-module" x="5" y="12" width="1" height="1" data-x="3" data-y="10"/><rect class="qr-module" x="7" y="12" width="1" height="1" data-x="5" data-y="10"/><rect class="qr-module" x="8" y="12" width="1" height="1" data-x="6" data-y="10"/><rect class="qr-module" x="9" y="12" width="1" height="1" data-x="7" data-y="10"/><rect class="qr-module" x="10" y="12" width="1" height="1" data-x="8" data-y="10"/><rect class="qr-module" x="12" y="12" width="1" height="1" data-x="10" data-y="10"/><rect class="qr-module" x="14" y="12" width="1" height="1" data-x="12" data-y="10"/><rect class="qr-module" x="15" y="12" width="1" height="1" data-x="13" data-y="10"/><rect class="qr-module" x="17" y="12" width="1" height="1" data-x="15" data-y="10"/><rect class="qr-module" x="18" y="12" width="1" height="1" data-x="16" data-y="10"/><rect class="qr-module" x="20" y="12" width="1" height="1" data-x="18" data-y="10"/><rect class="qr-module" x="22" y="12" width="1" height="1" data-x="20" data-y="10"/><rect class="qr-module" x="25" y="12" width="1" height="1" data-x="23" data-y="10"/><rect class="qr-module" x="26" y="12" width="1" height="1" data-x="24" data-y="10"/><rect class="qr-module" x="27" y="12" width="1" height="1" data-x="25" data-y="10"/><rect class="qr-module" x="29" y="12" width="1" height="1" data-x="27" data-y="10"/><rect class="qr-module" x="30" y="12" width="1" height="1" data-x="28" data-y="10"/><rect class="qr-module" x="31" y="12" width="1" height="1" data-x="29" data-y="10"/><rect class="qr-module" x="32" y="12" width="1" height="1" data-x="30" data-y="10"/><rect class="qr-module" x="34" y="12" width="1" height="1" data-x="32" data-y="10"/><rect class="qr-module" x="36" y="12" width="1" height="1" data-x="34" data-y="10"/><rect class="qr-module" x="37" y="12" width="1" height="1" data-x="35" data-y="10"/><rect class="qr-module" x="38" y="12" width="1" height="1" data-x="36" data-y="10"/><rect class="qr-module" x="39" y="12" width="1" height="1" data-x="37" data-y="10"/><rect class="qr-module" x="42" y="12" width="1" height="1" data-x="40" data-y="10"/><rect class="qr-module" x="2" y="13" width="1" height="1" data-x="0" data-y="11"/><rect class="qr-module" x="3" y="13" width="1" height="1" data-x="1" data-y="11"/><rect class="qr-module" x="5" y="13" width="1" height="1" data-x="3" data-y="11"/><rect class="qr-module" x="7" y="13" width="1" height="1" data-x="5" data-y="11"/><rect class="qr-module" x="10" y="13" width="1" height="1" data-x="8" data-y="11"/><rect class="qr-module" x="11" y="13" width="1" height="1" data-x="9" data-y="11"/><rect class="qr-module" x="12" y="13" width="1" height="1" data-x="10" data-y="11"/><rect class="qr-module" x="13" y="13" width="1" height="1" data-x="11" data-y="11"/><rect class="qr-module" x="14" y="13" width="1" height="1" data-x="12" data-y="11"/><rect class="qr-module" x="17" y="13" width="1" height="1" data-x="15" data-y="11"/><rect class="qr-module" x="19" y="13" width="1" height="1" data-x="17" data-y="11"/><rect class="qr-module" x="20" y="13" width="1" height="1" data-x="18" data-y="11"/><rect class="qr-module" x="21" y="13" width="1" height="1" data-x="19" data-y="11"/><rect class="qr-module" x="23" y="13" width="1" height="1" data-x="21" data-y="11"/><rect class="qr-module" x="24" y="13" width="1" height="1" data-x="22" data-y="11"/><rect class="qr-module" x="26" y="13" width="1" height="1" data-x="24" data-y="11"/><rect class="qr-module" x="29" y="13" width="1" height="1" data-x="27" data-y="11"/><rect class="qr-module" x="31" y="13" width="1" height="1" data-x="29" data-y="11"/><rect class="qr-module" x="32" y="13" width="1" height="1" data-x="30" data-y="11"/><rect class="qr-module" x="33" y="13" width="1" height="1" data-x="31" data-y="11"/><rect class="qr-module" x="34" y="13" width="1" height="1" data-x="32" data-y="11"/><rect class="qr-module" x="35" y="13" width="1" height="1" data-x="33" data-y="11"/><rect class="qr-module" x="38" y="13" width="1" height="1" data-x="36" data-y="11"/><rect class="qr-module" x="39" y="13" width="1" height="1" data-x="37" data-y="11"/><rect class="qr-module" x="41" y="13" width="1" height="1" data-x="39" data-y="11"/><rect class="qr-module" x="3" y="14" width="1" height="1" data-x="1" data-y="12"/><rect class="qr-module" x="4" y="14" width="1" height="1" data-x="2" data-y="12"/><rect class="qr-module" x="7" y="14" width="1" height="1" data-x="5" data-y="12"/><rect class="qr-module" x="8" y="14" width="1" height="1" data-x="6" data-y="12"/><rect class="qr-module" x="14" y="14" width="1" height="1" data-x="12" data-y="12"/><rect class="qr-module" x="15" y="14" width="1" height="1" data-x="13" data-y="12"/><rect class="qr-module" x="19" y="14" width="1" height="1" data-x="17" data-y="12"/><rect class="qr-module" x="21" y="14" width="1" height="1" data-x="19" data-y="12"/><rect class="qr-module" x="22" y="14" width="1" height="1" data-x="20" data-y="12"/><rect class="qr-module" x="23" y="14" width="1" height="1" data-x="21" data-y="12"/><rect class="qr-module" x="24" y="14" width="1" height="1" data-x="22" data-y="12"/><rect class="qr-module" x="26" y="14" width="1" height="1" data-x="24" data-y="12"/><rect class="qr-module" x="30" y="14" width="1" height="1" data-x="28" data-y="12"/><rect class="qr-module" x="31" y="14" width="1" height="1" data-x="29" data-y="12"/><rect class="qr-module" x="35" y="14" width="1" height="1" data-x="33" data-y="12"/><rect class="qr-module" x="37" y="14" width="1" height="1" data-x="35" data-y="12"/><rect class="qr-module" x="3" y="15" width="1" height="1" data-x="1" data-y="13"/><rect class="qr-module" x="4" y="15" width="1" height="1" data-x="2" data-y="13"/><rect class="qr-module" x="5" y="15" width="1" height="1" data-x="3" data-y="13"/><rect class="qr-module" x="6" y="15" width="1" height="1" data-x="4" data-y="13"/><rect class="qr-module" x="7" y="15" width="1" height="1" data-x="5" data-y="13"/><rect class="qr-module" x="9" y="15" width="1" height="1" data-x="7" data-y="13"/><rect class="qr-module" x="10" y="15" width="1" height="1" data-x="8" data-y="13"/><rect class="qr-module" x="11" y="15" width="1" height="1" data-x="9" data-y="13"/><rect class="qr-module" x="12" y="15" width="1" height="1" data-x="10" data-y="13"/><rect class="qr-module" x="20" y="15" width="1" height="1" data-x="18" data-y="13"/><rect class="qr-module" x="21" y="15" width="1" height="1" data-x="19" data-y="13"/><rect class="qr-module" x="26" y="15" width="1" height="1" data-x="24" data-y="13"/><rect class="qr-module" x="27" y="15" width="1" height="1" data-x="25" data-y="13"/><rect class="qr-module" x="28" y="15" width="1" height="1" data-x="26" data-y="13"/><rect class="qr-module" x="29" y="15" width="1" height="1" data-x="27" data-y="13"/><rect class="qr-module" x="30" y="15" width="1" height="1" data-x="28" data-y="13"/><rect class="qr-module" x="32" y="15" width="1" height="1" data-x="30" data-y="13"/><rect class="qr-module" x="35" y="15" width="1" height="1" data-x="33" data-y="13"/><rect class="qr-module" x="36" y="15" width="1" height="1" data-x="34" data-y="13"/><rect class="qr-module" x="37" y="15" width="1" height="1" data-x="35" data-y="13"/><rect class="qr-module" x="38" y="15" width="1" height="1" data-x="36" data-y="13"/><rect class="qr-module" x="39" y="15" width="1" height="1" data-x="37" data-y="13"/><rect class="qr-module" x="40" y="15" width="1" height="1" data-x="38" data-y="13"/><rect class="qr-module" x="42" y="15" width="1" height="1" data-x="40" data-y="13"/><rect class="qr-module" x="2" y="16" width="1" height="1" data-x="0" data-y="14"/><rect class="qr-module" x="5" y="16" width="1" height="1" data-x="3" data-y="14"/><rect class="qr-module" x="6" y="16" width="1" height="1" data-x="4" data-y="14"/><rect class="qr-module" x="7" y="16" width="1" height="1" data-x="5" data-y="14"/><rect class="qr-module" x="8" y="16" width="1" height="1" data-x="6" data-y="14"/><rect class="qr-module" x="11" y="16" width="1" height="1" data-x="9" data-y="14"/><rect class="qr-module" x="12" y="16" width="1" height="1" data-x="10" data-y="14"/><rect class="qr-module" x="14" y="16" width="1" height="1" data-x="12" data-y="14"/><rect class="qr-module" x="15" y="16" width="1" height="1" data-x="13" data-y="14"/><rect class="qr-module" x="16" y="16" width="1" height="1" data-x="14" data-y="14"/><rect class="qr-module" x="17" y="16" width="1" height="1" data-x="15" data-y="14"/><rect class="qr-module" x="18" y="16" width="1" height="1" data-x="16" data-y="14"/><rect class="qr-module" x="19" y="16" width="1" height="1" data-x="17" data-y="14"/><rect class="qr-module" x="20" y="16" width="1" height="1" data-x="18" data-y="14"/><rect class="qr-module" x="21" y="16" width="1" height="1" data-x="19" data-y="14"/><rect class="qr-module" x="23" y="16" width="1" height="1" data-x="21" data-y="14"/><rect class="qr-module" x="25" y="16" width="1" height="1" data-x="23" data-y="14"/><rect class="qr-module" x="26" y="16" width="1" height="1" data-x="24" data-y="14"/><rect class="qr-module" x="27" y="16" width="1" height="1" data-x="25" data-y="14"/><rect class="qr-module" x="29" y="16" width="1" height="1" data-x="27" data-y="14"/><rect class="qr-module" x="34" y="16" width="1" height="1" data-x="32" data-y="14"/><rect class="qr-module" x="35" y="16" width="1" height="1" data-x="33" data-y="14"/><rect class="qr-module" x="36" y="16" width="1" height="1" data-x="34" data-y="14"/><rect class="qr-module" x="38" y="16" width="1" height="1" data-x="36" data-y="14"/><rect class="qr-module" x="39" y="16" width="1" height="1" data-x="37" data-y="14"/><rect class="qr-module" x="40" y="16" width="1" height="1" data-x="38" data-y="14"/><rect class="qr-module" x="41" y="16" width="1" height="1" data-x="39" data-y="14"/><rect class="qr-module" x="42" y="16" width="1" height="1" data-x="40" data-y="14"/><rect class="qr-module" x="2" y="17" width="1" height="1" data-x="0" data-y="15"/><rect class="qr-module" x="10" y="17" width="1" height="1" data-x="8" data-y="15"/><rect class="qr-module" x="13" y="17" width="1" height="1" data-x="11" data-y="15"/><rect class="qr-module" x="15" y="17" width="1" height="1" data-x="13" data-y="15"/><rect class="qr-module" x="16" y="17" width="1" height="1" data-x="14" data-y="15"/><rect class="qr-module" x="17" y="17" width="1" height="1" data-x="15" data-y="15"/><rect class="qr-module" x="19" y="17" width="1" height="1" data-x="17" data-y="15"/><rect class="qr-module" x="20" y="17" width="1" height="1" data-x="18" data-y="15"/><rect class="qr-module" x="21" y="17" width="1" height="1" data-x="19" data-y="15"/><rect class="qr-module" x="22" y="17" width="1" height="1" data-x="20" data-y="15"/><rect class="qr-module" x="23" y="17" width="1" height="1" data-x="21" data-y="15"/><rect class="qr-module" x="24" y="17" width="1" height="1" data-x="22" data-y="15"/><rect class="qr-module" x="25" y="17" width="1" height="1" data-x="23" data-y="15"/><rect class="qr-module" x="26" y="17" width="1" height="1" data-x="24" data-y="15"/><rect class="qr-module" x="29" y="17" width="1" height="1" data-x="27" data-y="15"/><rect class="qr-module" x="30" y="17" width="1" height="1" data-x="28" data-y="15"/><rect class="qr-module" x="31" y="17" width="1" height="1" data-x="29" data-y="15"/><rect class="qr-module" x="34" y="17" width="1" height="1" data-x="32" data-y="15"/><rect class="qr-module" x="35" y="17" width="1" height="1" data-x="33" data-y="15"/><rect class="qr-module" x="36" y="17" width="1" height="1" data-x="34" data-y="15"/><rect class="qr-module" x="38" y="17" width="1" height="1" data-x="36" data-y="15"/><rect class="qr-module" x="39" y="17" width="1" height="1" data-x="37" data-y="15"/><rect class="qr-module" x="42" y="17" width="1" height="1" data-x="40" data-y="15"/><rect class="qr-module" x="3" y="18" width="1" height="1" data-x="1" data-y="16"/><rect class="qr-module" x="7" y="18" width="1" height="1" data-x="5" data-y="16"/><rect class="qr-module" x="8" y="18" width="1" height="1" data-x="6" data-y="16"/><rect class="qr-module" x="9" y="18" width="1" height="1" data-x="7" data-y="16"/><rect class="qr-module" x="10" y="18" width="1" height="1" data-x="8" data-y="16"/><rect class="qr-module" x="11" y="18" width="1" height="1" data-x="9" data-y="16"/><rect class="qr-module" x="13" y="18" width="1" height="1" data-x="11" data-y="16"/><rect class="qr-module" x="15" y="18" width="1" height="1" data-x="13" data-y="16"/><rect class="qr-module" x="17" y="18" width="1" height="1" data-x="15" data-y="16"/><rect class="qr-module" x="19" y="18" width="1" height="1" data-x="17" data-y="16"/><rect class="qr-module" x="20" y="18" width="1" height="1" data-x="18" data-y="16"/><rect class="qr-module" x="24" y="18" width="1" height="1" data-x="22" data-y="16"/><rect class="qr-module" x="28" y="18" width="1" height="1" data-x="26" data-y="16"/><rect class="qr-module" x="30" y="18" width="1" height="1" data-x="28" data-y="16"/><rect class="qr-module" x="31" y="18" width="1" height="1" data-x="29" data-y="16"/><rect class="qr-module" x="32" y="18" width="1" height="1" data-x="30" data-y="16"/><rect class="qr-module" x="33" y="18" width="1" height="1" data-x="31" data-y="16"/><rect class="qr-module" x="35" y="18" width="1" height="1" data-x="33" data-y="16"/><rect class="qr-module" x="37" y="18" width="1" height="1" data-x="35" data-y="16"/><rect class="qr-module" x="4" y="19" width="1" height="1" data-x="2" data-y="17"/><rect class="qr-module" x="6" y="19" width="1" height="1" data-x="4" data-y="17"/><rect class="qr-module" x="9" y="19" width="1" height="1" data-x="7" data-y="17"/><rect class="qr-module" x="13" y="19" width="1" height="1" data-x="11" data-y="17"/><rect class="qr-module" x="17" y="19" width="1" height="1" data-x="15" data-y="17"/><rect class="qr-module" x="19" y="19" width="1" height="1" data-x="17" data-y="17"/><rect class="qr-module" x="24" y="19" width="1" height="1" data-x="22" data-y="17"/><rect class="qr-module" x="25" y="19" width="1" height="1" data-x="23" data-y="17"/><rect class="qr-module" x="27" y="19" width="1" height="1" data-x="25" data-y="17"/><rect class="qr-module" x="28" y="19" width="1" height="1" data-x="26" data-y="17"/><rect class="qr-module" x="29" y="19" width="1" height="1" data-x="27" data-y="17"/><rect class="qr-module" x="34" y="19" width="1" height="1" data-x="32" data-y="17"/><rect class="qr-module" x="36" y="19" width="1" height="1" data-x="34" data-y="17"/><rect class="qr-module" x="37" y="19" width="1" height="1" data-x="35" data-y="17"/><rect class="qr-module" x="38" y="19" width="1" height="1" data-x="36" data-y="17"/><rect class="qr-module" x="40" y="19" width="1" height="1" data-x="38" data-y="17"/><rect class="qr-module" x="41" y="19" width="1" height="1" data-x="39" data-y="17"/><rect class="qr-module" x="42" y="19" width="1" height="1" data-x="40" data-y="17"/><rect class="qr-module" x="3" y="20" width="1" height="1" data-x="1" data-y="18"/><rect class="qr-module" x="4" y="20" width="1" height="1" data-x="2" data-y="18"/><rect class="qr-module" x="6" y="20" width="1" height="1" data-x="4" data-y="18"/><rect class="qr-module" x="8" y="20" width="1" height="1" data-x="6" data-y="18"/><rect class="qr-module" x="9" y="20" width="1" height="1" data-x="7" data-y="18"/><rect class="qr-module" x="10" y="20" width="1" height="1" data-x="8" data-y="18"/><rect class="qr-module" x="11" y="20" width="1" height="1" data-x="9" data-y="18"/><rect class="qr-module" x="12" y="20" width="1" height="1" data-x="10" data-y="18"/><rect class="qr-module" x="13" y="20" width="1" height="1" data-x="11" data-y="18"/><rect class="qr-module" x="14" y="20" width="1" height="1" data-x="12" data-y="18"/><rect class="qr-module" x="17" y="20" width="1" height="1" data-x="15" data-y="18"/><rect class="qr-module" x="20" y="20" width="1" height="1" data-x="18" data-y="18"/><rect class="qr-module" x="22" y="20" width="1" height="1" data-x="20" data-y="18"/><rect class="qr-module" x="23" y="20" width="1" height="1" data-x="21" data-y="18"/><rect class="qr-module" x="24" y="20" width="1" height="1" data-x="22" data-y="18"/><rect class="qr-module" x="25" y="20" width="1" height="1" data-x="23" data-y="18"/><rect class="qr-module" x="26" y="20" width="1" height="1" data-x="24" data-y="18"/><rect class="qr-module" x="27" y="20" width="1" height="1" data-x="25" data-y="18"/><rect class="qr-module" x="29" y="20" width="1" height="1" data-x="27" data-y="18"/><rect class="qr-module" x="34" y="20" width="1" height="1" data-x="32" data-y="18"/><rect class="qr-module" x="36" y="20" width="1" height="1" data-x="34" data-y="18"/><rect class="qr-module" x="40" y="20" width="1" height="1" data-x="38" data-y="18"/><rect class="qr-module" x="42" y="20" width="1" height="1" data-x="40" data-y="18"/><rect class="qr-module" x="4" y="21" width="1" height="1" data-x="2" data-y="19"/><rect class="qr-module" x="9" y="21" width="1" height="1" data-x="7" data-y="19"/><rect class="qr-module" x="13" y="21" width="1" height="1" data-x="11" data-y="19"/><rect class="qr-module" x="14" y="21" width="1" height="1" data-x="12" data-y="19"/><rect class="qr-module" x="15" y="21" width="1" height="1" data-x="13" data-y="19"/><rect class="qr-module" x="23" y="21" width="1" height="1" data-x="21" data-y="19"/><rect class="qr-module" x="25" y="21" width="1" height="1" data-x="23" data-y="19"/><rect class="qr-module" x="28" y="21" width="1" height="1" data-x="26" data-y="19"/><rect class="qr-module" x="31" y="21" width="1" height="1" data-x="29" data-y="19"/><rect class="qr-module" x="32" y="21" width="1" height="1" data-x="30" data-y="19"/><rect class="qr-module" x="34" y="21" width="1" height="1" data-x="32" data-y="19"/><rect class="qr-module" x="35" y="21" width="1" height="1" data-x="33" data-y="19"/><rect class="qr-module" x="36" y="21" width="1" height="1" data-x="34" data-y="19"/><rect class="qr-module" x="37" y="21" width="1" height="1" data-x="35" data-y="19"/><rect class="qr-module" x="39" y="21" width="1" height="1" data-x="37" data-y="19"/><rect class="qr-module" x="3" y="22" width="1" height="1" data-x="1" data-y="20"/><rect class="qr-module" x="5" y="22" width="1" height="1" data-x="3" data-y="20"/><rect class="qr-module" x="6" y="22" width="1" height="1" data-x="4" data-y="20"/><rect class="qr-module" x="8" y="22" width="1" height="1" data-x="6" data-y="20"/><rect class="qr-module" x="10" y="22" width="1" height="1" data-x="8" data-y="20"/><rect class="qr-module" x="12" y="22" width="1" height="1" data-x="10" data-y="20"/><rect class="qr-module" x="13" y="22" width="1" height="1" data-x="11" data-y="20"/><rect class="qr-module" x="15" y="22" width="1" height="1" data-x="13" data-y="20"/><rect class="qr-module" x="16" y="22" width="1" height="1" data-x="14" data-y="20"/><rect class="qr-module" x="22" y="22" width="1" height="1" data-x="20" data-y="20"/><rect class="qr-module" x="26" y="22" width="1" height="1" data-x="24" data-y="20"/><rect class="qr-module" x="31" y="22" width="1" height="1" data-x="29" data-y="20"/><rect class="qr-module" x="33" y="22" width="1" height="1" data-x="31" data-y="20"/><rect class="qr-module" x="34" y="22" width="1" height="1" data-x="32" data-y="20"/><rect class="qr-module" x="35" y="22" width="1" height="1" data-x="33" data-y="20"/><rect class="qr-module" x="41" y="22" width="1" height="1" data-x="39" data-y="20"/><rect class="qr-module" x="42" y="22" width="1" height="1" data-x="40" data-y="20"/><rect class="qr-module" x="7" y="23" width="1" height="1" data-x="5" data-y="21"/><rect class="qr-module" x="13" y="23" width="1" height="1" data-x="11" data-y="21"/><rect class="qr-module" x="14" y="23" width="1" height="1" data-x="12" data-y="21"/><rect class="qr-module" x="16" y="23" width="1" height="1" data-x="14" data-y="21"/><rect class="qr-module" x="17" y="23" width="1" height="1" data-x="15" data-y="21"/><rect class="qr-module" x="20" y="23" width="1" height="1" data-x="18" data-y="21"/><rect class="qr-module" x="24" y="23" width="1" height="1" data-x="22" data-y="21"/><rect class="qr-module" x="25" y="23" width="1" height="1" data-x="23" data-y="21"/><rect class="qr-module" x="26" y="23" width="1" height="1" data-x="24" data-y="21"/><rect class="qr-module" x="27" y="23" width="1" height="1" data-x="25" data-y="21"/><rect class="qr-module" x="28" y="23" width="1" height="1" data-x="26" data-y="21"/><rect class="qr-module" x="29" y="23" width="1" height="1" data-x="27" data-y="21"/><rect class="qr-module" x="30" y="23" width="1" height="1" data-x="28" data-y="21"/><rect class="qr-module" x="32" y="23" width="1" height="1" data-x="30" data-y="21"/><rect class="qr-module" x="35" y="23" width="1" height="1" data-x="33" data-y="21"/><rect class="qr-module" x="36" y="23" width="1" height="1" data-x="34" data-y="21"/><rect class="qr-module" x="38" y="23" width="1" height="1" data-x="36" data-y="21"/><rect class="qr-module" x="42" y="23" width="1" height="1" data-x="40" data-y="21"/><rect class="qr-module" x="3" y="24" width="1" height="1" data-x="1" data-y="22"/><rect class="qr-module" x="4" y="24" width="1" height="1" data-x="2" data-y="22"/><rect class="qr-module" x="5" y="24" width="1" height="1" data-x="3" data-y="22"/><rect class="qr-module" x="8" y="24" width="1" height="1" data-x="6" data-y="22"/><rect class="qr-module" x="10" y="24" width="1" height="1" data-x="8" data-y="22"/><rect class="qr-module" x="11" y="24" width="1" height="1" data-x="9" data-y="22"/><rect class="qr-module" x="13" y="24" width="1" height="1" data-x="11" data-y="22"/><rect class="qr-module" x="15" y="24" width="1" height="1" data-x="13" data-y="22"/><rect class="qr-module" x="17" y="24" width="1" height="1" data-x="15" data-y="22"/><rect class="qr-module" x="18" y="24" width="1" height="1" data-x="16" data-y="22"/><rect class="qr-module" x="22" y="24" width="1" height="1" data-x="20" data-y="22"/><rect class="qr-module" x="23" y="24" width="1" height="1" data-x="21" data-y="22"/><rect class="qr-module" x="24" y="24" width="1" height="1" data-x="22" data-y="22"/><rect class="qr-module" x="25" y="24" width="1" height="1" data-x="23" data-y="22"/><rect class="qr-module" x="27" y="24" width="1" height="1" data-x="25" data-y="22"/><rect class="qr-module" x="29" y="24" width="1" height="1" data-x="27" data-y="22"/><rect class="qr-module" x="30" y="24" width="1" height="1" data-x="28" data-y="22"/><rect class="qr-module" x="37" y="24" width="1" height="1" data-x="35" data-y="22"/><rect class="qr-module" x="39" y="24" width="1" height="1" data-x="37" data-y="22"/><rect class="qr-module" x="40" y="24" width="1" height="1" data-x="38" data-y="22"/><rect class="qr-module" x="42" y="24" width="1" height="1" data-x="40" data-y="22"/><rect class="qr-module" x="2" y="25" width="1" height="1" data-x="0" data-y="23"/><rect class="qr-module" x="6" y="25" width="1" height="1" data-x="4" data-y="23"/><rect class="qr-module" x="12" y="25" width="1" height="1" data-x="10" data-y="23"/><rect class="qr-module" x="17" y="25" width="1" height="1" data-x="15" data-y="23"/><rect class="qr-module" x="19" y="25" width="1" height="1" data-x="17" data-y="23"/><rect class="qr-module" x="21" y="25" width="1" height="1" data-x="19" data-y="23"/><rect class="qr-module" x="23" y="25" width="1" height="1" data-x="21" data-y="23"/><rect class="qr-module" x="24" y="25" width="1" height="1" data-x="22" data-y="23"/><rect class="qr-module" x="25" y="25" width="1" height="1" data-x="23" data-y="23"/><rect class="qr-module" x="26" y="25" width="1" height="1" data-x="24" data-y="23"/><rect class="qr-module" x="28" y="25" width="1" height="1" data-x="26" data-y="23"/><rect class="qr-module" x="29" y="25" width="1" height="1" data-x="27" data-y="23"/><rect class="qr-module" x="31" y="25" width="1" height="1" data-x="29" data-y="23"/><rect class="qr-module" x="32" y="25" width="1" height="1" data-x="30" data-y="23"/><rect class="qr-module" x="36" y="25" width="1" height="1" data-x="34" data-y="23"/><rect class="qr-module" x="37" y="25" width="1" height="1" data-x="35" data-y="23"/><rect class="qr-module" x="39" y="25" width="1" height="1" data-x="37" data-y="23"/><rect class="qr-module" x="41" y="25" width="1" height="1" data-x="39" data-y="23"/><rect class="qr-module" x="2" y="26" width="1" height="1" data-x="0" data-y="24"/><rect class="qr-module" x="3" y="26" width="1" height="1" data-x="1" data-y="24"/><rect class="qr-module" x="4" y="26" width="1" height="1" data-x="2" data-y="24"/><rect class="qr-module" x="8" y="26" width="1" height="1" data-x="6" data-y="24"/><rect class="qr-module" x="10" y="26" width="1" height="1" data-x="8" data-y="24"/><rect class="qr-module" x="12" y="26" width="1" height="1" data-x="10" data-y="24"/><rect class="qr-module" x="13" y="26" width="1" height="1" data-x="11" data-y="24"/><rect class="qr-module" x="14" y="26" width="1" height="1" data-x="12" data-y="24"/><rect class="qr-module" x="18" y="26" width="1" height="1" data-x="16" data-y="24"/><rect class="qr-module" x="19" y="26" width="1" height="1" data-x="17" data-y="24"/><rect class="qr-module" x="21" y="26" width="1" height="1" data-x="19" data-y="24"/><rect class="qr-module" x="22" y="26" width="1" height="1" data-x="20" data-y="24"/><rect class="qr-module" x="23" y="26" width="1" height="1" data-x="21" data-y="24"/><rect class="qr-module" x="24" y="26" width="1" height="1" data-x="22" data-y="24"/><rect class="qr-module" x="25" y="26" width="1" height="1" data-x="23" data-y="24"/><rect class="qr-module" x="31" y="26" width="1" height="1" data-x="29" data-y="24"/><rect class="qr-module" x="33" y="26" width="1" height="1" data-x="31" data-y="24"/><rect class="qr-module" x="34" y="26" width="1" height="1" data-x="32" data-y="24"/><rect class="qr-module" x="2" y="27" width="1" height="1" data-x="0" data-y="25"/><rect class="qr-module" x="11" y="27" width="1" height="1" data-x="9" data-y="25"/><rect class="qr-module" x="14" y="27" width="1" height="1" data-x="12" data-y="25"/><rect class="qr-module" x="15" y="27" width="1" height="1" data-x="13" data-y="25"/><rect class="qr-module" x="17" y="27" width="1" height="1" data-x="15" data-y="25"/><rect class="qr-module" x="19" y="27" width="1" height="1" data-x="17" data-y="25"/><rect class="qr-module" x="20" y="27" width="1" height="1" data-x="18" data-y="25"/><rect class="qr-module" x="24" y="27" width="1" height="1" data-x="22" data-y="25"/><rect class="qr-module" x="25" y="27" width="1" height="1" data-x="23" data-y="25"/><rect class="qr-module" x="28" y="27" width="1" height="1" data-x="26" data-y="25"/><rect class="qr-module" x="29" y="27" width="1" height="1" data-x="27" data-y="25"/><rect class="qr-module" x="30" y="27" width="1" height="1" data-x="28" data-y="25"/><rect class="qr-module" x="31" y="27" width="1" height="1" data-x="29" data-y="25"/><rect class="qr-module" x="32" y="27" width="1" height="1" data-x="30" data-y="25"/><rect class="qr-module" x="34" y="27" width="1" height="1" data-x="32" data-y="25"/><rect class="qr-module" x="35" y="27" width="1" height="1" data-x="33" data-y="25"/><rect class="qr-module" x="36" y="27" width="1" height="1" data-x="34" data-y="25"/><rect class="qr-module" x="37" y="27" width="1" height="1" data-x="35" data-y="25"/><rect class="qr-module" x="38" y="27" width="1" height="1" data-x="36" data-y="25"/><rect class="qr-module" x="39" y="27" width="1" height="1" data-x="37" data-y="25"/><rect class="qr-module" x="40" y="27" width="1" height="1" data-x="38" data-y="25"/><rect class="qr-module" x="41" y="27" width="1" height="1" data-x="39" data-y="25"/><rect class="qr-module" x="42" y="27" width="1" height="1" data-x="40" data-y="25"/><rect class="qr-module" x="2" y="28" width="1" height="1" data-x="0" data-y="26"/><rect class="qr-module" x="3" y="28" width="1" height="1" data-x="1" data-y="26"/><rect class="qr-module" x="4" y="28" width="1" height="1" data-x="2" data-y="26"/><rect class="qr-module" x="5" y="28" width="1" height="1" data-x="3" data-y="26"/><rect class="qr-module" x="6" y="28" width="1" height="1" data-x="4" data-y="26"/><rect class="qr-module" x="7" y="28" width="1" height="1" data-x="5" data-y="26"/><rect class="qr-module" x="8" y="28" width="1" height="1" data-x="6" data-y="26"/><rect class="qr-module" x="9" y="28" width="1" height="1" data-x="7" data-y="26"/><rect class="qr-module" x="12" y="28" width="1" height="1" data-x="10" data-y="26"/><rect class="qr-module" x="17" y="28" width="1" height="1" data-x="15" data-y="26"/><rect class="qr-module" x="20" y="28" width="1" height="1" data-x="18" data-y="26"/><rect class="qr-module" x="23" y="28" width="1" height="1" data-x="21" data-y="26"/><rect class="qr-module" x="25" y="28" width="1" height="1" data-x="23" data-y="26"/><rect class="qr-module" x="26" y="28" width="1" height="1" data-x="24" data-y="26"/><rect class="qr-module" x="27" y="28" width="1" height="1" data-x="25" data-y="26"/><rect class="qr-module" x="28" y="28" width="1" height="1" data-x="26" data-y="26"/><rect class="qr-module" x="29" y="28" width="1" height="1" data-x="27" data-y="26"/><rect class="qr-module" x="30" y="28" width="1" height="1" data-x="28" data-y="26"/><rect class="qr-module" x="31" y="28" width="1" height="1" data-x="29" data-y="26"/><rect class="qr-module" x="35" y="28" width="1" height="1" data-x="33" data-y="26"/><rect class="qr-module" x="36" y="28" width="1" height="1" data-x="34" data-y="26"/><rect class="qr-module" x="39" y="28" width="1" height="1" data-x="37" data-y="26"/><rect class="qr-module" x="42" y="28" width="1" height="1" data-x="40" data-y="26"/><rect class="qr-module" x="4" y="29" width="1" height="1" data-x="2" data-y="27"/><rect class="qr-module" x="5" y="29" width="1" height="1" data-x="3" data-y="27"/><rect class="qr-module" x="7" y="29" width="1" height="1" data-x="5" data-y="27"/><rect class="qr-module" x="13" y="29" width="1" height="1" data-x="11" data-y="27"/><rect class="qr-module" x="14" y="29" width="1" height="1" data-x="12" data-y="27"/><rect class="qr-module" x="15" y="29" width="1" height="1" data-x="13" data-y="27"/><rect class="qr-module" x="17" y="29" width="1" height="1" data-x="15" data-y="27"/><rect class="qr-module" x="19" y="29" width="1" height="1" data-x="17" data-y="27"/><rect class="qr-module" x="22" y="29" width="1" height="1" data-x="20" data-y="27"/><rect class="qr-module" x="23" y="29" width="1" height="1" data-x="21" data-y="27"/><rect class="qr-module" x="26" y="29" width="1" height="1" data-x="24" data-y="27"/><rect class="qr-module" x="30" y="29" width="1" height="1" data-x="28" data-y="27"/><rect class="qr-module" x="31" y="29" width="1" height="1" data-x="29" data-y="27"/><rect class="qr-module" x="32" y="29" width="1" height="1" data-x="30" data-y="27"/><rect class="qr-module" x="33" y="29" width="1" height="1" data-x="31" data-y="27"/><rect class="qr-module" x="37" y="29" width="1" height="1" data-x="35" data-y="27"/><rect class="qr-module" x="38" y="29" width="1" height="1" data-x="36" data-y="27"/><rect class="qr-module" x="39" y="29" width="1" height="1" data-x="37" data-y="27"/><rect class="qr-module" x="3" y="30" width="1" height="1" data-x="1" data-y="28"/><rect class="qr-module" x="6" y="30" width="1" height="1" data-x="4" data-y="28"/><rect class="qr-module" x="8" y="30" width="1" height="1" data-x="6" data-y="28"/><rect class="qr-module" x="9" y="30" width="1" height="1" data-x="7" data-y="28"/><rect class="qr-module" x="11" y="30" width="1" height="1" data-x="9" data-y="28"/><rect class="qr-module" x="12" y="30" width="1" height="1" data-x="10" data-y="28"/><rect class="qr-module" x="13" y="30" width="1" height="1" data-x="11" data-y="28"/><rect class="qr-module" x="14" y="30" width="1" height="1" data-x="12" data-y="28"/><rect class="qr-module" x="15" y="30" width="1" height="1" data-x="13" data-y="28"/><rect class="qr-module" x="18" y="30" width="1" height="1" data-x="16" data-y="28"/><rect class="qr-module" x="19" y="30" width="1" height="1" data-x="17" data-y="28"/><rect class="qr-module" x="20" y="30" width="1" height="1" data-x="18" data-y="28"/><rect class="qr-module" x="23" y="30" width="1" height="1" data-x="21" data-y="28"/><rect class="qr-module" x="24" y="30" width="1" height="1" data-x="22" data-y="28"/><rect class="qr-module" x="25" y="30" width="1" height="1" data-x="23" data-y="28"/><rect class="qr-module" x="26" y="30" width="1" height="1" data-x="24" data-y="28"/><rect class="qr-module" x="30" y="30" width="1" height="1" data-x="28" data-y="28"/><rect class="qr-module" x="31" y="30" width="1" height="1" data-x="29" data-y="28"/><rect class="qr-module" x="35" y="30" width="1" height="1" data-x="33" data-y="28"/><rect class="qr-module" x="37" y="30" width="1" height="1" data-x="35" data-y="28"/><rect class="qr-module" x="38" y="30" width="1" height="1" data-x="36" data-y="28"/><rect class="qr-module" x="41" y="30" width="1" height="1" data-x="39" data-y="28"/><rect class="qr-module" x="2" y="31" width="1" height="1" data-x="0" data-y="29"/><rect class="qr-module" x="3" y="31" width="1" height="1" data-x="1" data-y="29"/><rect class="qr-module" x="4" y="31" width="1" height="1" data-x="2" data-y="29"/><rect class="qr-module" x="5" y="31" width="1" height="1" data-x="3" data-y="29"/><rect class="qr-module" x="6" y="31" width="1" height="1" data-x="4" data-y="29"/><rect class="qr-module" x="10" y="31" width="1" height="1" data-x="8" data-y="29"/><rect class="qr-module" x="12" y="31" width="1" height="1" data-x="10" data-y="29"/><rect class="qr-module" x="18" y="31" width="1" height="1" data-x="16" data-y="29"/><rect class="qr-module" x="19" y="31" width="1" height="1" data-x="17" data-y="29"/><rect class="qr-module" x="21" y="31" width="1" height="1" data-x="19" data-y="29"/><rect class="qr-module" x="22" y="31" width="1" height="1" data-x="20" data-y="29"/><rect class="qr-module" x="23" y="31" width="1" height="1" data-x="21" data-y="29"/><rect class="qr-module" x="24" y="31" width="1" height="1" data-x="22" data-y="29"/><rect class="qr-module" x="25" y="31" width="1" height="1" data-x="23" data-y="29"/><rect class="qr-module" x="27" y="31" width="1" height="1" data-x="25" data-y="29"/><rect class="qr-module" x="28" y="31" width="1" height="1" data-x="26" data-y="29"/><rect class="qr-module" x="29" y="31" width="1" height="1" data-x="27" data-y="29"/><rect class="qr-module" x="30" y="31" width="1" height="1" data-x="28" data-y="29"/><rect class="qr-module" x="32" y="31" width="1" height="1" data-x="30" data-y="29"/><rect class="qr-module" x="36" y="31" width="1" height="1" data-x="34" data-y="29"/><rect class="qr-module" x="37" y="31" width="1" height="1" data-x="35" data-y="29"/><rect class="qr-module" x="38" y="31" width="1" height="1" data-x="36" data-y="29"/><rect class="qr-module" x="39" y="31" width="1" height="1" data-x="37" data-y="29"/><rect class="qr-module" x="40" y="31" width="1" height="1" data-x="38" data-y="29"/><rect class="qr-module" x="41" y="31" width="1" height="1" data-x="39" data-y="29"/><rect class="qr-module" x="42" y="31" width="1" height="1" data-x="40" data-y="29"/><rect class="qr-module" x="4" y="32" width="1" height="1" data-x="2" data-y="30"/><rect class="qr-module" x="5" y="32" width="1" height="1" data-x="3" data-y="30"/><rect class="qr-module" x="6" y="32" width="1" height="1" data-x="4" data-y="30"/><rect class="qr-module" x="7" y="32" width="1" height="1" data-x="5" data-y="30"/><rect class="qr-module" x="8" y="32" width="1" height="1" data-x="6" data-y="30"/><rect class="qr-module" x="11" y="32" width="1" height="1" data-x="9" data-y="30"/><rect class="qr-module" x="12" y="32" width="1" height="1" data-x="10" data-y="30"/><rect class="qr-module" x="14" y="32" width="1" height="1" data-x="12" data-y="30"/><rect class="qr-module" x="19" y="32" width="1" height="1" data-x="17" data-y="30"/><rect class="qr-module" x="20" y="32" width="1" height="1" data-x="18" data-y="30"/><rect class="qr-module" x="22" y="32" width="1" height="1" data-x="20" data-y="30"/><rect class="qr-module" x="25" y="32" width="1" height="1" data-x="23" data-y="30"/><rect class="qr-module" x="27" y="32" width="1" height="1" data-x="25" data-y="30"/><rect class="qr-module" x="28" y="32" width="1" height="1" data-x="26" data-y="30"/><rect class="qr-module" x="29" y="32" width="1" height="1" data-x="27" data-y="30"/><rect class="qr-module" x="32" y="32" width="1" height="1" data-x="30" data-y="30"/><rect class="qr-module" x="34" y="32" width="1" height="1" data-x="32" data-y="30"/><rect class="qr-module" x="35" y="32" width="1" height="1" data-x="33" data-y="30"/><rect class="qr-module" x="38" y="32" width="1" height="1" data-x="36" data-y="30"/><rect class="qr-module" x="40" y="32" width="1" height="1" data-x="38" data-y="30"/><rect class="qr-module" x="41" y="32" width="1" height="1" data-x="39" data-y="30"/><rect class="qr-module" x="42" y="32" width="1" height="1" data-x="40" data-y="30"/><rect class="qr-module" x="4" y="33" width="1" height="1" data-x="2" data-y="31"/><rect class="qr-module" x="6" y="33" width="1" height="1" data-x="4" data-y="31"/><rect class="qr-module" x="7" y="33" width="1" height="1" data-x="5" data-y="31"/><rect class="qr-module" x="10" y="33" width="1" height="1" data-x="8" data-y="31"/><rect class="qr-module" x="18" y="33" width="1" height="1" data-x="16" data-y="31"/><rect class="qr-module" x="19" y="33" width="1" height="1" data-x="17" data-y="31"/><rect class="qr-module" x="20" y="33" width="1" height="1" data-x="18" data-y="31"/><rect class="qr-module" x="23" y="33" width="1" height="1" data-x="21" data-y="31"/><rect class="qr-module" x="25" y="33" width="1" height="1" data-x="23" data-y="31"/><rect class="qr-module" x="26" y="33" width="1" height="1" data-x="24" data-y="31"/><rect class="qr-module" x="29" y="33" width="1" height="1" data-x="27" data-y="31"/><rect class="qr-module" x="31" y="33" width="1" height="1" data-x="29" data-y="31"/><rect class="qr-module" x="32" y="33" width="1" height="1" data-x="30" data-y="31"/><rect class="qr-module" x="33" y="33" width="1" height="1" data-x="31" data-y="31"/><rect class="qr-module" x="34" y="33" width="1" height="1" data-x="32" data-y="31"/><rect class="qr-module" x="36" y="33" width="1" height="1" data-x="34" data-y="31"/><rect class="qr-module" x="37" y="33" width="1" height="1" data-x="35" data-y="31"/><rect class="qr-module" x="39" y="33" width="1" height="1" data-x="37" data-y="31"/><rect class="qr-module" x="42" y="33" width="1" height="1" data-x="40" data-y="31"/><rect class="qr-module" x="2" y="34" width="1" height="1" data-x="0" data-y="32"/><rect class="qr-module" x="3" y="34" width="1" height="1" data-x="1" data-y="32"/><rect class="qr-module" x="4" y="34" width="1" height="1" data-x="2" data-y="32"/><rect class="qr-module" x="6" y="34" width="1" height="1" data-x="4" data-y="32"/><rect class="qr-module" x="7" y="34" width="1" height="1" data-x="5" data-y="32"/><rect class="qr-module" x="8" y="34" width="1" height="1" data-x="6" data-y="32"/><rect class="qr-module" x="10" y="34" width="1" height="1" data-x="8" data-y="32"/><rect class="qr-module" x="11" y="34" width="1" height="1" data-x="9" data-y="32"/><rect class="qr-module" x="12" y="34" width="1" height="1" data-x="10" data-y="32"/><rect class="qr-module" x="16" y="34" width="1" height="1" data-x="14" data-y="32"/><rect class="qr-module" x="19" y="34" width="1" height="1" data-x="17" data-y="32"/><rect class="qr-module" x="21" y="34" width="1" height="1" data-x="19" data-y="32"/><rect class="qr-module" x="23" y="34" width="1" height="1" data-x="21" data-y="32"/><rect class="qr-module" x="24" y="34" width="1" height="1" data-x="22" data-y="32"/><rect class="qr-module" x="26" y="34" width="1" height="1" data-x="24" data-y="32"/><rect class="qr-module" x="29" y="34" width="1" height="1" data-x="27" data-y="32"/><rect class="qr-module" x="30" y="34" width="1" height="1" data-x="28" data-y="32"/><rect class="qr-module" x="31" y="34" width="1" height="1" data-x="29" data-y="32"/><rect class="qr-module" x="32" y="34" width="1" height="1" data-x="30" data-y="32"/><rect class="qr-module" x="34" y="34" width="1" height="1" data-x="32" data-y="32"/><rect class="qr-module" x="35" y="34" width="1" height="1" data-x="33" data-y="32"/><rect class="qr-module" x="36" y="34" width="1" height="1" data-x="34" data-y="32"/><rect class="qr-module" x="37" y="34" width="1" height="1" data-x="35" data-y="32"/><rect class="qr-module" x="38" y="34" width="1" height="1" data-x="36" data-y="32"/><rect class="qr-module" x="39" y="34" width="1" height="1" data-x="37" data-y="32"/><rect class="qr-module" x="41" y="34" width="1" height="1" data-x="39" data-y="32"/><rect class="qr-module" x="42" y="34" width="1" height="1" data-x="40" data-y="32"/><rect class="qr-module" x="10" y="35" width="1" height="1" data-x="8" data-y="33"/><rect class="qr-module" x="11" y="35" width="1" height="1" data-x="9" data-y="33"/><rect class="qr-module" x="12" y="35" width="1" height="1" data-x="10" data-y="33"/><rect class="qr-module" x="14" y="35" width="1" height="1" data-x="12" data-y="33"/><rect class="qr-module" x="16" y="35" width="1" height="1" data-x="14" data-y="33"/><rect class="qr-module" x="18" y="35" width="1" height="1" data-x="16" data-y="33"/><rect class="qr-module" x="20" y="35" width="1" height="1" data-x="18" data-y="33"/><rect class="qr-module" x="23" y="35" width="1" height="1" data-x="21" data-y="33"/><rect class="qr-module" x="24" y="35" width="1" height="1" data-x="22" data-y="33"/><rect class="qr-module" x="25" y="35" width="1" height="1" data-x="23" data-y="33"/><rect class="qr-module" x="28" y="35" width="1" height="1" data-x="26" data-y="33"/><rect class="qr-module" x="29" y="35" width="1" height="1" data-x="27" data-y="33"/><rect class="qr-module" x="34" y="35" width="1" height="1" data-x="32" data-y="33"/><rect class="qr-module" x="38" y="35" width="1" height="1" data-x="36" data-y="33"/><rect class="qr-module" x="40" y="35" width="1" height="1" data-x="38" data-y="33"/><rect class="qr-module" x="41" y="35" width="1" height="1" data-x="39" data-y="33"/><rect class="qr-module" x="42" y="35" width="1" height="1" data-x="40" data-y="33"/><rect class="qr-module" x="2" y="36" width="1" height="1" data-x="0" data-y="34"/><rect class="qr-module" x="3" y="36" width="1" height="1" data-x="1" data-y="34"/><rect class="qr-module" x="4" y="36" width="1" height="1" data-x="2" data-y="34"/><rect class="qr-module" x="5" y="36" width="1" height="1" data-x="3" data-y="34"/><rect class="qr-module" x="6" y="36" width="1" height="1" data-x="4" data-y="34"/><rect class="qr-module" x="7" y="36" width="1" height="1" data-x="5" data-y="34"/><rect class="qr-module" x="8" y="36" width="1" height="1" data-x="6" data-y="34"/><rect class="qr-module" x="10" y="36" width="1" height="1" data-x="8" data-y="34"/><rect class="qr-module" x="12" y="36" width="1" height="1" data-x="10" data-y="34"/><rect class="qr-module" x="14" y="36" width="1" height="1" data-x="12" data-y="34"/><rect class="qr-module" x="16" y="36" width="1" height="1" data-x="14" data-y="34"/><rect class="qr-module" x="17" y="36" width="1" height="1" data-x="15" data-y="34"/><rect class="qr-module" x="18" y="36" width="1" height="1" data-x="16" data-y="34"/><rect class="qr-module" x="19" y="36" width="1" height="1" data-x="17" data-y="34"/><rect class="qr-module" x="25" y="36" width="1" height="1" data-x="23" data-y="34"/><rect class="qr-module" x="26" y="36" width="1" height="1" data-x="24" data-y="34"/><rect class="qr-module" x="27" y="36" width="1" height="1" data-x="25" data-y="34"/><rect class="qr-module" x="28" y="36" width="1" height="1" data-x="26" data-y="34"/><rect class="qr-module" x="29" y="36" width="1" height="1" data-x="27" data-y="34"/><rect class="qr-module" x="30" y="36" width="1" height="1" data-x="28" data-y="34"/><rect class="qr-module" x="31" y="36" width="1" height="1" data-x="29" data-y="34"/><rect class="qr-module" x="32" y="36" width="1" height="1" data-x="30" data-y="34"/><rect class="qr-module" x="33" y="36" width="1" height="1" data-x="31" data-y="34"/><rect class="qr-module" x="34" y="36" width="1" height="1" data-x="32" data-y="34"/><rect class="qr-module" x="36" y="36" width="1" height="1" data-x="34" data-y="34"/><rect class="qr-module" x="38" y="36" width="1" height="1" data-x="36" data-y="34"/><rect class="qr-module" x="39" y="36" width="1" height="1" data-x="37" data-y="34"/><rect class="qr-module" x="41" y="36" width="1" height="1" data-x="39" data-y="34"/><rect class="qr-module" x="42" y="36" width="1" height="1" data-x="40" data-y="34"/><rect class="qr-module" x="2" y="37" width="1" height="1" data-x="0" data-y="35"/><rect class="qr-module" x="8" y="37" width="1" height="1" data-x="6" data-y="35"/><rect class="qr-module" x="11" y="37" width="1" height="1" data-x="9" data-y="35"/><rect class="qr-module" x="12" y="37" width="1" height="1" data-x="10" data-y="35"/><rect class="qr-module" x="13" y="37" width="1" height="1" data-x="11" data-y="35"/><rect class="qr-module" x="14" y="37" width="1" height="1" data-x="12" data-y="35"/><rect class="qr-module" x="15" y="37" width="1" height="1" data-x="13" data-y="35"/><rect class="qr-module" x="18" y="37" width="1" height="1" data-x="16" data-y="35"/><rect class="qr-module" x="19" y="37" width="1" height="1" data-x="17" data-y="35"/><rect class="qr-module" x="20" y="37" width="1" height="1" data-x="18" data-y="35"/><rect class="qr-module" x="22" y="37" width="1" height="1" data-x="20" data-y="35"/><rect class="qr-module" x="24" y="37" width="1" height="1" data-x="22" data-y="35"/><rect class="qr-module" x="28" y="37" width="1" height="1" data-x="26" data-y="35"/><rect class="qr-module" x="30" y="37" width="1" height="1" data-x="28" data-y="35"/><rect class="qr-module" x="31" y="37" width="1" height="1" data-x="29" data-y="35"/><rect class="qr-module" x="32" y="37" width="1" height="1" data-x="30" data-y="35"/><rect class="qr-module" x="34" y="37" width="1" height="1" data-x="32" data-y="35"/><rect class="qr-module" x="38" y="37" width="1" height="1" data-x="36" data-y="35"/><rect class="qr-module" x="39" y="37" width="1" height="1" data-x="37" data-y="35"/><rect class="qr-module" x="41" y="37" width="1" height="1" data-x="39" data-y="35"/><rect class="qr-module" x="42" y="37" width="1" height="1" data-x="40" data-y="35"/><rect class="qr-module" x="2" y="38" width="1" height="1" data-x="0" data-y="36"/><rect class="qr-module" x="4" y="38" width="1" height="1" data-x="2" data-y="36"/><rect class="qr-module" x="5" y="38" width="1" height="1" data-x="3" data-y="36"/><rect class="qr-module" x="6" y="38" width="1" height="1" data-x="4" data-y="36"/><rect class="qr-module" x="8" y="38" width="1" height="1" data-x="6" data-y="36"/><rect class="qr-module" x="10" y="38" width="1" height="1" data-x="8" data-y="36"/><rect class="qr-module" x="11" y="38" width="1" height="1" data-x="9" data-y="36"/><rect class="qr-module" x="15" y="38" width="1" height="1" data-x="13" data-y="36"/><rect class="qr-module" x="16" y="38" width="1" height="1" data-x="14" data-y="36"/><rect class="qr-module" x="18" y="38" width="1" height="1" data-x="16" data-y="36"/><rect class="qr-module" x="20" y="38" width="1" height="1" data-x="18" data-y="36"/><rect class="qr-module" x="21" y="38" width="1" height="1" data-x="19" data-y="36"/><rect class="qr-module" x="24" y="38" width="1" height="1" data-x="22" data-y="36"/><rect class="qr-module" x="26" y="38" width="1" height="1" data-x="24" data-y="36"/><rect class="qr-module" x="30" y="38" width="1" height="1" data-x="28" data-y="36"/><rect class="qr-module" x="31" y="38" width="1" height="1" data-x="29" data-y="36"/><rect class="qr-module" x="32" y="38" width="1" height="1" data-x="30" data-y="36"/><rect class="qr-module" x="33" y="38" width="1" height="1" data-x="31" data-y="36"/><rect class="qr-module" x="34" y="38" width="1" height="1" data-x="32" data-y="36"/><rect class="qr-module" x="35" y="38" width="1" height="1" data-x="33" data-y="36"/><rect class="qr-module" x="36" y="38" width="1" height="1" data-x="34" data-y="36"/><rect class="qr-module" x="37" y="38" width="1" height="1" data-x="35" data-y="36"/><rect class="qr-module" x="38" y="38" width="1" height="1" data-x="36" data-y="36"/><rect class="qr-module" x="39" y="38" width="1" height="1" data-x="37" data-y="36"/><rect class="qr-module" x="41" y="38" width="1" height="1" data-x="39" data-y="36"/><rect class="qr-module" x="2" y="39" width="1" height="1" data-x="0" data-y="37"/><rect class="qr-module" x="4" y="39" width="1" height="1" data-x="2" data-y="37"/><rect class="qr-module" x="5" y="39" width="1" height="1" data-x="3" data-y="37"/><rect class="qr-module" x="6" y="39" width="1" height="1" data-x="4" data-y="37"/><rect class="qr-module" x="8" y="39" width="1" height="1" data-x="6" data-y="37"/><rect class="qr-module" x="11" y="39" width="1" height="1" data-x="9" data-y="37"/><rect class="qr-module" x="12" y="39" width="1" height="1" data-x="10" data-y="37"/><rect class="qr-module" x="13" y="39" width="1" height="1" data-x="11" data-y="37"/><rect class="qr-module" x="14" y="39" width="1" height="1" data-x="12" data-y="37"/><rect class="qr-module" x="16" y="39" width="1" height="1" data-x="14" data-y="37"/><rect class="qr-module" x="17" y="39" width="1" height="1" data-x="15" data-y="37"/><rect class="qr-module" x="18" y="39" width="1" height="1" data-x="16" data-y="37"/><rect class="qr-module" x="19" y="39" width="1" height="1" data-x="17" data-y="37"/><rect class="qr-module" x="25" y="39" width="1" height="1" data-x="23" data-y="37"/><rect class="qr-module" x="28" y="39" width="1" height="1" data-x="26" data-y="37"/><rect class="qr-module" x="29" y="39" width="1" height="1" data-x="27" data-y="37"/><rect class="qr-module" x="30" y="39" width="1" height="1" data-x="28" data-y="37"/><rect class="qr-module" x="33" y="39" width="1" height="1" data-x="31" data-y="37"/><rect class="qr-module" x="34" y="39" width="1" height="1" data-x="32" data-y="37"/><rect class="qr-module" x="40" y="39" width="1" height="1" data-x="38" data-y="37"/><rect class="qr-module" x="42" y="39" width="1" height="1" data-x="40" data-y="37"/><rect class="qr-module" x="2" y="40" width="1" height="1" data-x="0" data-y="38"/><rect class="qr-module" x="4" y="40" width="1" height="1" data-x="2" data-y="38"/><rect class="qr-module" x="5" y="40" width="1" height="1" data-x="3" data-y="38"/><rect class="qr-module" x="6" y="40" width="1" height="1" data-x="4" data-y="38"/><rect class="qr-module" x="8" y="40" width="1" height="1" data-x="6" data-y="38"/><rect class="qr-module" x="11" y="40" width="1" height="1" data-x="9" data-y="38"/><rect class="qr-module" x="13" y="40" width="1" height="1" data-x="11" data-y="38"/><rect class="qr-module" x="14" y="40" width="1" height="1" data-x="12" data-y="38"/><rect class="qr-module" x="17" y="40" width="1" height="1" data-x="15" data-y="38"/><rect class="qr-module" x="19" y="40" width="1" height="1" data-x="17" data-y="38"/><rect class="qr-module" x="20" y="40" width="1" height="1" data-x="18" data-y="38"/><rect class="qr-module" x="24" y="40" width="1" height="1" data-x="22" data-y="38"/><rect class="qr-module" x="25" y="40" width="1" height="1" data-x="23" data-y="38"/><rect class="qr-module" x="26" y="40" width="1" height="1" data-x="24" data-y="38"/><rect class="qr-module" x="29" y="40" width="1" height="1" data-x="27" data-y="38"/><rect class="qr-module" x="30" y="40" width="1" height="1" data-x="28" data-y="38"/><rect class="qr-module" x="31" y="40" width="1" height="1" data-x="29" data-y="38"/><rect class="qr-module" x="34" y="40" width="1" height="1" data-x="32" data-y="38"/><rect class="qr-module" x="39" y="40" width="1" height="1" data-x="37" data-y="38"/><rect class="qr-module" x="42" y="40" width="1" height="1" data-x="40" data-y="38"/><rect class="qr-module" x="2" y="41" width="1" height="1" data-x="0" data-y="39"/><rect class="qr-module" x="8" y="41" width="1" height="1" data-x="6" data-y="39"/><rect class="qr-module" x="11" y="41" width="1" height="1" data-x="9" data-y="39"/><rect class="qr-module" x="13" y="41" width="1" height="1" data-x="11" data-y="39"/><rect class="qr-module" x="14" y="41" width="1" height="1" data-x="12" data-y="39"/><rect class="qr-module" x="15" y="41" width="1" height="1" data-x="13" data-y="39"/><rect class="qr-module" x="20" y="41" width="1" height="1" data-x="18" data-y="39"/><rect class="qr-module" x="21" y="41" width="1" height="1" data-x="19" data-y="39"/><rect class="qr-module" x="23" y="41" width="1" height="1" data-x="21" data-y="39"/><rect class="qr-module" x="25" y="41" width="1" height="1" data-x="23" data-y="39"/><rect class="qr-module" x="31" y="41" width="1" height="1" data-x="29" data-y="39"/><rect class="qr-module" x="32" y="41" width="1" height="1" data-x="30" data-y="39"/><rect class="qr-module" x="33" y="41" width="1" height="1" data-x="31" data-y="39"/><rect class="qr-module" x="34" y="41" width="1" height="1" data-x="32" data-y="39"/><rect class="qr-module" x="35" y="41" width="1" height="1" data-x="33" data-y="39"/><rect class="qr-module" x="39" y="41" width="1" height="1" data-x="37" data-y="39"/><rect class="qr-module" x="41" y="41" width="1" height="1" data-x="39" data-y="39"/><rect class="qr-module" x="42" y="41" width="1" height="1" data-x="40" data-y="39"/><rect class="qr-module" x="2" y="42" width="1" height="1" data-x="0" data-y="40"/><rect class="qr-module" x="3" y="42" width="1" height="1" data-x="1" data-y="40"/><rect class="qr-module" x="4" y="42" width="1" height="1" data-x="2" data-y="40"/><rect class="qr-module" x="5" y="42" width="1" height="1" data-x="3" data-y="40"/><rect class="qr-module" x="6" y="42" width="1" height="1" data-x="4" data-y="40"/><rect class="qr-module" x="7" y="42" width="1" height="1" data-x="5" data-y="40"/><rect class="qr-module" x="8" y="42" width="1" height="1" data-x="6" data-y="40"/><rect class="qr-module" x="10" y="42" width="1" height="1" data-x="8" data-y="40"/><rect class="qr-module" x="12" y="42" width="1" height="1" data-x="10" data-y="40"/><rect class="qr-module" x="13" y="42" width="1" height="1" data-x="11" data-y="40"/><rect class="qr-module" x="15" y="42" width="1" height="1" data-x="13" data-y="40"/><rect class="qr-module" x="17" y="42" width="1" height="1" data-x="15" data-y="40"/><rect class="qr-module" x="18" y="42" width="1" height="1" data-x="16" data-y="40"/><rect class="qr-module" x="19" y="42" width="1" height="1" data-x="17" data-y="40"/><rect class="qr-module" x="21" y="42" width="1" height="1" data-x="19" data-y="40"/><rect class="qr-module" x="22" y="42" width="1" height="1" data-x="20" data-y="40"/><rect class="qr-module" x="23" y="42" width="1" height="1" data-x="21" data-y="40"/><rect class="qr-module" x="24" y="42" width="1" height="1" data-x="22" data-y="40"/><rect class="qr-module" x="26" y="42" width="1" height="1" data-x="24" data-y="40"/><rect class="qr-module" x="29" y="42" width="1" height="1" data-x="27" data-y="40"/><rect class="qr-module" x="30" y="42" width="1" height="1" data-x="28" data-y="40"/><rect class="qr-module" x="31" y="42" width="1" height="1" data-x="29" data-y="40"/><rect class="qr-module" x="34" y="42" width="1" height="1" data-x="32" data-y="40"/><rect class="qr-module" x="35" y="42" width="1" height="1" data-x="33" data-y="40"/><rect class="qr-module" x="38" y="42" width="1" height="1" data-x="36" data-y="40"/><rect class="qr-module" x="41" y="42" width="1" height="1" data-x="39" data-y="40"/>
+                    </g>
+                  </svg>
+                </div>
+
+                <div class="qr-meta">
+                  <span class="dot"></span>
+                  <span>扫码加入 · 856272742</span>
+                </div>
+              </div>
+              <!-- —— 二维码面板结束 —— -->
+
+            </div>
+          </div>
+        </div>
+
+        <div class="marquee" aria-hidden="true">
+          <div class="marquee-track">
+            <div class="marquee-group">
+              <span class="marquee-item"><i class="sep"></i>JOIN ONLINE<span class="en">线上加入</span></span>
+              <span class="marquee-item"><i class="sep"></i>以星为引<span class="en">Guided by Stars</span></span>
+              <span class="marquee-item"><i class="sep"></i>以创为宸<span class="en">Creating for the Palace</span></span>
+              <span class="marquee-item"><i class="sep"></i>星宸学社<span class="en">StellarSage</span></span>
+              <span class="marquee-item"><i class="sep"></i>动手实践<span class="en">Make It Real</span></span>
+              <span class="marquee-item"><i class="sep"></i>让作品说话<span class="en">Let the Work Speak</span></span>
+            </div>
+            <div class="marquee-group">
+              <span class="marquee-item"><i class="sep"></i>JOIN ONLINE<span class="en">线上加入</span></span>
+              <span class="marquee-item"><i class="sep"></i>以星为引<span class="en">Guided by Stars</span></span>
+              <span class="marquee-item"><i class="sep"></i>以创为宸<span class="en">Creating for the Palace</span></span>
+              <span class="marquee-item"><i class="sep"></i>星宸学社<span class="en">StellarSage</span></span>
+              <span class="marquee-item"><i class="sep"></i>动手实践<span class="en">Make It Real</span></span>
+              <span class="marquee-item"><i class="sep"></i>让作品说话<span class="en">Let the Work Speak</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="page-indicator">
+  <span class="current" id="pageCurrent">01</span>
+  <span>/ 04</span>
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+
+<div class="toast" id="toast"><span class="toast-dot"></span><span id="toastText">功能正在测试，暂不开放</span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+/* ============================================================
+   1. 字符错峰预计算
+   ============================================================ */
+document.querySelectorAll('.chars').forEach(function(el){
+  el.querySelectorAll('.ch').forEach(function(ch, i){
+    ch.style.setProperty('--ci', i);
+    const rz = (Math.random() * 16 - 8).toFixed(1) + 'deg';
+    const sc = (Math.random() * 0.1 + 0.88).toFixed(2);
+    ch.style.setProperty('--ch-rz', rz);
+    ch.style.setProperty('--ch-sc', sc);
+  });
+});
+
+/* ============================================================
+   1.5 二维码模块错峰延时预计算
+   ------------------------------------------------------------
+   以 (data-x + data-y) 作为"波前"距离，形成从左上到右下的
+   生长节奏；再叠加少量随机抖动，避免过于机械。
+   ============================================================ */
+(function(){
+  document.querySelectorAll('.qr-module').forEach(function(r){
+    const x = parseFloat(r.getAttribute('data-x') || 0);
+    const y = parseFloat(r.getAttribute('data-y') || 0);
+    const delay = 0.45 + (x + y) * 0.013 + Math.random() * 0.10;
+    r.style.setProperty('--qd', delay.toFixed(2) + 's');
+  });
+})();
+
+/* ============================================================
+   2. 出入场动画控制
+   ============================================================ */
+function getAnimTargets(slide){
+  if (!slide) return [];
+  return slide.querySelectorAll(
+    '[data-anim], .chars, .marquee, .grow-line, .cover-ornament, .qr-modules'
+  );
+}
+
+function playIn(slide){
+  if (!slide) return;
+  const els = getAnimTargets(slide);
+  els.forEach(function(el){ el.classList.remove('anim-in'); });
+
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      els.forEach(function(el){ el.classList.add('anim-in'); });
+    });
+  });
+
+  setTimeout(function(){
+    els.forEach(function(el){
+      if (!el.classList.contains('anim-in')) el.classList.add('anim-in');
+    });
+  }, 700);
+}
+
+function playOut(slide){
+  if (!slide) return;
+  getAnimTargets(slide).forEach(function(el){ el.classList.remove('anim-in'); });
+}
+
+/* ============================================================
+   3. 主 Swiper
+   ============================================================ */
+const mainSwiper = new Swiper('#mainSwiper', {
+  direction: 'vertical',
+  speed: 780,
+  mousewheel: { forceToAxis: true, sensitivity: 1 },
+  keyboard: { enabled: true },
+  resistanceRatio: 0.65,
+  touchReleaseOnEdges: true,
+  nested: true,
+  on: {
+    slideChangeTransitionStart: function (sw) {
+      const prev = sw.slides[sw.previousIndex];
+      if (prev) playOut(prev);
+      const cur = sw.slides[sw.activeIndex];
+      if (cur) {
+        playIn(cur);
+        const body = cur.querySelector('.slide-body');
+        if (body) body.scrollTop = 0;
+      }
+    },
+    slideChange: function (sw) {
+      const i = sw.activeIndex;
+      document.getElementById('pageCurrent').textContent = ('0' + (i + 1)).slice(-2);
+      document.getElementById('progressBar').style.width = ((i + 1) / 4 * 100) + '%';
+    }
+  }
+});
+
+/* ============================================================
+   4. 启动
+   ============================================================ */
+function bootstrap(){
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      playIn(mainSwiper.slides[mainSwiper.activeIndex]);
+    });
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
+}
+
+window.addEventListener('resize', function(){
+  mainSwiper.update();
+});
+
+/* ============================================================
+   5. 移动端抽屉
+   ============================================================ */
+const navBurger  = document.getElementById('navBurger');
+const navDrawer  = document.getElementById('navDrawer');
+const navOverlay = document.getElementById('navOverlay');
+const navClose   = document.getElementById('navClose');
+
+function openDrawer(){
+  navDrawer.classList.add('is-open');
+  navOverlay.classList.add('is-open');
+  navBurger.classList.add('is-open');
+  navBurger.setAttribute('aria-expanded', 'true');
+  navDrawer.setAttribute('aria-hidden', 'false');
+  navOverlay.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('no-scroll');
+}
+function closeDrawer(){
+  navDrawer.classList.remove('is-open');
+  navOverlay.classList.remove('is-open');
+  navBurger.classList.remove('is-open');
+  navBurger.setAttribute('aria-expanded', 'false');
+  navDrawer.setAttribute('aria-hidden', 'true');
+  navOverlay.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('no-scroll');
+}
+
+navBurger.addEventListener('click', function(){
+  if (navDrawer.classList.contains('is-open')) closeDrawer();
+  else openDrawer();
+});
+navClose.addEventListener('click', closeDrawer);
+navOverlay.addEventListener('click', closeDrawer);
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && navDrawer.classList.contains('is-open')) closeDrawer();
+});
+
+navDrawer.querySelectorAll('a').forEach(function(a){
+  a.addEventListener('click', function(){ closeDrawer(); });
+});
+
+/* ============================================================
+   6. 按钮滑动色块
+   ============================================================ */
+function setupSlideButton(btn){
+  let t = null;
+  function on(){
+    if (t){ clearTimeout(t); t = null; }
+    btn.classList.remove('slide-out');
+    void btn.offsetWidth;
+    btn.classList.add('slide-in');
+  }
+  function off(){
+    btn.classList.remove('slide-in');
+    btn.classList.add('slide-out');
+    t = setTimeout(function(){
+      btn.classList.remove('slide-out');
+      t = null;
+    }, 620);
+  }
+  btn.addEventListener('mouseenter', on);
+  btn.addEventListener('mouseleave', off);
+  btn.addEventListener('touchstart', on, { passive: true });
+  btn.addEventListener('touchend', off, { passive: true });
+  btn.addEventListener('touchcancel', off, { passive: true });
+}
+document.querySelectorAll('.btn-block, .btn-slide-x').forEach(setupSlideButton);
+
+document.querySelectorAll('.nav-btn').forEach(function(btn){
+  let t = null;
+  function on(){
+    if (t){ clearTimeout(t); t = null; }
+    btn.classList.remove('slide-out');
+    void btn.offsetWidth;
+    btn.classList.add('slide-in');
+  }
+  function off(){
+    btn.classList.remove('slide-in');
+    btn.classList.add('slide-out');
+    t = setTimeout(function(){
+      btn.classList.remove('slide-out');
+      t = null;
+    }, 620);
+  }
+  btn.addEventListener('mouseenter', on);
+  btn.addEventListener('mouseleave', off);
+  btn.addEventListener('touchstart', on, { passive: true });
+  btn.addEventListener('touchend', off, { passive: true });
+  btn.addEventListener('touchcancel', off, { passive: true });
+});
+
+document.querySelectorAll('a[href="#page2"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    e.preventDefault();
+    mainSwiper.slideTo(1);
+  });
+});
+
+/* ============================================================
+   7. Toast / 复制
+   ============================================================ */
+const toastEl = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+let toastTimer = null;
+
+function showToast(msg){
+  toastText.textContent = msg || '功能正在测试，暂不开放';
+  toastEl.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){
+    toastEl.classList.remove('show');
+    toastTimer = null;
+  }, 2200);
+}
+
+/* 统一处理带 data-copy 的元素（邮箱 / QQ 群） */
+document.addEventListener('click', function(e){
+  const copyTarget = e.target.closest('[data-copy]');
+  if (copyTarget) {
+    e.preventDefault();
+    const val   = copyTarget.getAttribute('data-copy') || '';
+    const label = copyTarget.getAttribute('data-copy-label') || '内容';
+    if (!val) return;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(val).then(function(){
+        showToast(label + '已复制：' + val);
+      }).catch(function(){
+        showToast(label + '：' + val);
+      });
+    } else {
+      showToast(label + '：' + val);
+    }
+    return;
+  }
+
+  /* 其他 data-toast */
+  const target = e.target.closest('[data-toast]');
+  if (!target) return;
+  if (target.tagName === 'A'){
+    const href = target.getAttribute('href');
+    if (href && href !== '#') return;
+    e.preventDefault();
+  }
+  showToast();
+}, true);
+</script>
+</body>
+</html>
